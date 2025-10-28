@@ -183,54 +183,91 @@
     syncDropdownMode();
   </script>
   
-  <!-- New styled submission section -->
+  <!-- Hero Section for Submission -->
+  <div class="submission-hero">
+    <div class="submission-hero-bg"></div>
+    <div class="submission-hero-content">
+      <div class="submission-logo">
+        <img src="Media/Logo/logo.png" alt="Anubis Underground" class="submission-logo-img">
+      </div>
+      <h1 class="submission-title">MUSIC <span class="text-accent">SUBMISSION</span></h1>
+      <p class="submission-subtitle">Share Your Underground Sound</p>
+      <div class="submission-tagline">Send us your singles • EPs • Albums • Podcasts</div>
+      <div class="submission-divider"></div>
+    </div>
+  </div>
+
+  <!-- Submission form container -->
   <main class="form-container" role="main">
     <header class="form-header">
-      <h1>MUSIC SUBMISSION</h1>
-      <div class="form-subtitle form-subtitle--box">
-        <p>Share your single, EP, album, or podcast with Anubis Underground.</p>
-        <p>Submit via email and include a <strong>private SoundCloud link</strong> for review.</p>
-        <p>Please note that submissions are open only to established artists with <strong>active platforms or profiles</strong>.</p>
-        <p>We’ll review your music and reply as soon as we can.</p> <!-- Moved to a new paragraph -->
+      <div class="form-info-grid">
+        <div class="info-card">
+          <div class="info-icon">🎵</div>
+          <h3>What We Accept</h3>
+          <p>Singles, EPs, Albums, and Underground Podcasts</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🔗</div>
+          <h3>How to Submit</h3>
+          <p>Include a private SoundCloud link for review</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">⚡</div>
+          <h3>Requirements</h3>
+          <p>Established artists with active platforms only</p>
+        </div>
       </div>
     </header>
 
-    <form class="form-card" id="submission-form" action="https://formspree.io/f/xgvpewpz" method="POST">
+    <form class="form-card enhanced-form" id="submission-form" action="https://formspree.io/f/xgvpewpz" method="POST">
+      <div class="form-card-header">
+        <h2 class="form-card-title">Submit Your Music</h2>
+        <p class="form-card-subtitle">Fill out the form below and we'll review your submission</p>
+      </div>
+      
       <div class="form-grid">
         <div class="form-field">
-          <label for="name">Your Name <span class="required">*</span></label>
-          <input type="text" id="name" name="name" placeholder="Enter your full artist name" required>
+          <label for="name">Artist Name <span class="required">*</span></label>
+          <input type="text" id="name" name="name" placeholder="Your artist name" required>
+          <div class="field-icon">👤</div>
         </div>
 
         <div class="form-field">
-          <label for="email">Your Email <span class="required">*</span></label>
-          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+          <label for="email">Email Address <span class="required">*</span></label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          <div class="field-icon">✉️</div>
         </div>
 
         <div class="form-field form-field--full">
-          <label for="ep">Select your music project <span class="required">*</span></label>
+          <label for="ep">Music Type <span class="required">*</span></label>
           <select id="ep" name="ep" required aria-describedby="ep-help">
-            <option value="">-- Choose one --</option>
-            <option value="Single">Single</option>
-            <option value="EP">EP </option>
-            <option value="Album">Album </option>
-            <option value="Podcast">Podcast </option>
+            <option value="">Select your submission type</option>
+            <option value="Single">🎵 Single</option>
+            <option value="EP">💿 EP</option>
+            <option value="Album">🎼 Album</option>
+            <option value="Podcast">🎧 Podcast</option>
           </select>
-          <small id="ep-help" class="help-text">Tell us what you’re submitting.</small>
+          <small id="ep-help" class="help-text">Choose what type of music you're submitting</small>
         </div>
 
         <div class="form-field form-field--full">
-          <label for="message">Your Message (optional)</label>
-          <textarea id="message" name="message" rows="5" placeholder="Share links (private SoundCloud link), genre, and anything we should know."></textarea>
+          <label for="message">Additional Information</label>
+          <textarea id="message" name="message" rows="6" placeholder="Include your private SoundCloud link, genre, social media links, and anything else we should know about your music..."></textarea>
+          <div class="field-icon">💬</div>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn-red">Send Submission</button>
+        <button type="submit" class="btn-submit">
+          <span class="btn-text">Send Submission</span>
+          <span class="btn-icon">🚀</span>
+        </button>
       </div>
 
       <!-- status message area -->
-      <p class="form-status" id="form-status" aria-live="polite"></p>
+      <div class="form-status-wrapper">
+        <p class="form-status" id="form-status" aria-live="polite"></p>
+      </div>
     </form>
   </main>
 

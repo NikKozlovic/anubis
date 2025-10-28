@@ -179,12 +179,26 @@
     syncDropdownMode();
   </script>
 
-  <!-- Single main section -->
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <img class="hero-logo-img" src="Media/Logo/logo.png" alt="Anubis Underground Logo">
+      </div>
+      <h1 class="hero-title">ANUBIS <span class="text-accent">RESIDENTS</span></h1>
+      <p class="hero-subtitle">Meet Our Artists</p>
+      <p class="hero-tagline">The DJs, producers and residents who perform at Anubis Underground</p>
+      <div class="hero-divider"></div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
   <main class="content">
-    <header class="page-header">
-      <h1>ANUBIS RESIDENTS</h1>
-      <p class="subtitle">Meet the DJs, producers and residents who perfom art Anubis. <strong>Tap the picture to check the bio.</strong></p>
-    </header>
+    <section class="section-header">
+      <h2 class="section-title">OUR <span class="text-accent">RESIDENTS</span></h2>
+      <p class="section-subtitle"><strong>Tap the picture to check the bio and swipe through multiple slides</strong></p>
+    </section>
 
     <section class="residents-grid" aria-label="Anubis residents gallery">
       <div class="resident">
@@ -213,96 +227,122 @@
       </div>
     </section>
 
-    <section class="contact-form-section">
-      <h2>BOOKING FORM</h2>
-      <form
-        id="booking-form"
-        action="https://formspree.io/f/mvgvzrye"
-        method="POST"
-      >
-        <!-- Row 1: Name and Email -->
-        <div class="form-row">
-          <div class="form-field">
-            <label>
-              Your name: <span class="required">*</span>
-              <input type="text" name="name" placeholder="Enter your name" required>
-            </label>
-          </div>
-          <div class="form-field">
-            <label>
-              Your email: <span class="required">*</span>
-              <input type="email" name="email" placeholder="Enter your email" required>
-            </label>
+    <!-- Booking Section -->
+    <section class="featured-section">
+      <div class="section-header">
+        <h2 class="section-title">BOOK <span class="text-accent">OUR ARTISTS</span></h2>
+        <p class="section-subtitle">Ready to bring the Anubis Underground experience to your event?</p>
+      </div>
+      
+      <div class="booking-card-wrapper">
+        <div class="booking-intro-card">
+          <div class="booking-intro-content">
+            <h3>Professional Booking Services</h3>
+            <p>Our residents are available for bookings worldwide. Each artist brings their unique style and energy to create unforgettable underground experiences.</p>
+            <div class="booking-features">
+              <div class="feature-item">
+                <span class="feature-icon">🔥</span>
+                <span>Underground Experience</span>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <span>High-Energy Performances</span>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Row 2: Event Name and Location -->
-        <div class="form-row">
-          <div class="form-field">
-            <label>
-              Name of event: <span class="required">*</span>
-              <input type="text" name="event_name" placeholder="Enter event name" required>
-            </label>
+      <div class="contact-form-section">
+        <form
+          id="booking-form"
+          action="https://formspree.io/f/mvgvzrye"
+          method="POST"
+        >
+          <!-- Row 1: Name and Email -->
+          <div class="form-row">
+            <div class="form-field">
+              <label>
+                Your name: <span class="required">*</span>
+                <input type="text" name="name" placeholder="Enter your name" required>
+              </label>
+            </div>
+            <div class="form-field">
+              <label>
+                Your email: <span class="required">*</span>
+                <input type="email" name="email" placeholder="Enter your email" required>
+              </label>
+            </div>
           </div>
-          <div class="form-field">
-            <label>
-              Location: <span class="required">*</span>
-              <input type="text" name="location" placeholder="Enter event location" required>
-            </label>
-          </div>
-        </div>
 
-        <!-- Row 3: Country and Date -->
-        <div class="form-row">
-          <div class="form-field">
-            <label>
-              Country: <span class="required">*</span>
-              <input type="text" name="country" placeholder="Enter country" required>
-            </label>
+          <!-- Row 2: Event Name and Location -->
+          <div class="form-row">
+            <div class="form-field">
+              <label>
+                Name of event: <span class="required">*</span>
+                <input type="text" name="event_name" placeholder="Enter event name" required>
+              </label>
+            </div>
+            <div class="form-field">
+              <label>
+                Location: <span class="required">*</span>
+                <input type="text" name="location" placeholder="Enter event location" required>
+              </label>
+            </div>
           </div>
-          <div class="form-field">
-            <label>
-              Date for booking: <span class="required">*</span>
-              <input type="date" name="booking_date" required>
-            </label>
-          </div>
-        </div>
 
-        <label>
-          Select artist(s) to book: <span class="required">*</span>
-        </label>
-        <div class="checkbox-group">
-          <div class="checkbox-item">
-            <input type="checkbox" id="kosowsky" name="artist" value="Kosowsky">
-            <label for="kosowsky">Kosowsky</label>
+          <!-- Row 3: Country and Date -->
+          <div class="form-row">
+            <div class="form-field">
+              <label>
+                Country: <span class="required">*</span>
+                <input type="text" name="country" placeholder="Enter country" required>
+              </label>
+            </div>
+            <div class="form-field">
+              <label>
+                Date for booking: <span class="required">*</span>
+                <input type="date" name="booking_date" required>
+              </label>
+            </div>
           </div>
-          <div class="checkbox-item">
-            <input type="checkbox" id="kunja" name="artist" value="Kunja">
-            <label for="kunja">Kunja</label>
+
+          <label>
+            Select artist(s) to book: <span class="required">*</span>
+          </label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="kosowsky" name="artist" value="Kosowsky">
+              <label for="kosowsky">Kosowsky</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="kunja" name="artist" value="Kunja">
+              <label for="kunja">Kunja</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="kayn" name="artist" value="Kayn">
+              <label for="kayn">Kayn</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="nazh" name="artist" value="Nazh">
+              <label for="nazh">Nazh</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="bahun" name="artist" value="Bahun">
+              <label for="bahun">Bahun</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="vanch" name="artist" value="Vanch">
+              <label for="vanch">Vanch</label>
+            </div>
           </div>
-          <div class="checkbox-item">
-            <input type="checkbox" id="kayn" name="artist" value="Kayn">
-            <label for="kayn">Kayn</label>
-          </div>
-          <div class="checkbox-item">
-            <input type="checkbox" id="nazh" name="artist" value="Nazh">
-            <label for="nazh">Nazh</label>
-          </div>
-          <div class="checkbox-item">
-            <input type="checkbox" id="bahun" name="artist" value="Bahun">
-            <label for="bahun">Bahun</label>
-          </div>
-          <div class="checkbox-item">
-            <input type="checkbox" id="vanch" name="artist" value="Vanch">
-            <label for="vanch">Vanch</label>
-          </div>
-        </div>
-        <label>
-          Additional message:
-          <textarea name="message" placeholder="Any additional details or requirements..."></textarea>
-        </label>
-        <button type="submit" id="booking-submit">Send Booking Request</button>
-      </form>
+          <label>
+            Additional message:
+            <textarea name="message" placeholder="Any additional details or requirements..."></textarea>
+          </label>
+          <button type="submit" id="booking-submit">Send Booking Request</button>
+        </form>
+      </div>
     </section>
   </main>
 
