@@ -362,11 +362,31 @@ body {
 }
 
 @media (max-width: 480px) {
-  .residents-grid {
-    grid-template-columns: 1fr;
+  .content {
+    padding: 0; /* Remove any padding from content container */
   }
+  
+  .residents-grid {
+    grid-template-columns: 1fr; /* Single column layout */
+    gap: 20px;
+    justify-items: center;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0; /* Remove any inherited padding */
+  }
+  
+  .content > .residents-grid {
+    padding: 0 20px; /* Equal padding for single column */
+    box-sizing: border-box;
+  }
+  
+  .resident {
+    width: 100%; /* Full width within grid cell */
+    max-width: 320px; /* Wider max-width */
+  }
+  
   .resident img {
-    height: 300px;
+    height: 350px; /* Taller height */
   }
 }
 
