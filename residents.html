@@ -202,28 +202,94 @@
 
     <section class="residents-grid" aria-label="Anubis residents gallery">
       <div class="resident">
-        <img src="Media/Residents/kosowsky.jpeg" alt="Kosowsky">
         <p class="resident-name">Kosowsky</p>
+        <div class="resident-image-slider">
+          <div class="resident-images">
+            <img src="Media/Residents/kosowsky1.jpeg" alt="Kosowsky" class="active">
+            <img src="Media/Residents/kosowsky.JPG" alt="Kosowsky">
+            <img src="Media/Residents/kosowsky3.png" alt="Kosowsky">
+          </div>
+          <div class="resident-image-dots">
+            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
+            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
+            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
+          </div>
+        </div>
       </div>
       <div class="resident">
-        <img src="Media/Residents/kunja.jpg" alt="Kunja">
         <p class="resident-name">Kunja</p>
+        <div class="resident-image-slider">
+          <div class="resident-images">
+            <img src="Media/Residents/kunja1.jpeg" alt="Kunja" class="active">
+            <img src="Media/Residents/kunja2.jpeg" alt="Kunja">
+            <img src="Media/Residents/kunja3.jpeg" alt="Kunja">
+          </div>
+          <div class="resident-image-dots">
+            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
+            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
+            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
+          </div>
+        </div>
       </div>
       <div class="resident">
-        <img src="Media/Residents/kayn.jpg" alt="Kayn">
         <p class="resident-name">Kayn</p>
+        <div class="resident-image-slider">
+          <div class="resident-images">
+            <img src="Media/Residents/kayn.jpg" alt="Kayn" class="active">
+            <img src="Media/Residents/kayn2.jpg" alt="Kayn">
+            <img src="Media/Residents/kayn3.jpg" alt="Kayn">
+          </div>
+          <div class="resident-image-dots">
+            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
+            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
+            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
+          </div>
+        </div>
       </div>
       <div class="resident">
-        <img src="Media/Residents/nazh.jpeg" alt="Nazh">
         <p class="resident-name">Nazh</p>
+        <div class="resident-image-slider">
+          <div class="resident-images">
+            <img src="Media/Residents/nazh2.png" alt="Nazh" class="active">
+            <img src="Media/Residents/nazh.png" alt="Nazh">
+            <img src="Media/Residents/nazh3.png" alt="Nazh">
+          </div>
+          <div class="resident-image-dots">
+            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
+            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
+            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
+          </div>
+        </div>
       </div>
       <div class="resident">
-        <img src="Media/Residents/bahun.png" alt="Bahun">
         <p class="resident-name">Bahun</p>
+        <div class="resident-image-slider">
+          <div class="resident-images">
+            <img src="Media/Residents/bahun2.jpeg" alt="Bahun" class="active">
+            <img src="Media/Residents/bahun.png" alt="Bahun">
+            <img src="Media/Residents/bahun3.png" alt="Bahun">
+          </div>
+          <div class="resident-image-dots">
+            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
+            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
+            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
+          </div>
+        </div>
       </div>
       <div class="resident">
-        <img src="Media/Residents/vanch.jpg" alt="Vanch">
         <p class="resident-name">Vanch</p>
+        <div class="resident-image-slider">
+          <div class="resident-images">
+            <img src="Media/Residents/vanch3.jpeg" alt="Vanch" class="active">
+            <img src="Media/Residents/vanch2.png" alt="Vanch">
+            <img src="Media/Residents/vanch.png" alt="Vanch">
+          </div>
+          <div class="resident-image-dots">
+            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
+            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
+            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -411,6 +477,118 @@
         const nameEl = card.querySelector('.resident-name');
         const name = (nameEl?.textContent || 'Resident').trim();
 
+        // Initialize image slider
+        const imageSlider = card.querySelector('.resident-image-slider');
+        const images = card.querySelectorAll('.resident-images img');
+        const imageDots = card.querySelectorAll('.resident-image-dot');
+        
+        let currentImageIndex = 0;
+
+        // Image slider navigation functions
+        const goToImage = (index) => {
+          if (index === currentImageIndex || index < 0 || index >= images.length) return;
+          
+          images[currentImageIndex].classList.remove('active');
+          imageDots[currentImageIndex]?.classList.remove('active');
+          
+          images[index].classList.add('active');
+          imageDots[index]?.classList.add('active');
+          
+          currentImageIndex = index;
+        };
+
+        // Handle image dot clicks
+        imageDots.forEach(dot => {
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const slideIndex = parseInt(dot.getAttribute('data-slide'));
+            goToImage(slideIndex);
+          });
+        });
+
+        // Image swipe functionality (touch/pointer) - Enhanced for mobile
+        const imagesContainer = card.querySelector('.resident-images');
+        const threshold = 50; // px required to trigger a swipe (increased for better mobile experience)
+
+        let startX = 0, startY = 0, dx = 0, dy = 0, activeDrag = false, lockedAxis = null;
+
+        const getXY = (e) => {
+          if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          return { x: e.clientX, y: e.clientY };
+        };
+
+        const onImagePointerDown = (e) => {
+          activeDrag = true;
+          lockedAxis = null;
+          const p = getXY(e);
+          startX = p.x; startY = p.y; dx = 0; dy = 0;
+          
+          // Prevent default to avoid conflicts with other gestures
+          if (e.type === 'touchstart') {
+            e.preventDefault();
+          }
+          
+          imagesContainer.setPointerCapture?.(e.pointerId);
+          e.stopPropagation();
+        };
+
+        const onImagePointerMove = (e) => {
+          if (!activeDrag) return;
+          const p = getXY(e);
+          dx = p.x - startX;
+          dy = p.y - startY;
+
+          // Lock to horizontal if movement is mostly horizontal
+          if (!lockedAxis && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+            lockedAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+          }
+
+          // If horizontal gesture, prevent scrolling the page
+          if (lockedAxis === 'x') {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        };
+
+        const onImagePointerUp = (e) => {
+          if (!activeDrag) return;
+          activeDrag = false;
+
+          if (lockedAxis === 'x' && Math.abs(dx) > threshold) {
+            if (dx < 0) {
+              // swipe left -> next image
+              goToImage(Math.min(currentImageIndex + 1, images.length - 1));
+            } else {
+              // swipe right -> prev image
+              goToImage(Math.max(currentImageIndex - 1, 0));
+            }
+          }
+
+          dx = dy = 0;
+          lockedAxis = null;
+          e.stopPropagation();
+        };
+
+        // Add image swipe event listeners with enhanced mobile support
+        if (window.PointerEvent) {
+          imagesContainer.addEventListener('pointerdown', onImagePointerDown);
+          imagesContainer.addEventListener('pointermove', onImagePointerMove, { passive: false });
+          imagesContainer.addEventListener('pointerup', onImagePointerUp);
+          imagesContainer.addEventListener('pointercancel', onImagePointerUp);
+        } else {
+          // Enhanced fallback for older browsers and better mobile support
+          imagesContainer.addEventListener('touchstart', onImagePointerDown, { passive: false });
+          imagesContainer.addEventListener('touchmove', onImagePointerMove, { passive: false });
+          imagesContainer.addEventListener('touchend', onImagePointerUp, { passive: false });
+          imagesContainer.addEventListener('touchcancel', onImagePointerUp, { passive: false });
+          
+          // Also add mouse events for desktop
+          imagesContainer.addEventListener('mousedown', onImagePointerDown);
+          imagesContainer.addEventListener('mousemove', onImagePointerMove, { passive: false });
+          imagesContainer.addEventListener('mouseup', onImagePointerUp);
+        }
+
+        // Create bio overlay
         const overlay = document.createElement('div');
         overlay.className = 'resident-overlay';
         overlay.setAttribute('aria-hidden', 'true');
@@ -466,9 +644,10 @@
           </div>
         `;
 
-        const img = card.querySelector('img');
-        if (!img) return;
-        card.insertBefore(overlay, img.nextSibling);
+        // Insert overlay after the image slider
+        const imageSliderEl = card.querySelector('.resident-image-slider');
+        if (!imageSliderEl) return;
+        card.insertBefore(overlay, imageSliderEl.nextSibling);
 
         // Handle dot navigation
         const dots = overlay.querySelectorAll('.bio-dot');
@@ -494,47 +673,47 @@
           });
         });
 
-        // Swipe navigation (touch/pointer)
-        const slidesEl = overlay.querySelector('.bio-slides');
-        const threshold = 40; // px required to trigger a swipe
+        // Bio swipe navigation (touch/pointer)
+        const bioSlidesEl = overlay.querySelector('.bio-slides');
+        const bioThreshold = 40; // px required to trigger a swipe
 
-        let startX = 0, startY = 0, dx = 0, dy = 0, activeDrag = false, lockedAxis = null;
+        let bioStartX = 0, bioStartY = 0, bioDx = 0, bioDy = 0, bioActiveDrag = false, bioLockedAxis = null;
 
-        const getXY = (e) => {
+        const getBioXY = (e) => {
           if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
           return { x: e.clientX, y: e.clientY };
         };
 
-        const onPointerDown = (e) => {
-          activeDrag = true;
-          lockedAxis = null;
-          const p = getXY(e);
-          startX = p.x; startY = p.y; dx = 0; dy = 0;
-          slidesEl.setPointerCapture?.(e.pointerId);
+        const onBioPointerDown = (e) => {
+          bioActiveDrag = true;
+          bioLockedAxis = null;
+          const p = getBioXY(e);
+          bioStartX = p.x; bioStartY = p.y; bioDx = 0; bioDy = 0;
+          bioSlidesEl.setPointerCapture?.(e.pointerId);
           e.stopPropagation();
         };
 
-        const onPointerMove = (e) => {
-          if (!activeDrag) return;
-          const p = getXY(e);
-          dx = p.x - startX;
-          dy = p.y - startY;
+        const onBioPointerMove = (e) => {
+          if (!bioActiveDrag) return;
+          const p = getBioXY(e);
+          bioDx = p.x - bioStartX;
+          bioDy = p.y - bioStartY;
 
           // Lock to horizontal if movement is mostly horizontal
-          if (!lockedAxis && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
-            lockedAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+          if (!bioLockedAxis && (Math.abs(bioDx) > 10 || Math.abs(bioDy) > 10)) {
+            bioLockedAxis = Math.abs(bioDx) > Math.abs(bioDy) ? 'x' : 'y';
           }
 
           // If horizontal gesture, prevent scrolling the page
-          if (lockedAxis === 'x') e.preventDefault();
+          if (bioLockedAxis === 'x') e.preventDefault();
         };
 
-        const onPointerUp = (e) => {
-          if (!activeDrag) return;
-          activeDrag = false;
+        const onBioPointerUp = (e) => {
+          if (!bioActiveDrag) return;
+          bioActiveDrag = false;
 
-          if (lockedAxis === 'x' && Math.abs(dx) > threshold) {
-            if (dx < 0) {
+          if (bioLockedAxis === 'x' && Math.abs(bioDx) > bioThreshold) {
+            if (bioDx < 0) {
               // swipe left -> next
               goTo(Math.min(currentIndex + 1, slides.length - 1));
             } else {
@@ -543,22 +722,22 @@
             }
           }
 
-          dx = dy = 0;
-          lockedAxis = null;
+          bioDx = bioDy = 0;
+          bioLockedAxis = null;
           e.stopPropagation();
         };
 
         if (window.PointerEvent) {
-          slidesEl.addEventListener('pointerdown', onPointerDown);
-          slidesEl.addEventListener('pointermove', onPointerMove, { passive: false });
-          slidesEl.addEventListener('pointerup', onPointerUp);
-          slidesEl.addEventListener('pointercancel', onPointerUp);
+          bioSlidesEl.addEventListener('pointerdown', onBioPointerDown);
+          bioSlidesEl.addEventListener('pointermove', onBioPointerMove, { passive: false });
+          bioSlidesEl.addEventListener('pointerup', onBioPointerUp);
+          bioSlidesEl.addEventListener('pointercancel', onBioPointerUp);
         } else {
           // Fallback for older browsers
-          slidesEl.addEventListener('touchstart', onPointerDown, { passive: true });
-          slidesEl.addEventListener('touchmove', onPointerMove, { passive: false });
-          slidesEl.addEventListener('touchend', onPointerUp);
-          slidesEl.addEventListener('touchcancel', onPointerUp);
+          bioSlidesEl.addEventListener('touchstart', onBioPointerDown, { passive: true });
+          bioSlidesEl.addEventListener('touchmove', onBioPointerMove, { passive: false });
+          bioSlidesEl.addEventListener('touchend', onBioPointerUp);
+          bioSlidesEl.addEventListener('touchcancel', onBioPointerUp);
         }
 
         overlay.addEventListener('click', (e) => {
@@ -576,7 +755,14 @@
           card.setAttribute('aria-pressed', flipped ? 'true' : 'false');
         };
 
-        card.addEventListener('click', toggle);
+        // Handle card click (but not if clicking on image dots)
+        card.addEventListener('click', (e) => {
+          // Don't flip if clicking on image dots
+          if (e.target.closest('.resident-image-dot')) {
+            return;
+          }
+          toggle();
+        });
         card.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
