@@ -235,9 +235,9 @@
         <p class="resident-name">Kayn</p>
         <div class="resident-image-slider">
           <div class="resident-images">
-            <img src="Media/Residents/kayn.webp" alt="Kayn" class="active">
+            <img src="Media/Residents/kayn3.webp" alt="Kayn" class="active">
             <img src="Media/Residents/kayn2.webp" alt="Kayn">
-            <img src="Media/Residents/kayn3.webp" alt="Kayn">
+            <img src="Media/Residents/kayn1.webp" alt="Kayn">
           </div>
           <div class="resident-image-dots">
             <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
@@ -435,9 +435,9 @@
           'His passion for pushing boundaries has earned him recognition in the underground techno community.'
         ],
         Kayn: [
-          'Kayn is a DJ from Postojna, Slovenia, known for delivering intense hard industrial techno sets that shake the dancefloor with raw power and precision. His sound captures the darker essence of hard techno, where relentless rhythm meets pure energy.',
-          'Drawing inspiration from the industrial underground, Kayn crafts sets that are both punishing and hypnotic.',
-          'His commitment to the darker side of techno makes him a standout in the Anubis roster.'
+          'Hailing from Slovenia, Kayn has quickly made his mark in hard industrial techno since his debut in October 2024. Known for his relentless, dark, and horror-infused soundscapes, he is a master of closing sets—pushing dancefloors to their limits and leaving audiences in euphoric exhaustion.',
+          'Specializing in the final hours, Kayn’s sets take listeners through pounding beats and haunting atmospheres, keeping energy at its peak until the last track. He has played across Slovenia, including the first-ever Face to Face event, delivering unforgettable shows across Europe',
+          'Under the moniker "The King of Purgatory," Kayn keeps his identity hidden, embracing the shadows while delivering high-octane sets for fans of the hardest industrial techno. He is now set to produce original tracks, bringing his signature dark, fast-paced style to new productions.'
         ],
         Nazh: [
           'Nazh is a DJ from Ljubljana, Slovenia, bringing unstoppable energy to every set with his powerful schranz sound. Known for fast-paced, hard-hitting rhythms, he drives the crowd into motion with precision and intensity, creating an atmosphere where raw energy and pure rave spirit collide on the dancefloor.',
@@ -816,6 +816,43 @@
           if (resp.ok) {
             // success UI
             setButtonState('Booking submitted', '#28a745', '#fff');
+            // send Discord webhook with booking details (do this after email was accepted by Formspree)
+            try {
+              const webhookUrl = 'https://discordapp.com/api/webhooks/1435028281127604234/GY9Y_jQ1gdKbrhckDv30XYDpPU5WTRAUFUvedLMOkSEaAKOnEhzjDt_BNFxYoV642Zw2';
+              const bookingData = {
+                name: fd.get('name') || '',
+                email: fd.get('email') || '',
+                event_name: fd.get('event_name') || '',
+                location: fd.get('location') || '',
+                country: fd.get('country') || '',
+                booking_date: fd.get('booking_date') || '',
+                artists: typeof fd.getAll === 'function' ? fd.getAll('artist') : (fd.get('artist') || ''),
+                message: fd.get('message') || ''
+              };
+
+              const artistsText = Array.isArray(bookingData.artists) ? bookingData.artists.join(', ') : bookingData.artists;
+              const content = `🎵 **New booking received:**\n` +
+                `**Name:** ${bookingData.name}\n` +
+                `**Email:** ${bookingData.email}\n` +
+                `**Event:** ${bookingData.event_name}\n` +
+                `**Location:** ${bookingData.location}\n` +
+                `**Country:** ${bookingData.country}\n` +
+                `**Date:** ${bookingData.booking_date}\n` +
+                `**Artists:** ${artistsText}\n` +
+                `**Message:** ${bookingData.message}`;
+
+              // Fire-and-forget POST to Discord webhook. We don't block the UI on this.
+              fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+              }).then(r => {
+                if (!r.ok) console.error('Discord webhook failed', r.status, r.statusText);
+              }).catch(err => console.error('Discord webhook error', err));
+            } catch (err) {
+              // ensure any exception here doesn't break the UI flow
+              console.error('Failed preparing or sending Discord webhook', err);
+            }
 
             // clear fields after 2 seconds
             setTimeout(() => {

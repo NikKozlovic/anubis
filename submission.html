@@ -276,7 +276,7 @@
   </footer>
   
   <script>
-    // Formspree AJAX submit + clear fields on success
+    // Formspree AJAX submit + clear fields on success, and send a Discord webhook notification
     (function () {
       const form = document.getElementById('submission-form');
       if (!form) return;
@@ -284,6 +284,34 @@
       const statusEl = document.getElementById('form-status');
       const submitBtn = form.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn ? submitBtn.textContent : '';
+
+      const DISCORD_WEBHOOK = 'https://discordapp.com/api/webhooks/1435005398422913289/ehmSwFBlW801Af5WxS8XJ39LWW7xtTFUFLyShXMcYQCrZ4sYiLTyKoKoDQyGd7uXP8SS';
+
+      async function sendDiscordNotification(formData) {
+        try {
+          const name = formData.get('name') || '—';
+          const email = formData.get('email') || '—';
+          const ep = formData.get('ep') || '—';
+          const message = formData.get('message') || '—';
+
+          const content = [
+            '**New music submission**',
+            `**Name:** ${name}`,
+            `**Email:** ${email}`,
+            `**Type:** ${ep}`,
+            `**Message:** ${message}`
+          ].join('\n');
+
+          await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+          });
+        } catch (err) {
+          // ignore Discord errors (CORS or network); they shouldn't block user flow
+          console.error('Discord webhook error:', err);
+        }
+      }
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -311,6 +339,9 @@
               statusEl.dataset.state = 'success';
               statusEl.textContent = 'Thanks! Your submission has been sent.';
             }
+
+            // attempt to notify Discord (do not block UX on failure)
+            sendDiscordNotification(data);
           } else {
             const result = await resp.json().catch(() => ({}));
             const msg = (result && result.errors)
