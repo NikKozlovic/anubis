@@ -1,10 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&display=swap');
+
+/* Reset and base sizing */
+* {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html {
+  font-size: 16px; /* Base font size for rem calculations */
+}
+
 body {
   background-color: black;
   color: white;
-  font-family: Arial, sans-serif;
+  font-family: 'Cinzel', serif;
   margin: 0;
   padding-top: 56px; /* reserve space for fixed navbar */
   overflow-x: hidden; /* prevent horizontal scroll */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ===== Navbar ===== */
@@ -99,6 +115,7 @@ body {
   display: flex;
   gap: 10px;
   background-color: #000;
+  margin-left: 21px;
 }
 
 /* Navbar links */
@@ -111,6 +128,7 @@ body {
   border: none;
   cursor: pointer;
   font-size: 16px;
+  font-family: 'Cinzel', serif;
 }
 
 /* Hover effects */
@@ -143,10 +161,12 @@ body {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  font-family: 'Cinzel', serif;
 }
 
 .dropdown-content a:hover {
-  background-color: #ddd;
+  background-color: red !important;
+  color: white !important;
 }
 
 .dropdown:hover .dropdown-content {
@@ -475,8 +495,8 @@ body {
   }
 }
 
-/* Responsive layout - trigger on narrow width OR short height (landscape phones) */
-@media (max-width: 700px), (max-height: 500px) and (max-width: 1000px) {
+/* Responsive layout - trigger on narrow width OR short height (landscape phones/tablets) */
+@media (max-width: 1024px), (max-height: 500px) and (max-width: 1200px) {
   /* move toggle to right */
   .navbar {
     justify-content: flex-end; /* changed from flex-start */
@@ -565,7 +585,7 @@ body {
 }
 
 /* Desktop: hide left absolute logo, show inline centered logo */
-@media (min-width: 701px) and (min-height: 501px) {
+@media (min-width: 1025px) and (min-height: 501px) {
   .logo { /* left logo stays for mobile only */
     display: none;
   }
@@ -576,6 +596,7 @@ body {
     height: 18px;  /* 20% smaller than current ~22.4px */
     align-items: center;
     justify-content: center;
+    margin: 0 auto;  /* center the logo */
   }
 
   .logo-inline .logo-img {
@@ -596,6 +617,12 @@ body {
   .menu a:hover,
   .dropdown:hover .dropbtn {
     background: transparent !important;
+  }
+
+  /* dropdown content items should still have red background on hover */
+  .dropdown-content a:hover {
+    background-color: red !important;
+    color: white !important;
   }
 
   /* base for pseudo highlight */
@@ -871,7 +898,7 @@ html {
 }
 
 /* Specifically target menu items in mobile view */
-@media (max-width: 700px), (max-height: 500px) and (max-width: 1000px) {
+@media (max-width: 1024px), (max-height: 500px) and (max-width: 1200px) {
   .menu a,
   .dropbtn,
   .dropdown-content a {
@@ -1652,6 +1679,12 @@ strong {
       letter-spacing: 3px;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
       animation: fadeInUp 1s ease-out 0.3s both;
+      display: inline;
+      font-family: 'Cinzel Decorative', serif;
+    }
+
+    .about-hero .about-title .text-accent {
+      display: inline;
     }
 
     .text-accent {
@@ -1934,11 +1967,38 @@ strong {
       letter-spacing: 3px;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
       animation: fadeInUp 1s ease-out 0.3s both;
+      font-family: 'Cinzel Decorative', serif;
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      gap: 0;
+    }
+
+    /* Keep other pages' hero titles inline */
+    section.hero-section .hero-title {
+      display: inline;
+    }
+
+    section.hero-section .hero-title .text-accent {
+      display: inline;
+    }
+
+    /* Home page hero title stacked */
+    div.hero-section .hero-title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      gap: 0;
+    }
+
+    div.hero-section .hero-title .text-accent {
+      display: block;
     }
 
     .text-accent {
       color: #ff2a2a;
       text-shadow: 0 0 30px rgba(255, 42, 42, 0.6);
+      display: block;
     }
 
     .hero-subtitle {
@@ -2322,10 +2382,15 @@ strong {
     @media (max-width: 768px) {
       .hero-title {
         font-size: 2.5rem;
+        letter-spacing: 2px;
       }
       
       .hero-subtitle {
         font-size: 1.2rem;
+      }
+      
+      .hero-tagline {
+        font-size: 0.9rem;
       }
       
       .hero-actions {
@@ -2359,6 +2424,74 @@ strong {
       .cta-actions {
         flex-direction: column;
         align-items: center;
+      }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 480px) {
+      html {
+        font-size: 14px;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+        letter-spacing: 1px;
+      }
+      
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+      
+      .hero-tagline {
+        font-size: 0.8rem;
+      }
+
+      .hero-logo-img {
+        width: 80px;
+      }
+
+      .hero-btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .section-subtitle {
+        font-size: 0.9rem;
+      }
+      
+      .event-name {
+        font-size: 1.3rem;
+      }
+
+      .cta-title {
+        font-size: 1.5rem;
+      }
+
+      .cta-text {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Very small phones and landscape mode fixes */
+    @media (max-width: 375px) {
+      html {
+        font-size: 13px;
+      }
+
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .hero-content {
+        padding: 0 15px;
+      }
+
+      .content-grid {
+        padding: 40px 10px;
       }
     }
 
@@ -2878,6 +3011,12 @@ strong {
   letter-spacing: 3px;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
   animation: fadeInUp 1s ease-out 0.3s both;
+  display: inline;
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.submission-title .text-accent {
+  display: inline;
 }
 
 .submission-subtitle {
@@ -3284,6 +3423,12 @@ strong {
   letter-spacing: 3px;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
   animation: fadeInUp 1s ease-out 0.3s both;
+  display: inline;
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.rules-hero .rules-title .text-accent {
+  display: inline;
 }
 
 .rules-subtitle {
@@ -3539,6 +3684,12 @@ strong {
   letter-spacing: 3px;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
   animation: fadeInUp 1s ease-out 0.3s both;
+  display: inline;
+  font-family: 'Cinzel Decorative', serif;
+}
+
+.faq-hero .faq-title .text-accent {
+  display: inline;
 }
 
 .faq-subtitle {
@@ -3796,3 +3947,61 @@ strong {
     width: 90px;
   }
 }
+
+    .hero-snake-top-left {
+      position: absolute;
+      left: -55px;
+      top: -45px;
+      width: 450px;
+      height: auto;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .hero-snake-top-left {
+        width: 180px;
+        left: -25px;
+        top: -5px;
+      }
+    }
+
+    .hero-snake-top-right {
+      position: absolute;
+      right: -35px;
+      top: -15px;
+      width: 450px;
+      height: auto;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .hero-snake-top-right {
+        width: 180px;
+        right: -15px;
+        top: 8px;
+      }
+    }
+
+    .hero-snake-bottom-right {
+      position: absolute;
+      right: -35px;
+      bottom: -55px;
+      width: 450px;
+      height: auto;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .hero-snake-bottom-right {
+        width: 180px;
+        right: -15px;
+        bottom: -20px;
+      }
+    }
+    
