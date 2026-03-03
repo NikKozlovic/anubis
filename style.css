@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cinzel+Decorative:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap');
 
 /* Reset and base sizing */
 * {
@@ -1680,7 +1680,7 @@ strong {
       text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
       animation: fadeInUp 1s ease-out 0.3s both;
       display: inline;
-      font-family: 'Cinzel Decorative', serif;
+      font-family: 'Cinzel', serif;
     }
 
     .about-hero .about-title .text-accent {
@@ -1924,7 +1924,6 @@ strong {
       align-items: center;
       justify-content: center;
       position: relative;
-      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
       overflow: hidden;
     }
 
@@ -1934,8 +1933,21 @@ strong {
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ff2a2a" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ff2a2a" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-      animation: float 20s ease-in-out infinite;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .hero-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: 130%;
+      height: 130%;
+      transform: translate(-50%, -50%);
+      object-fit: contain;
+      z-index: 1;
     }
 
     .hero-content {
@@ -1967,7 +1979,7 @@ strong {
       letter-spacing: 3px;
       text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
       animation: fadeInUp 1s ease-out 0.3s both;
-      font-family: 'Cinzel Decorative', serif;
+      font-family: 'Cinzel', serif;
       display: flex;
       flex-direction: column;
       line-height: 1;
@@ -3012,7 +3024,7 @@ strong {
   text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
   animation: fadeInUp 1s ease-out 0.3s both;
   display: inline;
-  font-family: 'Cinzel Decorative', serif;
+  font-family: 'Cinzel', serif;
 }
 
 .submission-title .text-accent {
@@ -3424,7 +3436,7 @@ strong {
   text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
   animation: fadeInUp 1s ease-out 0.3s both;
   display: inline;
-  font-family: 'Cinzel Decorative', serif;
+  font-family: 'Cinzel', serif;
 }
 
 .rules-hero .rules-title .text-accent {
@@ -3685,7 +3697,7 @@ strong {
   text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
   animation: fadeInUp 1s ease-out 0.3s both;
   display: inline;
-  font-family: 'Cinzel Decorative', serif;
+  font-family: 'Cinzel', serif;
 }
 
 .faq-hero .faq-title .text-accent {
@@ -4002,6 +4014,12 @@ strong {
         width: 180px;
         right: -15px;
         bottom: -20px;
+      }
+
+      .hero-video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
       }
     }
     
