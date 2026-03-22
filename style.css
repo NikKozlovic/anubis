@@ -10,6 +10,8 @@
 
 html {
   font-size: 16px; /* Base font size for rem calculations */
+  overflow-y: scroll;
+  scrollbar-gutter: stable both-edges;
 }
 
 body {
@@ -38,7 +40,7 @@ body {
   z-index: 1000;
 
   /* animation */
-  transition: transform 0.25s ease, padding 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transition: padding 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
   transform: translateY(0);
 }
 
@@ -770,15 +772,13 @@ body {
   margin-top: 120px; /* adjust as needed */
 }
 
-html {
-  overflow-y: scroll;
-}
-
 /* Footer styling */
 .footer {
+  position: relative;
   text-align: center;
-  padding: 20px;
+  padding: 150px 20px;
   margin-top: 40px;
+  overflow: hidden;
 }
 
 .footer p {
@@ -2090,6 +2090,94 @@ strong {
       box-shadow: 0 10px 30px rgba(255, 42, 42, 0.4);
     }
 
+    .hieroglyph-marquee {
+      position: relative;
+      overflow: hidden;
+      margin: 0;
+      padding: 16px 0;
+      isolation: isolate;
+      border-top: 1px solid rgba(255, 42, 42, 0.55);
+      border-bottom: 1px solid rgba(255, 42, 42, 0.55);
+      background:
+        radial-gradient(120% 140% at 50% 50%, rgba(255, 42, 42, 0.09) 0%, rgba(255, 42, 42, 0.02) 35%, rgba(0, 0, 0, 0.98) 100%),
+        #000000;
+      box-shadow:
+        inset 0 10px 24px rgba(0, 0, 0, 0.55),
+        inset 0 -10px 24px rgba(0, 0, 0, 0.55),
+        0 0 22px rgba(255, 42, 42, 0.14);
+    }
+
+    .hieroglyph-marquee::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255, 42, 42, 0.12) 0,
+        rgba(255, 42, 42, 0.12) 1px,
+        transparent 1px,
+        transparent 6px
+      );
+      mix-blend-mode: screen;
+      animation: hieroglyphScanlines 9s linear infinite;
+      z-index: 2;
+    }
+
+    .hieroglyph-marquee::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, #000 0%, transparent 10%, transparent 90%, #000 100%);
+      z-index: 3;
+    }
+
+    section.hero-section > .hieroglyph-marquee {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 4;
+    }
+
+    .about-hero > .hieroglyph-marquee,
+    .faq-hero > .hieroglyph-marquee,
+    .rules-hero > .hieroglyph-marquee,
+    .submission-hero > .hieroglyph-marquee {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 4;
+    }
+
+    .hieroglyph-track {
+      display: flex;
+      align-items: center;
+      width: max-content;
+      white-space: nowrap;
+      will-change: transform;
+      backface-visibility: hidden;
+      transform: translate3d(-50%, 0, 0);
+      animation: hieroglyphLeftToRight 28s linear infinite -14s;
+    }
+
+    .hieroglyph-text {
+      display: inline-block;
+      flex: 0 0 auto;
+      padding-right: 0;
+      color: #ff2a2a;
+      font-size: 1.25rem;
+      font-weight: 900;
+      -webkit-text-stroke: 0.35px rgba(255, 42, 42, 0.9);
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 12px rgba(255, 42, 42, 0.45);
+      animation: hieroglyphNeonPulse 2.8s ease-in-out infinite;
+    }
+
     /* Featured Event Section */
     .featured-section {
       padding: 80px 20px;
@@ -2404,6 +2492,39 @@ strong {
       50% { transform: translateY(-10px) rotate(1deg); }
     }
 
+    @keyframes hieroglyphLeftToRight {
+      from {
+        transform: translate3d(-50%, 0, 0);
+      }
+      to {
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes hieroglyphNeonPulse {
+      0%, 100% {
+        text-shadow:
+          0 0 8px rgba(255, 42, 42, 0.3),
+          0 0 18px rgba(255, 42, 42, 0.2);
+        filter: saturate(1);
+      }
+      50% {
+        text-shadow:
+          0 0 14px rgba(255, 42, 42, 0.5),
+          0 0 26px rgba(255, 42, 42, 0.3);
+        filter: saturate(1.2);
+      }
+    }
+
+    @keyframes hieroglyphScanlines {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(6px);
+      }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .hero-title {
@@ -2417,6 +2538,14 @@ strong {
       
       .hero-tagline {
         font-size: 0.9rem;
+      }
+
+      .hieroglyph-marquee {
+        padding: 12px 0;
+      }
+
+      .hieroglyph-text {
+        font-size: 1rem;
       }
       
       .hero-actions {
@@ -2470,6 +2599,10 @@ strong {
       
       .hero-tagline {
         font-size: 0.8rem;
+      }
+
+      .hieroglyph-text {
+        font-size: 0.9rem;
       }
 
       .hero-logo-img {
@@ -4028,8 +4161,8 @@ strong {
 
     .hero-snake-bottom-right {
       position: absolute;
-      right: -35px;
-      bottom: -55px;
+      right: -50px;
+      bottom: -100px;
       width: 450px;
       height: auto;
       opacity: 0.9;
@@ -4040,8 +4173,8 @@ strong {
     @media (max-width: 768px) {
       .hero-snake-bottom-right {
         width: 180px;
-        right: -15px;
-        bottom: -20px;
+        right: -20px;
+        bottom: -40px;
       }
 
       .hero-video {
