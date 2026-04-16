@@ -227,44 +227,64 @@
                 }
                 observer.unobserve(img);
               });
-            }, { rootMargin: "300px 0px" })
+            }, { rootMargin: "120px 0px" })
           : null;
 
-        function renderImagesInBatches(fileNames, eventName, grid, batchSize = 12) {
-          let cursor = 0;
+        const INITIAL_RENDER_COUNT = 12;
+        const LOAD_MORE_COUNT = 12;
 
-          function renderBatch() {
-            const fragment = document.createDocumentFragment();
-            const end = Math.min(cursor + batchSize, fileNames.length);
-
-            for (; cursor < end; cursor += 1) {
-              const imgFileName = fileNames[cursor];
-              const image = document.createElement("img");
-              const fullSrc = `Media/Gallery/${eventName}/${imgFileName}`;
-
-              image.alt = `${eventName} photo`;
-              image.loading = "lazy";
-              image.decoding = "async";
-              image.fetchPriority = "low";
-
-              if (imageObserver) {
-                image.dataset.src = fullSrc;
-                imageObserver.observe(image);
-              } else {
-                image.src = fullSrc;
-              }
-
-              fragment.appendChild(image);
-            }
-
-            grid.appendChild(fragment);
-
-            if (cursor < fileNames.length) {
-              requestAnimationFrame(renderBatch);
-            }
+        function resolveImageSrc(entry, eventName) {
+          if (typeof entry === "string") {
+            if (/^https?:\/\//i.test(entry) || entry.startsWith("//")) return entry;
+            if (entry.startsWith("Media/")) return entry;
+            return `Media/Gallery/${eventName}/${entry}`;
           }
 
-          renderBatch();
+          if (entry && typeof entry === "object") {
+            const src = entry.src || entry.url || entry.link;
+            if (typeof src === "string" && src.length > 0) return src;
+          }
+
+          return "";
+        }
+
+        function optimizeImageSrc(src) {
+          if (!src) return src;
+          if (!/^https?:\/\/res\.cloudinary\.com\//i.test(src)) return src;
+          if (!src.includes("/upload/")) return src;
+          return src.replace("/upload/", "/upload/f_auto,q_auto,w_900/");
+        }
+
+        function renderChunk(fileEntries, eventName, grid, startIndex, chunkSize) {
+          const fragment = document.createDocumentFragment();
+          let cursor = startIndex;
+          const end = Math.min(startIndex + chunkSize, fileEntries.length);
+
+          for (; cursor < end; cursor += 1) {
+            const entry = fileEntries[cursor];
+            const resolvedSrc = resolveImageSrc(entry, eventName);
+            if (!resolvedSrc) continue;
+
+            const image = document.createElement("img");
+            const optimizedSrc = optimizeImageSrc(resolvedSrc);
+
+            image.alt = `${eventName} photo`;
+            image.loading = "lazy";
+            image.decoding = "async";
+            image.fetchPriority = "low";
+
+            if (imageObserver) {
+              image.dataset.src = optimizedSrc;
+              imageObserver.observe(image);
+            } else {
+              image.src = optimizedSrc;
+            }
+
+            fragment.appendChild(image);
+          }
+
+          grid.appendChild(fragment);
+          return cursor;
         }
 
         Object.keys(data).forEach((eventName, index) => {
@@ -288,14 +308,31 @@
 
           const grid = document.createElement("div");
           grid.className = "photo-grid";
+          const loadMoreBtn = document.createElement("button");
+          loadMoreBtn.className = "gallery-load-more";
+          loadMoreBtn.type = "button";
+          loadMoreBtn.textContent = "Load more photos";
+
           let loaded = false;
+          let cursor = 0;
+          const entries = Array.isArray(data[eventName]) ? data[eventName] : [];
 
           // Load images only when first opened
           function loadImages() {
             if (loaded) return;
             loaded = true;
-            renderImagesInBatches(data[eventName], eventName, grid);
+            cursor = renderChunk(entries, eventName, grid, 0, INITIAL_RENDER_COUNT);
+            if (cursor >= entries.length) {
+              loadMoreBtn.hidden = true;
+            }
           }
+
+          loadMoreBtn.addEventListener("click", () => {
+            cursor = renderChunk(entries, eventName, grid, cursor, LOAD_MORE_COUNT);
+            if (cursor >= entries.length) {
+              loadMoreBtn.hidden = true;
+            }
+          });
 
           header.addEventListener("click", () => {
             const isOpen = header.getAttribute("aria-expanded") === "true";
@@ -313,6 +350,7 @@
           });
 
           panel.appendChild(grid);
+          panel.appendChild(loadMoreBtn);
           section.appendChild(header);
           section.appendChild(panel);
           container.appendChild(section);

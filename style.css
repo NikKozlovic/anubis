@@ -3132,17 +3132,16 @@ strong {
 
 /* Collapsible panel */
 .gallery-event-panel {
-  max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
-  padding: 0 20px;
+  transform: translateY(-6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  padding: 20px;
 }
 
 .gallery-event-panel.open {
-  max-height: 5000px;
   opacity: 1;
-  padding: 20px;
+  transform: translateY(0);
 }
 
 /* Photo grid */
@@ -3162,6 +3161,24 @@ strong {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   filter: brightness(1.05) contrast(1.1);
   background: #0c0c0c;
+}
+
+.gallery-load-more {
+  margin: 16px auto 0;
+  display: block;
+  border: 1px solid #3a3a3a;
+  background: #151515;
+  color: #ddd;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.gallery-load-more:hover {
+  background: #1f1f1f;
+  border-color: #ff2a2a;
 }
 
 .photo-grid img:hover {
