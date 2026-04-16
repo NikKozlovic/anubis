@@ -215,6 +215,58 @@
         const container = document.getElementById("gallery");
         if (!container) throw new Error("Missing #gallery container in gallery.html");
 
+        const imageObserver = "IntersectionObserver" in window
+          ? new IntersectionObserver((entries, observer) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const img = entry.target;
+                const src = img.dataset.src;
+                if (src) {
+                  img.src = src;
+                  img.removeAttribute("data-src");
+                }
+                observer.unobserve(img);
+              });
+            }, { rootMargin: "300px 0px" })
+          : null;
+
+        function renderImagesInBatches(fileNames, eventName, grid, batchSize = 12) {
+          let cursor = 0;
+
+          function renderBatch() {
+            const fragment = document.createDocumentFragment();
+            const end = Math.min(cursor + batchSize, fileNames.length);
+
+            for (; cursor < end; cursor += 1) {
+              const imgFileName = fileNames[cursor];
+              const image = document.createElement("img");
+              const fullSrc = `Media/Gallery/${eventName}/${imgFileName}`;
+
+              image.alt = `${eventName} photo`;
+              image.loading = "lazy";
+              image.decoding = "async";
+              image.fetchPriority = "low";
+
+              if (imageObserver) {
+                image.dataset.src = fullSrc;
+                imageObserver.observe(image);
+              } else {
+                image.src = fullSrc;
+              }
+
+              fragment.appendChild(image);
+            }
+
+            grid.appendChild(fragment);
+
+            if (cursor < fileNames.length) {
+              requestAnimationFrame(renderBatch);
+            }
+          }
+
+          renderBatch();
+        }
+
         Object.keys(data).forEach((eventName, index) => {
           const section = document.createElement("div");
           section.className = "gallery-event-section";
@@ -242,13 +294,7 @@
           function loadImages() {
             if (loaded) return;
             loaded = true;
-            data[eventName].forEach((imgFileName) => {
-              const image = document.createElement("img");
-              image.src = `Media/Gallery/${eventName}/${imgFileName}`;
-              image.alt = `${eventName} photo`;
-              image.loading = "lazy";
-              grid.appendChild(image);
-            });
+            renderImagesInBatches(data[eventName], eventName, grid);
           }
 
           header.addEventListener("click", () => {

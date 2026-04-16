@@ -3077,6 +3077,8 @@ strong {
   border-radius: 12px;
   overflow: hidden;
   background: #111;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
 }
 
 /* Accordion toggle button */
@@ -3159,6 +3161,7 @@ strong {
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   filter: brightness(1.05) contrast(1.1);
+  background: #0c0c0c;
 }
 
 .photo-grid img:hover {
