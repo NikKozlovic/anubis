@@ -2096,7 +2096,6 @@ strong {
       margin: 0;
       padding: 16px 0;
       isolation: isolate;
-      contain: layout paint;
       border-top: 1px solid rgba(255, 42, 42, 0.55);
       border-bottom: 1px solid rgba(255, 42, 42, 0.55);
       background:
@@ -2106,7 +2105,6 @@ strong {
         inset 0 10px 24px rgba(0, 0, 0, 0.55),
         inset 0 -10px 24px rgba(0, 0, 0, 0.55),
         0 0 22px rgba(255, 42, 42, 0.14);
-      transform: translateZ(0);
     }
 
     .hieroglyph-marquee::before {
@@ -2524,38 +2522,6 @@ strong {
       }
       to {
         transform: translateY(6px);
-      }
-    }
-
-    @media (hover: none) and (pointer: coarse) {
-      .hero-logo-img {
-        animation: none;
-        filter: none;
-      }
-
-      .hieroglyph-marquee {
-        box-shadow:
-          inset 0 8px 18px rgba(0, 0, 0, 0.45),
-          inset 0 -8px 18px rgba(0, 0, 0, 0.45);
-      }
-
-      .hieroglyph-marquee::before {
-        opacity: 0.08;
-        mix-blend-mode: normal;
-        animation: none;
-      }
-
-      .hieroglyph-track {
-        animation-duration: 36s;
-      }
-
-      .hieroglyph-text {
-        text-shadow: 0 0 8px rgba(255, 42, 42, 0.28);
-        animation: none;
-      }
-
-      body.is-touch-scrolling .hieroglyph-track {
-        animation-play-state: paused;
       }
     }
 
