@@ -897,6 +897,30 @@
       });
     })();
   </script>
+  <script>
+    (function () {
+      const mobilePointer = window.matchMedia('(hover: none) and (pointer: coarse)');
+      if (!mobilePointer.matches) return;
+
+      let scrollStopTimer;
+
+      const markScrolling = () => {
+        document.body.classList.add('is-touch-scrolling');
+        window.clearTimeout(scrollStopTimer);
+        scrollStopTimer = window.setTimeout(() => {
+          document.body.classList.remove('is-touch-scrolling');
+        }, 140);
+      };
+
+      window.addEventListener('scroll', markScrolling, { passive: true });
+      window.addEventListener('touchstart', markScrolling, { passive: true });
+      window.addEventListener('touchend', markScrolling, { passive: true });
+      window.addEventListener('touchcancel', () => {
+        document.body.classList.remove('is-touch-scrolling');
+        window.clearTimeout(scrollStopTimer);
+      }, { passive: true });
+    })();
+  </script>
   
   <footer class="footer">
     <img src="Media/Graphic/snake_bottom_right.webp" alt="" class="hero-snake-bottom-right">

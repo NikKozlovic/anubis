@@ -2528,6 +2528,11 @@ strong {
     }
 
     @media (hover: none) and (pointer: coarse) {
+      .hero-logo-img {
+        animation: none;
+        filter: none;
+      }
+
       .hieroglyph-marquee {
         box-shadow:
           inset 0 8px 18px rgba(0, 0, 0, 0.45),
@@ -2547,6 +2552,10 @@ strong {
       .hieroglyph-text {
         text-shadow: 0 0 8px rgba(255, 42, 42, 0.28);
         animation: none;
+      }
+
+      body.is-touch-scrolling .hieroglyph-track {
+        animation-play-state: paused;
       }
     }
 
