@@ -8,6 +8,7 @@
   <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="Media/Logo/logo.png">
   <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
 </head>
 <body>
 
@@ -75,7 +76,7 @@
     <div id="overlay" class="overlay" aria-hidden="true"></div>
   </div>
 
-  <script>
+  <script>if (!window.__ANUBIS_NAV_SCRIPT_LOADED__) {
     const toggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
     const overlay = document.getElementById('overlay');
@@ -171,6 +172,7 @@
     }
     window.addEventListener('resize', syncDropdownMode);
     syncDropdownMode();
+  }
   </script>
 
   <!-- Hero Section -->
@@ -201,181 +203,201 @@
 
   <!-- Main Content -->
   <main class="content">
-    <!-- Featured Event Section -->
-    <section class="featured-event-section">
+    <!-- Featured Event Section (current) -->
+    <section class="featured-event-section" id="currentEventSection">
       <div class="section-header">
         <h2 class="section-title">UPCOMING <span class="text-accent">EVENT</span></h2>
         <p class="section-subtitle">Don't miss our next underground experience</p>
       </div>
-      
-      <div class="event-card-modern">
-        <div class="event-image-container">
-          <img class="featured-f2f-image" src="Media/Events/F2F/F2F.webp" alt="Anubis Represents: F2F Event">
-          <div class="event-overlay">
-            <div class="event-badge">NEXT EVENT</div>
-          </div>
-        </div>
-        <div class="event-details-modern">
-          <h3 class="event-name-modern">ANUBIS REPRESENTS: F2F</h3>
-          <p class="event-description-modern">Face-to-face underground energy in an intimate Anubis setting. Stay tuned for full lineup and event details.</p>
-          <div class="event-meta-grid">
-            <div class="meta-item">
-              <span class="meta-label">DATE</span>
-              <span class="meta-value">TBA</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">LOCATION</span>
-              <span class="meta-value">Ljubljana, Slovenia</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">GENRE</span>
-              <span class="meta-value">Underground</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">STATUS</span>
-              <span class="meta-value">Details Soon</span>
-            </div>
-          </div>
-          <a href="#" class="event-ticket-btn-modern" aria-disabled="true" onclick="return false;">
-            <span>INFO SOON</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7 17L17 7M17 7H7M17 7V17"/>
-            </svg>
-          </a>
-        </div>
-      </div>
+      <div id="currentEventContainer"></div>
     </section>
 
     <!-- Past Events Gallery -->
-    <section class="past-events-section">
+    <section class="past-events-section" id="pastEventsSection">
       <div class="section-header">
         <h2 class="section-title">PAST <span class="text-accent">EVENTS</span></h2>
         <p class="section-subtitle">Relive the underground experiences</p>
       </div>
-      
-      <div class="events-gallery">
-        <!-- All Night Long BOCKA Event -->
-        <div class="gallery-event-card">
-          <div class="gallery-event-header">
-            <h3 class="gallery-event-title">VANCH B2B KOSOWSKY ALL NIGHT</h3>
-            <p class="gallery-event-subtitle">All Night Long underground experience in Ljubljana</p>
-          </div>
-          <div class="single-event-image">
-            <img src="Media/Events/BOCKA/vanchb2bkosi.webp" alt="Vanch b2b Kosowsky All Night Event">
-          </div>
-        </div>
-
-        <!-- Cleopatra's Curse Event -->
-        <div class="gallery-event-card">
-          <div class="gallery-event-header">
-            <h3 class="gallery-event-title">CLEOPATRA'S CURSE</h3>
-            <p class="gallery-event-subtitle">Ancient mystique meets modern underground beats</p>
-          </div>
-          <div class="single-event-image">
-            <img src="Media/Events/CLEOPATRAS/cleopatrascurse.webp" alt="Cleopatra's Curse Event" style="object-position: center top;">
-          </div>
-        </div>
-
-        <!-- House of Khepri Event -->
-        <div class="gallery-event-card">
-          <div class="gallery-event-header">
-            <h3 class="gallery-event-title">HOUSE OF KHEPRI</h3>
-            <p class="gallery-event-subtitle">Ancient Egyptian vibes meet modern underground</p>
-          </div>
-          <div class="gallery-slider">
-            <div class="slider-container" id="hokSlider">
-              <button class="slider-nav slider-nav-left" id="hokPrev" aria-label="Previous image">‹</button>
-              <img id="hokImage" src="Media/Events/HOK/kfemain.webp" alt="House of Khepri Event">
-              <button class="slider-nav slider-nav-right" id="hokNext" aria-label="Next image">›</button>
-            </div>
-            <div class="slider-dots" id="hokDots"></div>
-          </div>
-        </div>
-
-        <!-- Afterlife Event -->
-        <div class="gallery-event-card">
-          <div class="gallery-event-header">
-            <h3 class="gallery-event-title">AFTERLIFE</h3>
-            <p class="gallery-event-subtitle">Journey beyond the veil of reality</p>
-          </div>
-          <div class="single-event-image">
-            <img src="Media/Events/AFTERLIFE2/AFTERLIFE2.webp" alt="AFTERLIFE Event">
-          </div>
-        </div>
-      </div>
+      <div class="events-gallery" id="pastEventsContainer"></div>
     </section>
   </main>
 
   <script>
-    // House of Khepri slider functionality
-    const hokImage = document.getElementById('hokImage');
-    const hokPrev = document.getElementById('hokPrev');
-    const hokNext = document.getElementById('hokNext');
-    const hokDots = document.getElementById('hokDots');
-    const hokSlider = document.getElementById('hokSlider');
+    // ── Slider factory ──────────────────────────────────────────────
+    function makeSlider(images, altText, imageStyle) {
+      if (images.length === 1) {
+        const wrap = document.createElement('div');
+        wrap.className = 'single-event-image';
+        const img = document.createElement('img');
+        img.src = images[0];
+        img.alt = altText;
+        if (imageStyle) img.style.cssText = imageStyle;
+        wrap.appendChild(img);
+        return wrap;
+      }
 
-    const hokImages = [
-      'Media/Events/HOK/kfemain.webp',
-      'Media/Events/HOK/kfeoutsid.webp',
-      'Media/Events/HOK/kfemali.webp',
-      'Media/Events/HOK/kfebihhole.webp',
-    ];
+      let idx = 0;
+      let touchStartX = 0;
 
-    let currentIndex = 0;
-    let touchStartX = 0;
-    let touchEndX = 0;
+      const wrap = document.createElement('div');
+      wrap.className = 'gallery-slider';
 
-    // Create dots for HOK slider
-    hokImages.forEach((_, index) => {
-      const dot = document.createElement('span');
-      dot.className = 'slider-dot';
-      dot.addEventListener('click', () => {
-        currentIndex = index;
-        updateHokImage();
+      const container = document.createElement('div');
+      container.className = 'slider-container';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'slider-nav slider-nav-left';
+      prevBtn.setAttribute('aria-label', 'Previous image');
+      prevBtn.textContent = '‹';
+
+      const imgEl = document.createElement('img');
+      imgEl.src = images[0];
+      imgEl.alt = altText;
+      if (imageStyle) imgEl.style.cssText = imageStyle;
+
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'slider-nav slider-nav-right';
+      nextBtn.setAttribute('aria-label', 'Next image');
+      nextBtn.textContent = '›';
+
+      container.appendChild(prevBtn);
+      container.appendChild(imgEl);
+      container.appendChild(nextBtn);
+
+      const dotsWrap = document.createElement('div');
+      dotsWrap.className = 'slider-dots';
+
+      images.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => { idx = i; update(); });
+        dotsWrap.appendChild(dot);
       });
-      hokDots.appendChild(dot);
-    });
 
-    function updateHokImage() {
-      hokImage.src = hokImages[currentIndex];
-      const dots = document.querySelectorAll('.slider-dot');
-      dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentIndex);
+      function update() {
+        imgEl.src = images[idx];
+        dotsWrap.querySelectorAll('.slider-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+
+      prevBtn.addEventListener('click', () => { idx = (idx - 1 + images.length) % images.length; update(); });
+      nextBtn.addEventListener('click', () => { idx = (idx + 1) % images.length; update(); });
+
+      container.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+      container.addEventListener('touchend', e => {
+        const diff = e.changedTouches[0].screenX - touchStartX;
+        if (Math.abs(diff) > 50) { idx = diff < 0 ? (idx + 1) % images.length : (idx - 1 + images.length) % images.length; update(); }
+      }, { passive: true });
+
+      wrap.appendChild(container);
+      wrap.appendChild(dotsWrap);
+      return wrap;
+    }
+
+    // ── Render current event ────────────────────────────────────────
+    function renderCurrentEvent(ev) {
+      const hasTicketLink = typeof ev.ticketLink === 'string' && ev.ticketLink.trim().length > 0;
+      const buttonText = typeof ev.buttonText === 'string' && ev.buttonText.trim().length > 0
+        ? ev.buttonText.trim()
+        : (hasTicketLink ? 'GET TICKETS' : 'INFO SOON');
+
+      const card = document.createElement('div');
+      card.className = 'event-card';
+
+      const imgContainer = document.createElement('div');
+      imgContainer.className = 'event-image';
+      const img = document.createElement('img');
+      img.src = ev.images[0];
+      img.alt = ev.title;
+      const overlay = document.createElement('div');
+      overlay.className = 'event-overlay';
+      overlay.innerHTML = '<div class="event-badge">NEXT EVENT</div>';
+      imgContainer.appendChild(img);
+      imgContainer.appendChild(overlay);
+
+      const details = document.createElement('div');
+      details.className = 'event-details';
+
+      const h3 = document.createElement('h3');
+      h3.className = 'event-name';
+      h3.textContent = ev.title;
+
+      const desc = document.createElement('p');
+      desc.className = 'event-description';
+      desc.textContent = ev.subtitle || '';
+
+      const metaGrid = document.createElement('div');
+      metaGrid.className = 'event-meta';
+      [
+        ['DATE', ev.date || 'TBA'],
+        ['LOCATION', ev.location || 'TBA'],
+        ['GENRE', ev.genre || 'Underground'],
+        ['STATUS', ev.availabilityText || 'INFO SOON']
+      ].forEach(([label, val]) => {
+        metaGrid.innerHTML += `<div class="meta-item"><span class="meta-label">${label}</span><span class="meta-value">${val}</span></div>`;
       });
+
+      let btn;
+      if (hasTicketLink) {
+        btn = document.createElement('a');
+        btn.href = ev.ticketLink;
+        btn.target = '_blank';
+        btn.rel = 'noopener noreferrer';
+        btn.className = 'event-ticket-btn';
+        btn.innerHTML = `<span>${buttonText}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>`;
+      } else {
+        btn = document.createElement('a');
+        btn.href = '#';
+        btn.className = 'event-ticket-btn';
+        btn.setAttribute('aria-disabled', 'true');
+        btn.addEventListener('click', e => e.preventDefault());
+        btn.innerHTML = `<span>${buttonText}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>`;
+      }
+
+      details.appendChild(h3);
+      details.appendChild(desc);
+      details.appendChild(metaGrid);
+      details.appendChild(btn);
+      card.appendChild(imgContainer);
+      card.appendChild(details);
+      document.getElementById('currentEventContainer').appendChild(card);
     }
 
-    function goToPrevious() {
-      currentIndex = (currentIndex - 1 + hokImages.length) % hokImages.length;
-      updateHokImage();
+    // ── Render past event card ──────────────────────────────────────
+    function renderPastEvent(ev) {
+      const card = document.createElement('div');
+      card.className = 'gallery-event-card';
+
+      const header = document.createElement('div');
+      header.className = 'gallery-event-header';
+      header.innerHTML = `<h3 class="gallery-event-title">${ev.title}</h3><p class="gallery-event-subtitle">${ev.subtitle || ''}</p>`;
+
+      card.appendChild(header);
+      card.appendChild(makeSlider(ev.images, ev.title, ev.imageStyle || ''));
+      document.getElementById('pastEventsContainer').appendChild(card);
     }
 
-    function goToNext() {
-      currentIndex = (currentIndex + 1) % hokImages.length;
-      updateHokImage();
-    }
+    // ── Load events.json ────────────────────────────────────────────
+    fetch('events.json')
+      .then(r => { if (!r.ok) throw new Error('Failed to load events.json'); return r.json(); })
+      .then(events => {
+        const current = events.filter(e => e.status === 'current');
+        const past    = events.filter(e => e.status === 'past');
 
-    // Button event listeners
-    hokPrev.addEventListener('click', goToPrevious);
-    hokNext.addEventListener('click', goToNext);
+        const currentSection = document.getElementById('currentEventSection');
+        if (current.length > 0) {
+          current.forEach(renderCurrentEvent);
+        } else {
+          currentSection.style.display = 'none';
+        }
 
-    // Touch/swipe support
-    hokSlider.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    hokSlider.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    }, { passive: true });
-
-    function handleSwipe() {
-      const swipeThreshold = 50;
-      if (touchEndX < touchStartX - swipeThreshold) goToNext();
-      if (touchEndX > touchStartX + swipeThreshold) goToPrevious();
-    }
-
-    // Initialize
-    updateHokImage();
+        const pastSection = document.getElementById('pastEventsSection');
+        if (past.length > 0) {
+          past.forEach(renderPastEvent);
+        } else {
+          pastSection.style.display = 'none';
+        }
+      })
+      .catch(err => console.error('Events load error:', err));
   </script>
 
   <footer class="footer">

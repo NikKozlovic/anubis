@@ -1,0 +1,52 @@
+[
+    {
+    "title": "Anubis represents: KUNJA All Night Long",
+    "subtitle": "Face-to-face underground energy in an intimate Anubis setting. Stay tuned for full lineup and event details.",
+    "images": ["https://res.cloudinary.com/ddsdep1oj/image/upload/v1776551952/kunja_lgzeuh.webp"],
+    "date": "25.04.2026",
+    "location": "Publika Bar Klub, Ljubljana, Slovenia",
+    "genre": "Schranz",
+    "status": "current",
+    "ticketLink": "https://www.entrio.si/event/anubis-represents-kunja-all-night-long-31429",
+    "buttonText": "GET YOUR TICKETS",
+    "availabilityText": "TICKETS AVAILABLE"
+  },
+  {
+    "title": "ANUBIS REPRESENTS: F2F",
+    "subtitle": "Face-to-face underground energy in an intimate Anubis setting. Stay tuned for full lineup and event details.",
+    "images": ["https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546594/F2F_uszaxk.webp"],
+    "status": "past"
+  },
+  {
+    "title": "VANCH B2B KOSOWSKY ALL NIGHT",
+    "subtitle": "All Night Long underground experience in Ljubljana",
+    "images": ["https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546614/vanchb2bkosi_eusagz.webp"],
+    "status": "past"
+  },
+  {
+    "title": "CLEOPATRA'S CURSE",
+    "subtitle": "Ancient mystique meets modern underground beats",
+    "images": ["https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546604/cleopatrascurse_lryysb.webp"],
+    "imageStyle": "object-position: center top;",
+    "status": "past"
+  },
+  {
+    "title": "HOUSE OF KHEPRI",
+    "subtitle": "Ancient Egyptian vibes meet modern underground",
+    "imageStyle": "object-position: center top;",
+    "images": [
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546585/kfemain_m7kvfe.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546583/kfeoutsid_juqvsd.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546582/kfemali_r2tzul.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546584/kfebihhole_x1b2fg.webp"
+    ],
+    "status": "past"
+  },
+  {
+    "title": "AFTERLIFE",
+    "subtitle": "Journey beyond the veil of reality",
+    "images": ["https://res.cloudinary.com/ddsdep1oj/image/upload/v1776546627/AFTERLIFE2_m78lc2.webp"],
+    "status": "past"
+  }
+  
+]

@@ -10,6 +10,7 @@
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-39PWVR4N25"></script>
 <script src="clean-urls.js"></script>
+<script src="script.js"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -91,7 +92,7 @@
     <div id="overlay" class="overlay" aria-hidden="true"></div>
   </div>
 
-  <script>
+  <script>if (!window.__ANUBIS_NAV_SCRIPT_LOADED__) {
     const toggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
     const overlay = document.getElementById('overlay');
@@ -190,6 +191,7 @@
     }
     window.addEventListener('resize', syncDropdownMode);
     syncDropdownMode();
+  }
   </script>
   
   <div class="content">

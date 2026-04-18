@@ -8,6 +8,7 @@
   <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="Media/Logo/logo.png">
   <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
   <script src="https://www.paypal.com/sdk/js?client-id=AdLNKkfZbxKJzCQqlbXvWVoNwZETuPutFAi5clmGdgGhhAOuyClxIpY4hrnjbYoZk2KmNMH08RCtpGWc&currency=EUR"></script>
 </head>
 <body>
@@ -83,7 +84,7 @@
     <div id="overlay" class="overlay" aria-hidden="true"></div>
   </div>
 
-  <script>
+  <script>if (!window.__ANUBIS_NAV_SCRIPT_LOADED__) {
     const toggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
     const overlay = document.getElementById('overlay');
@@ -182,6 +183,7 @@
     }
     window.addEventListener('resize', syncDropdownMode);
     syncDropdownMode();
+  }
   </script>
   
   <main class="checkout-container" style="max-width: 800px; margin: 100px auto; padding: 20px;">

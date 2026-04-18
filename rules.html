@@ -8,6 +8,7 @@
   <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="Media/Logo/logo.png">
   <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
 </head>
 <body>
 
@@ -82,7 +83,7 @@
     <div id="overlay" class="overlay" aria-hidden="true"></div>
   </div>
 
-  <script>
+  <script>if (!window.__ANUBIS_NAV_SCRIPT_LOADED__) {
     const toggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
     const overlay = document.getElementById('overlay');
@@ -183,6 +184,7 @@
     }
     window.addEventListener('resize', syncDropdownMode);
     syncDropdownMode();
+  }
   </script>
   
   <!-- Hero Section for Rules -->

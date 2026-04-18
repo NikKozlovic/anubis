@@ -8,6 +8,7 @@
   <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="Media/Logo/logo.png">
   <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
 </head>
 <body>
 
@@ -80,7 +81,7 @@
     <div id="overlay" class="overlay" aria-hidden="true"></div>
   </div>
 
-  <script>
+  <script>if (!window.__ANUBIS_NAV_SCRIPT_LOADED__) {
     const toggle = document.getElementById('menu-toggle');
     const menu = document.getElementById('menu');
     const overlay = document.getElementById('overlay');
@@ -177,6 +178,7 @@
     }
     window.addEventListener('resize', syncDropdownMode);
     syncDropdownMode();
+  }
   </script>
 
   <!-- Hero Section -->
@@ -213,96 +215,7 @@
     </section>
 
     <section class="residents-grid" aria-label="Anubis residents gallery">
-      <div class="resident">
-        <p class="resident-name">Kosowsky</p>
-        <div class="resident-image-slider">
-          <div class="resident-images">
-            <img src="Media/Residents/kosowsky1.webp" alt="Kosowsky" class="active">
-            <img src="Media/Residents/kosowsky.webp" alt="Kosowsky">
-            <img src="Media/Residents/kosowsky3.webp" alt="Kosowsky">
-          </div>
-          <div class="resident-image-dots">
-            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
-            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
-            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
-          </div>
-        </div>
-      </div>
-      <div class="resident">
-        <p class="resident-name">Kunja</p>
-        <div class="resident-image-slider">
-          <div class="resident-images">
-            <img src="Media/Residents/kunja1.webp" alt="Kunja" class="active">
-            <img src="Media/Residents/kunja2.webp" alt="Kunja">
-            <img src="Media/Residents/kunja3.webp" alt="Kunja">
-          </div>
-          <div class="resident-image-dots">
-            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
-            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
-            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
-          </div>
-        </div>
-      </div>
-      <div class="resident">
-        <p class="resident-name">Kayn</p>
-        <div class="resident-image-slider">
-          <div class="resident-images">
-            <img src="Media/Residents/kayn3.webp" alt="Kayn" class="active">
-            <img src="Media/Residents/kayn2.webp" alt="Kayn">
-            <img src="Media/Residents/kayn1.webp" alt="Kayn">
-          </div>
-          <div class="resident-image-dots">
-            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
-            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
-            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
-          </div>
-        </div>
-      </div>
-      <div class="resident">
-        <p class="resident-name">Nazh</p>
-        <div class="resident-image-slider">
-          <div class="resident-images">
-            <img src="Media/Residents/nazh2.webp" alt="Nazh" class="active">
-            <img src="Media/Residents/nazh.webp" alt="Nazh">
-            <img src="Media/Residents/nazh3.webp" alt="Nazh">
-          </div>
-          <div class="resident-image-dots">
-            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
-            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
-            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
-          </div>
-        </div>
-      </div>
-      <div class="resident">
-        <p class="resident-name">Bahun</p>
-        <div class="resident-image-slider">
-          <div class="resident-images">
-            <img src="Media/Residents/bahun2.webp" alt="Bahun" class="active">
-            <img src="Media/Residents/bahun.webp" alt="Bahun">
-            <img src="Media/Residents/bahun3.webp" alt="Bahun">
-          </div>
-          <div class="resident-image-dots">
-            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
-            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
-            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
-          </div>
-        </div>
-      </div>
-      <div class="resident">
-        <p class="resident-name">Vanch</p>
-        <div class="resident-image-slider">
-          <div class="resident-images">
-            <img src="Media/Residents/vanch3.webp" alt="Vanch" class="active">
-            <img src="Media/Residents/vanch2.webp" alt="Vanch">
-            <img src="Media/Residents/vanch.webp" alt="Vanch">
-          </div>
-          <div class="resident-image-dots">
-            <button class="resident-image-dot active" data-slide="0" aria-label="Photo 1"></button>
-            <button class="resident-image-dot" data-slide="1" aria-label="Photo 2"></button>
-            <button class="resident-image-dot" data-slide="2" aria-label="Photo 3"></button>
-          </div>
-        </div>
-      </div>
+      <!-- populated from residents.json -->
     </section>
 
     <!-- Booking Section -->
@@ -388,31 +301,8 @@
           <label>
             Select artist(s) to book: <span class="required">*</span>
           </label>
-          <div class="checkbox-group">
-            <div class="checkbox-item">
-              <input type="checkbox" id="kosowsky" name="artist" value="Kosowsky">
-              <label for="kosowsky">Kosowsky</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="kunja" name="artist" value="Kunja">
-              <label for="kunja">Kunja</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="kayn" name="artist" value="Kayn">
-              <label for="kayn">Kayn</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="nazh" name="artist" value="Nazh">
-              <label for="nazh">Nazh</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="bahun" name="artist" value="Bahun">
-              <label for="bahun">Bahun</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="vanch" name="artist" value="Vanch">
-              <label for="vanch">Vanch</label>
-            </div>
+          <div class="checkbox-group" id="artist-checkboxes">
+            <!-- populated from residents.json -->
           </div>
           <label>
             Additional message:
@@ -427,62 +317,62 @@
 
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const bios = {
-        Kosowsky: [
-          'Kosowsky, a 25-year-old DJ, performs under the artist name Kosowsky. He represents the young force of the Slovenian hard techno and schranz scene, pushing the boundaries of the local underground with his distinctive raw and relentless sound.',
-          'His style, influenced by artists such as Nikolina and Kobosil, maintains a unique identity that blends unyielding energy, a powerful groove, and a dark industrial aesthetic.',
-          'With each set, Kosowsky creates an unforgettable experience that takes the audience into a state of rhythmic and energetic ecstasy.'
-        ],
-        Kunja: [
-          'KUNJA is a young yet experienced artist who blends the driving rhythms of Hard Groove, Schranz, Hard Techno, and Industrial into an unforgettable musical journey. His sets are known for their energy, refined track selection, and deep connection with the crowd.',
-          'Playing on 3 to 4 channels, he creates layered and dynamic performances that keep the energy flowing. With his unique sonic signature, he has already performed across various clubs in Slovenia and the region, always ensuring a packed dance floor.',
-          'With a sharp sense for reading the vibe of the room, KUNJA is not just a performer but a true atmosphere creator – whether it’s an underground event or a major festival stage. His mission is clear: to turn every performance into an experience that lingers with the audience long after the last beat.'
-        ],
-        Bahun: [
-          'Rok Bahun, known under the artist name B̷A̷H̷U̷N̷, is a DJ and performer from Ljubljana (Slovenia) and a member of the Anubis Underground collective.',
-          'With his raw energy and heavy rhythms of hard techno, schranz, and groove sounds, he creates an intense club atmosphere where the audience loses all sense of time.',
-          'His passion for pushing boundaries has earned him recognition in the underground techno community.'
-        ],
-        Kayn: [
-          'Hailing from Slovenia, Kayn has quickly made his mark in hard industrial techno since his debut in October 2024. Known for his relentless, dark, and horror-infused soundscapes, he is a master of closing sets—pushing dancefloors to their limits and leaving audiences in euphoric exhaustion.',
-          'Specializing in the final hours, Kayn’s sets take listeners through pounding beats and haunting atmospheres, keeping energy at its peak until the last track. He has played across Slovenia, including the first-ever Face to Face event, delivering unforgettable shows across Europe',
-          'Under the moniker "The King of Purgatory," Kayn keeps his identity hidden, embracing the shadows while delivering high-octane sets for fans of the hardest industrial techno. He is now set to produce original tracks, bringing his signature dark, fast-paced style to new productions.'
-        ],
-        Nazh: [
-          'Nazh is a DJ from Ljubljana who brings a strong tempo and a genuine love for hard raw energy to the stage.',
-          'His style combines influences from artists such as In Verruf, Triptykh and Klangkuenstler.',
-          'He prefers to play schranz and hard techno, especially at harder events, where he can raise the energy of the room to the maximum. If necessary, he can also fully adapt to the hard bounce atmosphere, when the event requires a slightly lighter, but still dynamic line.'
-        ],
-        Vanch: [
-          'Vanch is a DJ and producer from Borovnica, Slovenia, known for his dark and unrelenting fusion of bochka and pure industrial. His sets dive deep into the mechanical void, merging distortion and rhythm into a relentless force that consumes the dancefloor in raw intensity.',
-          'Vanch\'s sound design explores the boundaries between noise and rhythm, creating immersive sonic experiences.',
-          'His innovative approach to production has positioned him as one of the most exciting talents in the industrial techno scene.'
-        ],
-      };
+     document.addEventListener('DOMContentLoaded', async () => {
+      // Load resident data from residents.json
+      let residents;
+      try {
+        const resp = await fetch('residents.json');
+        if (!resp.ok) throw new Error('Failed to load residents.json');
+        residents = await resp.json();
+      } catch (e) {
+        console.error('Could not load residents.json', e);
+        return;
+      }
 
-      const instagram = {
-        Kosowsky: 'https://www.instagram.com/kosowsky666/',
-        Kunja: 'https://www.instagram.com/kunjaa_official/',
-        Bahun: 'https://www.instagram.com/rokbahun/',
-        Kayn: 'https://www.instagram.com/kayn_musicc/',
-        Nazh: 'https://www.instagram.com/nazh.209/',
-        Vanch: 'https://www.instagram.com/vanch.wav/',
-      };
-      const soundcloud = {
-        Kosowsky: 'https://soundcloud.com/jan-kosec',
-        Kunja: 'https://soundcloud.com/kunja-og',
-        Bahun: 'https://soundcloud.com/rok-bahun',
-        Kayn: 'https://soundcloud.com/kayn_musicc',
-        Nazh: 'https://soundcloud.com/nazh_209',
-        Vanch: 'https://soundcloud.com/vanch999',
-      };
-      const tiktok = {
-        Kayn: 'https://www.tiktok.com/@kayn_musicc',
-        Kosowsky: 'https://www.tiktok.com/@kosi286',
-        Kunja: 'https://www.tiktok.com/@kunjaofficiale',
-      };
+      // Build resident cards in the grid
+      const grid = document.querySelector('.residents-grid');
+      residents.forEach(res => {
+        const card = document.createElement('div');
+        card.className = 'resident';
+        const imagesHTML = res.images.map((src, i) =>
+          `<img src="${src}" alt="${res.name}"${i === 0 ? ' class="active"' : ''}>`
+        ).join('');
+        const dotsHTML = res.images.map((_, i) =>
+          `<button class="resident-image-dot${i === 0 ? ' active' : ''}" data-slide="${i}" aria-label="Photo ${i + 1}"></button>`
+        ).join('');
+        card.innerHTML = `
+          <p class="resident-name">${res.name}</p>
+          <div class="resident-image-slider">
+            <div class="resident-images">${imagesHTML}</div>
+            <div class="resident-image-dots">${dotsHTML}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
 
+      // Build booking form checkboxes
+      const checkboxGroup = document.getElementById('artist-checkboxes');
+      if (checkboxGroup) {
+        residents.forEach(res => {
+          const id = res.name.toLowerCase();
+          const item = document.createElement('div');
+          item.className = 'checkbox-item';
+          item.innerHTML = `<input type="checkbox" id="${id}" name="artist" value="${res.name}"><label for="${id}">${res.name}</label>`;
+          checkboxGroup.appendChild(item);
+        });
+      }
+
+      // Build lookup maps from JSON data (same variable names used by setup code below)
+      const bios = {};
+      const instagram = {};
+      const soundcloud = {};
+      const tiktok = {};
+      residents.forEach(res => {
+        bios[res.name] = res.bio;
+        instagram[res.name] = res.instagram || '#';
+        soundcloud[res.name] = res.soundcloud || '#';
+        if (res.tiktok) tiktok[res.name] = res.tiktok;
+      });
       document.querySelectorAll('.residents-grid .resident').forEach(card => {
         const nameEl = card.querySelector('.resident-name');
         const name = (nameEl?.textContent || 'Resident').trim();
