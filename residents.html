@@ -670,6 +670,346 @@
           }
         });
       });
+
+      // Mobile tutorial overlay: darkens page and shows tap + swipe demo with close button.
+      (function showSwipeTutorialModal() {
+        const touchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+        if (!touchDevice) return;
+
+        const firstCard = document.querySelector('.residents-grid .resident');
+        if (!firstCard) return;
+
+        const firstCardImages = firstCard.querySelectorAll('.resident-images img');
+        if (!firstCardImages.length) return;
+
+        const firstNameEl = firstCard.querySelector('.resident-name');
+        const firstName = (firstNameEl?.textContent || '').trim();
+        const demoBios = (bios[firstName] || ['Tap card to show bio', 'Swipe to read next bio slide']).slice(0, 3);
+
+        const tutorialKey = 'anubis-residents-swipe-tutorial-v1';
+        const cooldownMs = 12 * 60 * 60 * 1000; // 12 hours
+        const maxShows = 6;
+        const now = Date.now();
+
+        let state = { count: 0, lastShown: 0 };
+        try {
+          const raw = localStorage.getItem(tutorialKey);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') {
+              state = {
+                count: Number(parsed.count) || 0,
+                lastShown: Number(parsed.lastShown) || 0
+              };
+            }
+          }
+        } catch (err) {
+          // Ignore storage errors and continue without persistence.
+        }
+
+        if (state.count >= maxShows) return;
+        if (state.lastShown && now - state.lastShown < cooldownMs) return;
+
+        const demoSources = Array.from(firstCardImages).slice(0, 3).map(img => img.getAttribute('src')).filter(Boolean);
+        if (!demoSources.length) return;
+
+        const overlayEl = document.createElement('div');
+        overlayEl.className = 'resident-tutorial-overlay';
+        overlayEl.setAttribute('role', 'dialog');
+        overlayEl.setAttribute('aria-modal', 'true');
+        overlayEl.setAttribute('aria-label', 'Swipe tutorial');
+
+        const imagesHtml = demoSources.map((src, i) =>
+          `<img src="${src}" alt="Swipe tutorial image ${i + 1}"${i === 0 ? ' class="active"' : ''}>`
+        ).join('');
+        const photoDotsHtml = demoSources.map((_, i) =>
+          `<span class="resident-tutorial-dot${i === 0 ? ' active' : ''}"></span>`
+        ).join('');
+        const biosHtml = demoBios.map((text, i) =>
+          `<div class="resident-tutorial-bio-slide${i === 0 ? ' active' : ''}">${text}</div>`
+        ).join('');
+        const bioDotsHtml = demoBios.map((_, i) =>
+          `<span class="resident-tutorial-dot${i === 0 ? ' active' : ''}"></span>`
+        ).join('');
+
+        const handSvg = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 21c-1.1 0-2.1-.5-2.8-1.3l-3.3-4c-.4-.5-.3-1.2.2-1.6.5-.4 1.2-.3 1.6.2l2.4 2.9V7.2c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v5h.8V5.8c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v6.4h.8V6.8c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v7h.8v-4c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v8.3c0 1.6-1.3 2.9-2.9 2.9H8.5z"/></svg>';
+
+        overlayEl.innerHTML = `
+          <div class="resident-tutorial-modal">
+            <button class="resident-tutorial-close" type="button" aria-label="Close tutorial">&times;</button>
+            <h3 class="resident-tutorial-title">Tap And Swipe</h3>
+            <p class="resident-tutorial-subtitle">Tap card for bio, then swipe for more</p>
+            <div class="resident-tutorial-demo">
+              <div class="resident-tutorial-demo-card">
+                <div class="resident-tutorial-face resident-tutorial-front">
+                  <div class="resident-tutorial-images">${imagesHtml}</div>
+                  <div class="resident-tutorial-hand mode-swipe" aria-hidden="true">${handSvg}</div>
+                  <div class="resident-tutorial-dots">${photoDotsHtml}</div>
+                </div>
+                <div class="resident-tutorial-face resident-tutorial-back">
+                  <div class="resident-tutorial-bio-track">${biosHtml}</div>
+                  <div class="resident-tutorial-hand is-back mode-swipe" aria-hidden="true">${handSvg}</div>
+                  <div class="resident-tutorial-bio-dots">${bioDotsHtml}</div>
+                </div>
+              </div>
+            </div>
+            <p class="resident-tutorial-step"><strong>Step 1:</strong> Tap the card. <strong>Step 2:</strong> Swipe left/right.</p>
+          </div>
+        `;
+
+        document.body.appendChild(overlayEl);
+        document.body.style.overflow = 'hidden';
+
+        const demoCard = overlayEl.querySelector('.resident-tutorial-demo-card');
+        const demoImages = overlayEl.querySelectorAll('.resident-tutorial-front .resident-tutorial-images img');
+        const photoDots = overlayEl.querySelectorAll('.resident-tutorial-front .resident-tutorial-dot');
+        const bioSlides = overlayEl.querySelectorAll('.resident-tutorial-bio-slide');
+        const bioDots = overlayEl.querySelectorAll('.resident-tutorial-bio-dots .resident-tutorial-dot');
+        const frontHand = overlayEl.querySelector('.resident-tutorial-front .resident-tutorial-hand');
+        const backHand = overlayEl.querySelector('.resident-tutorial-back .resident-tutorial-hand');
+        const closeBtn = overlayEl.querySelector('.resident-tutorial-close');
+        const demoArea = overlayEl.querySelector('.resident-tutorial-demo');
+
+        let photoIdx = 0;
+        let bioIdx = 0;
+        let flipped = false;
+
+        const setPhotoIdx = (next) => {
+          if (next < 0 || next >= demoImages.length || next === photoIdx) return;
+          demoImages[photoIdx].classList.remove('active');
+          photoDots[photoIdx]?.classList.remove('active');
+          demoImages[next].classList.add('active');
+          photoDots[next]?.classList.add('active');
+          photoIdx = next;
+        };
+
+        const setBioIdx = (next) => {
+          if (next < 0 || next >= bioSlides.length || next === bioIdx) return;
+          bioSlides[bioIdx].classList.remove('active');
+          bioDots[bioIdx]?.classList.remove('active');
+          bioSlides[next].classList.add('active');
+          bioDots[next]?.classList.add('active');
+          bioIdx = next;
+        };
+
+        const resetPhotoToFirst = () => {
+          if (!demoImages.length) return;
+          demoImages[photoIdx].classList.remove('active');
+          photoDots[photoIdx]?.classList.remove('active');
+          demoImages[0].classList.add('active');
+          photoDots[0]?.classList.add('active');
+          photoIdx = 0;
+        };
+
+        const resetBioToFirst = () => {
+          if (!bioSlides.length) return;
+          bioSlides[bioIdx].classList.remove('active');
+          bioDots[bioIdx]?.classList.remove('active');
+          bioSlides[0].classList.add('active');
+          bioDots[0]?.classList.add('active');
+          bioIdx = 0;
+        };
+
+        const setFlipped = (shouldFlip) => {
+          flipped = shouldFlip;
+          if (!demoCard) return;
+          demoCard.classList.toggle('flipped', flipped);
+        };
+
+        const setHandMode = (mode) => {
+          const active = flipped ? backHand : frontHand;
+          const inactive = flipped ? frontHand : backHand;
+          inactive?.classList.remove('mode-swipe', 'mode-tap');
+          if (!active) return;
+          active.classList.remove('mode-swipe', 'mode-tap');
+          active.classList.add(mode === 'tap' ? 'mode-tap' : 'mode-swipe');
+        };
+
+        let autoTimer = null;
+        let autoRunning = false;
+        const frontSwipeSteps = 2;
+        const backSwipeSteps = 2;
+        let phase = 'front-swipe';
+        let frontSwipeCount = 0;
+        let backSwipeCount = 0;
+
+        const resetPhaseForCurrentSide = () => {
+          phase = flipped ? 'back-swipe' : 'front-swipe';
+          frontSwipeCount = 0;
+          backSwipeCount = 0;
+          if (flipped) resetBioToFirst();
+          else resetPhotoToFirst();
+        };
+
+        const startAuto = () => {
+          stopAuto();
+          autoRunning = true;
+          resetPhaseForCurrentSide();
+
+          const runStep = () => {
+            if (!autoRunning) return;
+
+            if (phase === 'front-swipe') {
+              setFlipped(false);
+              setHandMode('swipe');
+
+              if (frontSwipeCount < frontSwipeSteps) {
+                setPhotoIdx((photoIdx + 1) % demoImages.length);
+                frontSwipeCount += 1;
+                autoTimer = setTimeout(runStep, 1300);
+                return;
+              }
+
+              phase = 'front-tap';
+              autoTimer = setTimeout(runStep, 450);
+              return;
+            }
+
+            if (phase === 'front-tap') {
+              setHandMode('tap');
+              autoTimer = setTimeout(() => {
+                if (!autoRunning) return;
+                resetBioToFirst();
+                setFlipped(true);
+                backSwipeCount = 0;
+                phase = 'back-swipe';
+                setHandMode('swipe');
+                autoTimer = setTimeout(runStep, 900);
+              }, 650);
+              return;
+            }
+
+            if (phase === 'back-swipe') {
+              setFlipped(true);
+              setHandMode('swipe');
+
+              if (backSwipeCount < backSwipeSteps) {
+                setBioIdx((bioIdx + 1) % bioSlides.length);
+                backSwipeCount += 1;
+                autoTimer = setTimeout(runStep, 1300);
+                return;
+              }
+
+              phase = 'back-tap';
+              autoTimer = setTimeout(runStep, 450);
+              return;
+            }
+
+            if (phase === 'back-tap') {
+              setHandMode('tap');
+              autoTimer = setTimeout(() => {
+                if (!autoRunning) return;
+                resetPhotoToFirst();
+                setFlipped(false);
+                frontSwipeCount = 0;
+                phase = 'front-swipe';
+                setHandMode('swipe');
+                autoTimer = setTimeout(runStep, 900);
+              }, 650);
+            }
+          };
+
+          setHandMode('swipe');
+          autoTimer = setTimeout(runStep, 900);
+        };
+        const stopAuto = () => {
+          autoRunning = false;
+          if (!autoTimer) return;
+          clearTimeout(autoTimer);
+          autoTimer = null;
+        };
+
+        let startX = 0;
+        let moved = false;
+        let suppressClick = false;
+        let activeDrag = false;
+        const threshold = 36;
+
+        const getX = (e) => (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+
+        const onDown = (e) => {
+          activeDrag = true;
+          moved = false;
+          startX = getX(e);
+          stopAuto();
+        };
+        const onMove = (e) => {
+          if (!activeDrag) return;
+          const dx = getX(e) - startX;
+          if (Math.abs(dx) > 8) moved = true;
+        };
+        const onUp = (e) => {
+          if (!activeDrag) return;
+          activeDrag = false;
+          const dx = getX(e) - startX;
+          if (Math.abs(dx) > threshold) {
+            suppressClick = true;
+            if (flipped) {
+              if (dx < 0) setBioIdx((bioIdx + 1) % bioSlides.length);
+              else setBioIdx((bioIdx - 1 + bioSlides.length) % bioSlides.length);
+            } else {
+              if (dx < 0) setPhotoIdx((photoIdx + 1) % demoImages.length);
+              else setPhotoIdx((photoIdx - 1 + demoImages.length) % demoImages.length);
+            }
+          }
+          resetPhaseForCurrentSide();
+          startAuto();
+        };
+
+        if (window.PointerEvent) {
+          demoArea.addEventListener('pointerdown', onDown);
+          demoArea.addEventListener('pointermove', onMove);
+          demoArea.addEventListener('pointerup', onUp);
+          demoArea.addEventListener('pointercancel', onUp);
+        } else {
+          demoArea.addEventListener('touchstart', onDown, { passive: true });
+          demoArea.addEventListener('touchmove', onMove, { passive: true });
+          demoArea.addEventListener('touchend', onUp);
+        }
+
+        demoArea.addEventListener('click', () => {
+          if (suppressClick) {
+            suppressClick = false;
+            return;
+          }
+          if (moved) return;
+          setHandMode('tap');
+          setFlipped(!flipped);
+          resetPhaseForCurrentSide();
+          setHandMode('swipe');
+          startAuto();
+        });
+
+        const closeTutorial = () => {
+          stopAuto();
+          overlayEl.classList.add('closing');
+          setTimeout(() => {
+            if (overlayEl.isConnected) overlayEl.remove();
+            document.body.style.overflow = '';
+          }, 220);
+        };
+
+        closeBtn.addEventListener('click', closeTutorial);
+        overlayEl.addEventListener('click', (e) => {
+          if (e.target === overlayEl) closeTutorial();
+        });
+        document.addEventListener('keydown', function onEsc(e) {
+          if (e.key !== 'Escape') return;
+          closeTutorial();
+          document.removeEventListener('keydown', onEsc);
+        });
+
+        startAuto();
+
+        try {
+          localStorage.setItem(tutorialKey, JSON.stringify({
+            count: state.count + 1,
+            lastShown: now
+          }));
+        } catch (err) {
+          // Ignore storage errors.
+        }
+      })();
     });
   </script>
   <script>

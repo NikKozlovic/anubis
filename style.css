@@ -289,6 +289,283 @@ body {
   -webkit-tap-highlight-color: transparent; /* Remove blue highlight on mobile tap */
 }
 
+.resident-tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.74);
+  backdrop-filter: blur(2px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  opacity: 0;
+  animation: residentTutorialFadeIn 260ms ease forwards;
+}
+
+.resident-tutorial-overlay.closing {
+  animation: residentTutorialFadeOut 220ms ease forwards;
+}
+
+.resident-tutorial-modal {
+  position: relative;
+  width: min(360px, 100%);
+  background: linear-gradient(160deg, #171717, #0f0f0f);
+  border: 1px solid rgba(255, 42, 42, 0.6);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  padding: 14px 14px 16px;
+  transform: translateY(10px) scale(0.98);
+  opacity: 0;
+  animation: residentTutorialModalIn 280ms ease 120ms forwards;
+}
+
+.resident-tutorial-close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.resident-tutorial-title {
+  margin: 6px 0 2px;
+  text-align: center;
+  color: #ff2a2a;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.resident-tutorial-subtitle {
+  margin: 0 0 10px;
+  text-align: center;
+  color: #c9c9c9;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+}
+
+.resident-tutorial-demo {
+  position: relative;
+  perspective: 1000px;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 250px;
+  background: #060606;
+}
+
+.resident-tutorial-demo-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 650ms ease;
+}
+
+.resident-tutorial-demo-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.resident-tutorial-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.resident-tutorial-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, #252525, #151515);
+  color: #fff;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.resident-tutorial-images {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.resident-tutorial-images img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.resident-tutorial-images img.active {
+  opacity: 1;
+}
+
+.resident-tutorial-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+}
+
+.resident-tutorial-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.resident-tutorial-dot.active {
+  background: #ff2a2a;
+}
+
+.resident-tutorial-bio-track {
+  position: relative;
+  flex: 1;
+}
+
+.resident-tutorial-bio-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #dddddd;
+}
+
+.resident-tutorial-bio-slide.active {
+  opacity: 1;
+}
+
+.resident-tutorial-bio-dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.resident-tutorial-step {
+  text-align: center;
+  margin: 10px 0 0;
+  color: #c8c8c8;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+}
+
+.resident-tutorial-step strong {
+  color: #ff5c5c;
+}
+
+.resident-tutorial-hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  --hand-base-transform: translate(-50%, -50%);
+  transform: var(--hand-base-transform);
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  pointer-events: none;
+  text-shadow: 0 6px 14px rgba(0, 0, 0, 0.9);
+}
+
+.resident-tutorial-hand.mode-swipe {
+  animation: residentTutorialHandSwipe 1.35s ease-in-out infinite;
+}
+
+.resident-tutorial-hand.mode-tap {
+  animation: residentTutorialHandTap 0.8s ease-in-out 1;
+}
+
+.resident-tutorial-hand svg {
+  width: 100%;
+  height: 100%;
+  fill: #ffffff;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.75));
+}
+
+.resident-tutorial-hand.is-back {
+  top: auto;
+  bottom: 34px;
+  --hand-base-transform: translate(-50%, 0);
+}
+
+@keyframes residentTutorialHandSwipe {
+  0% {
+    transform: var(--hand-base-transform) translateX(-24px);
+    opacity: 0.65;
+  }
+  50% {
+    transform: var(--hand-base-transform) translateX(24px);
+    opacity: 1;
+  }
+  100% {
+    transform: var(--hand-base-transform) translateX(-24px);
+    opacity: 0.65;
+  }
+}
+
+@keyframes residentTutorialHandTap {
+  0% {
+    transform: var(--hand-base-transform) scale(1);
+    opacity: 0.95;
+  }
+  45% {
+    transform: var(--hand-base-transform) translateY(8px) scale(0.92);
+    opacity: 1;
+  }
+  100% {
+    transform: var(--hand-base-transform) scale(1);
+    opacity: 0.95;
+  }
+}
+
+@keyframes residentTutorialFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes residentTutorialFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes residentTutorialModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .resident-images {
   position: relative;
   width: 100%;
@@ -361,6 +638,27 @@ body {
   
   .resident-image-dots {
     gap: 8px; /* Better spacing between dots on mobile */
+  }
+
+  .resident-tutorial-modal {
+    width: min(340px, 100%);
+  }
+
+  .resident-tutorial-demo {
+    height: 230px;
+  }
+
+  .resident-tutorial-hand {
+    width: 30px;
+    height: 30px;
+  }
+
+  .resident-tutorial-back {
+    padding: 14px 12px;
+  }
+
+  .resident-tutorial-bio-slide {
+    font-size: 12px;
   }
 }
 
