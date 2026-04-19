@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const menu = document.getElementById('menu');
   const overlay = document.getElementById('overlay');
   const navbar = document.querySelector('.navbar');
+  let lockedScrollY = 0;
 
   if (!toggle || !menu || !overlay) return;
 
@@ -229,11 +230,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function setScrollLock(isLocked) {
+    const root = document.documentElement;
+
+    if (isLocked) {
+      if (root.classList.contains('mobile-menu-open')) return;
+      lockedScrollY = window.scrollY || window.pageYOffset || 0;
+      root.classList.add('mobile-menu-open');
+      document.body.classList.add('mobile-menu-open');
+      document.body.style.top = '-' + lockedScrollY + 'px';
+      return;
+    }
+
+    if (!root.classList.contains('mobile-menu-open') && !document.body.classList.contains('mobile-menu-open')) return;
+
+    root.classList.remove('mobile-menu-open');
+    document.body.classList.remove('mobile-menu-open');
+
+    const storedOffset = Math.abs(parseInt(document.body.style.top || '0', 10)) || lockedScrollY;
+    document.body.style.top = '';
+    window.scrollTo(0, storedOffset);
+    lockedScrollY = 0;
+  }
+
   function openMenu() {
     menu.classList.add('active');
     overlay.classList.add('active');
     overlay.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('mobile-menu-open');
+    setScrollLock(true);
     toggle.classList.add('is-open');
     toggle.setAttribute('aria-expanded', 'true');
     toggle.setAttribute('aria-label', 'Close menu');
@@ -243,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menu.classList.remove('active');
     overlay.classList.remove('active');
     overlay.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('mobile-menu-open');
+    setScrollLock(false);
     toggle.classList.remove('is-open');
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-label', 'Open menu');
