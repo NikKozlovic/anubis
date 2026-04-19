@@ -1,0 +1,62 @@
+{
+  "menu": [
+    {
+      "label": "EVENTS",
+      "href": "events.html",
+      "type": "link"
+    },
+    {
+      "label": "MUSIC",
+      "type": "dropdown",
+      "items": [
+        {
+          "label": "BANDCAMP",
+          "href": "https://anubisrecords1.bandcamp.com/",
+          "target": "_blank"
+        },
+        {
+          "label": "SOUNDCLOUD",
+          "href": "https://soundcloud.com/anubis_records",
+          "target": "_blank"
+        },
+        {
+          "label": "SUBMISSION",
+          "href": "submission.html"
+        }
+      ]
+    },
+    {
+      "label": "RESIDENTS",
+      "href": "residents.html",
+      "type": "link"
+    },
+    {
+      "label": "GALLERY",
+      "href": "gallery.html",
+      "type": "link"
+    },
+    {
+      "label": "MERCH",
+      "href": "store.html",
+      "type": "link"
+    },
+    {
+      "label": "CONTACTS",
+      "type": "dropdown",
+      "items": [
+        {
+          "label": "ABOUT US",
+          "href": "about.html"
+        },
+        {
+          "label": "HOUSE RULES",
+          "href": "rules.html"
+        },
+        {
+          "label": "FAQ",
+          "href": "faq.html"
+        }
+      ]
+    }
+  ]
+}

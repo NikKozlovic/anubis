@@ -892,8 +892,8 @@ body {
   .logo-inline {
     display: flex;
     position: relative;
-    width: 18px;   /* 20% smaller than current ~22.4px */
-    height: 18px;  /* 20% smaller than current ~22.4px */
+    width: 18px;
+    height: 18px;
     align-items: center;
     justify-content: center;
     margin: 0 auto;  /* center the logo */
