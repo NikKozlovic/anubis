@@ -318,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('orientationchange', syncNavOffsetVar);
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', syncNavOffsetVar);
+    window.visualViewport.addEventListener('scroll', syncNavOffsetVar);
   }
   if (navbar) {
     navbar.addEventListener('transitionend', syncNavOffsetVar);

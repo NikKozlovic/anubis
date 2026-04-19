@@ -240,7 +240,9 @@ body {
   align-items: stretch;      /* allow full width instead of center */
   justify-content: flex-start;  /* keep content at top instead of centered vertically */
   text-align: center;       /* center text inside */
-  min-height: calc(100vh - var(--nav-offset)); /* fill viewport minus navbar height */
+  min-height: calc(100vh - var(--nav-offset)); /* fallback for older browsers */
+  min-height: calc(100svh - var(--nav-offset)); /* stable viewport on mobile Safari */
+  min-height: calc(100dvh - var(--nav-offset)); /* dynamic viewport when supported */
   padding: 0 0 16px;  /* remove top padding, keep bottom padding */
   box-sizing: border-box;
 }
@@ -887,9 +889,12 @@ body {
     top: 56px; /* slide-in menu appears below fixed navbar */
     right: -250px;
     left: auto;
-    height: calc(100vh - 56px); /* use viewport height to guarantee full coverage */
+    height: calc(100vh - 56px); /* fallback */
+    height: calc(100svh - 56px); /* Safari stable viewport */
+    height: calc(100dvh - 56px); /* dynamic viewport */
     width: 250px;
     padding-top: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     transition: right 0.3s ease;
     z-index: 1005; /* above page content */
     box-shadow: -6px 0 18px rgba(0, 0, 0, 0.6);
@@ -2563,6 +2568,10 @@ strong {
       margin: 0;
       padding: 16px 0;
       isolation: isolate;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
       border-top: 1px solid rgba(255, 42, 42, 0.55);
       border-bottom: 1px solid rgba(255, 42, 42, 0.55);
       background:
@@ -2627,8 +2636,10 @@ strong {
       width: max-content;
       white-space: nowrap;
       will-change: transform;
+      -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
-      transform: translate3d(-50%, 0, 0);
+      -webkit-transform: translate3d(-50%, 0, 0) translateZ(0);
+      transform: translate3d(-50%, 0, 0) translateZ(0);
       animation: hieroglyphLeftToRight 28s linear infinite -14s;
     }
 
@@ -2640,9 +2651,25 @@ strong {
       font-size: 1.25rem;
       font-weight: 900;
       -webkit-text-stroke: 0.35px rgba(255, 42, 42, 0.9);
+      -webkit-text-fill-color: currentColor;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
       letter-spacing: 0.08em;
       text-shadow: 0 0 12px rgba(255, 42, 42, 0.45);
       animation: hieroglyphNeonPulse 2.8s ease-in-out infinite;
+    }
+
+    /* iOS Safari: avoid blend/filter artifacts on complex Unicode glyphs. */
+    @supports (-webkit-touch-callout: none) {
+      .hieroglyph-marquee::before {
+        mix-blend-mode: normal;
+        opacity: 0.12;
+      }
+
+      .hieroglyph-text {
+        filter: none;
+        animation: none;
+      }
     }
 
     /* Featured Event Section */
@@ -2964,10 +2991,10 @@ strong {
 
     @keyframes hieroglyphLeftToRight {
       from {
-        transform: translate3d(-50%, 0, 0);
+        transform: translate3d(-50%, 0, 0) translateZ(0);
       }
       to {
-        transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0) translateZ(0);
       }
     }
 
@@ -4933,10 +4960,12 @@ strong {
     top: calc(var(--nav-offset) - 1px);
     right: 0;
     left: auto;
+    height: calc(100vh - var(--nav-offset) + 1px);
+    height: calc(100svh - var(--nav-offset) + 1px);
     height: calc(100dvh - var(--nav-offset) + 1px);
     width: 70vw;
     max-width: 70vw;
-    padding: 12px 12px 20px;
+    padding: 12px 12px calc(20px + env(safe-area-inset-bottom, 0px));
     gap: 6px;
     flex-direction: column;
     background:
