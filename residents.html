@@ -172,9 +172,13 @@
         const dotsHTML = res.images.map((_, i) =>
           `<button class="resident-image-dot${i === 0 ? ' active' : ''}" data-slide="${i}" aria-label="Photo ${i + 1}"></button>`
         ).join('');
+        const arrowsHTML = res.images.length > 1 ? `
+          <button class="res-img-arrow res-img-arrow-left" aria-label="Previous photo"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="res-img-arrow res-img-arrow-right" aria-label="Next photo"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : '';
         card.innerHTML = `
           <p class="resident-name">${res.name}</p>
           <div class="resident-image-slider">
+            ${arrowsHTML}
             <div class="resident-images">${imagesHTML}</div>
             <div class="resident-image-dots">${dotsHTML}</div>
           </div>
@@ -237,6 +241,22 @@
             goToImage(slideIndex);
           });
         });
+
+        // Handle arrow clicks (desktop)
+        const arrowLeft = card.querySelector('.res-img-arrow-left');
+        const arrowRight = card.querySelector('.res-img-arrow-right');
+        if (arrowLeft) {
+          arrowLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToImage(currentImageIndex === 0 ? images.length - 1 : currentImageIndex - 1);
+          });
+        }
+        if (arrowRight) {
+          arrowRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToImage(currentImageIndex === images.length - 1 ? 0 : currentImageIndex + 1);
+          });
+        }
 
         // Image swipe functionality (touch/pointer) - Enhanced for mobile
         const imagesContainer = card.querySelector('.resident-images');
@@ -346,7 +366,14 @@
           </div>
         ` : '';
 
+        // Build bio arrows HTML
+        const bioArrowsHTML = bioSlides.length > 1 ? `
+          <button class="bio-arrow bio-arrow-left" aria-label="Previous bio slide"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="bio-arrow bio-arrow-right" aria-label="Next bio slide"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        ` : '';
+
         overlay.innerHTML = `
+          ${bioArrowsHTML}
           <div class="overlay-content">
             <h3>${name}</h3>
             <div class="bio-slider">
@@ -381,6 +408,24 @@
         if (!imageSliderEl) return;
         card.insertBefore(overlay, imageSliderEl.nextSibling);
 
+        // Keep bio arrows aligned with the front image arrows.
+        const syncBioArrowPosition = () => {
+          if (!overlay.querySelector('.bio-arrow')) return;
+
+          const imageMidY = imageSliderEl.offsetTop + (imageSliderEl.offsetHeight / 2);
+          overlay.style.setProperty('--bio-arrow-top', `${Math.round(imageMidY)}px`);
+
+          // Match horizontal inset used by .res-img-arrow-left/.res-img-arrow-right (8px inside slider).
+          const sliderRect = imageSliderEl.getBoundingClientRect();
+          const overlayRect = overlay.getBoundingClientRect();
+          const leftInset = Math.round((sliderRect.left - overlayRect.left) + 8);
+          const rightInset = Math.round((overlayRect.right - sliderRect.right) + 8);
+          overlay.style.setProperty('--bio-arrow-left', `${leftInset}px`);
+          overlay.style.setProperty('--bio-arrow-right', `${rightInset}px`);
+        };
+        syncBioArrowPosition();
+        window.addEventListener('resize', syncBioArrowPosition);
+
         // Handle dot navigation
         const dots = overlay.querySelectorAll('.bio-dot');
         const slides = overlay.querySelectorAll('.bio-slide');
@@ -404,6 +449,22 @@
             goTo(slideIndex);
           });
         });
+
+        // Bio arrow click handlers (desktop)
+        const bioArrowLeft = overlay.querySelector('.bio-arrow-left');
+        const bioArrowRight = overlay.querySelector('.bio-arrow-right');
+        if (bioArrowLeft) {
+          bioArrowLeft.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goTo(currentIndex === 0 ? slides.length - 1 : currentIndex - 1);
+          });
+        }
+        if (bioArrowRight) {
+          bioArrowRight.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goTo(currentIndex === slides.length - 1 ? 0 : currentIndex + 1);
+          });
+        }
 
         // Bio swipe navigation (touch/pointer)
         const bioSlidesEl = overlay.querySelector('.bio-slides');

@@ -86,7 +86,7 @@
       const prevBtn = document.createElement('button');
       prevBtn.className = 'slider-nav slider-nav-left';
       prevBtn.setAttribute('aria-label', 'Previous image');
-      prevBtn.textContent = '‹';
+      prevBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
       const imgEl = document.createElement('img');
       imgEl.src = images[0];
@@ -96,7 +96,7 @@
       const nextBtn = document.createElement('button');
       nextBtn.className = 'slider-nav slider-nav-right';
       nextBtn.setAttribute('aria-label', 'Next image');
-      nextBtn.textContent = '›';
+      nextBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
       container.appendChild(prevBtn);
       container.appendChild(imgEl);
