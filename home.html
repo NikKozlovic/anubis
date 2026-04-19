@@ -75,7 +75,7 @@
       </a>
 
       <a href="gallery.html">GALLERY</a>
-      <a href="https://techno-cult.com/products/kosowsky-oversized-t-shirt" target="_blank" rel="noopener noreferrer">MERCH</a>
+      <a href="store.html">MERCH</a>
       
 
       <div class="dropdown">
@@ -233,96 +233,13 @@
         <div class="section-subtitle">Don't miss our next underground experience</div>
       </div>
       
-      <div class="featured-event">
-        <div class="event-card">
-          <div class="event-image">
-            <img src="Media/Events/F2F/F2F.webp" alt="Anubis Represents: F2F Event">
-            <div class="event-overlay">
-              <div class="event-badge">NEXT EVENT</div>
-            </div>
-          </div>
-          <div class="event-details">
-            <h3 class="event-name">ANUBIS REPRESENTS: F2F</h3>
-            <p class="event-description">Face-to-face underground energy in an intimate Anubis setting. Stay tuned for full lineup and event details.</p>
-            <div class="event-meta">
-              <div class="event-date">
-                <span class="meta-label">DATE</span>
-                <span class="meta-value">TBA</span>
-              </div>
-              <div class="event-location">
-                <span class="meta-label">LOCATION</span>
-                <span class="meta-value">Ljubljana, Slovenia</span>
-              </div>
-            </div>
-            <a href="#" class="event-ticket-btn" aria-disabled="true" onclick="return false;">
-              <span>INFO SOON</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M7 17L17 7M17 7H7M17 7V17"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
+      <div class="featured-event" id="home-featured-event"></div>
     </div>
 
     <!-- Content Grid -->
     <div class="content-grid">
-      
-      <!-- Latest Podcast -->
-      <div class="content-section podcast-section">
-        <div class="section-header">
-          <h2 class="section-title">LATEST PODCAST</h2>
-          <div class="section-subtitle">Fresh underground sounds from our residents</div>
-        </div>
-        
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-icon">🎧</div>
-            <div class="card-info">
-              <h3 class="card-title">ANUBIS PODCAST #027</h3>
-              <p class="card-subtitle">Mixed by ZVITA</p>
-            </div>
-          </div>
-          <div class="card-content">
-            <div class="audio-player">
-              <iframe width="100%" height="300" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/anubis_records/anubis-podcast-27-zvita%3Fsi%3D1ebccdc6d5214c43893561349f3b3f68%26utm_source%3Dclipboard%26utm_medium%3Dtext%26utm_campaign%3Dsocial_sharing&color=%23ff2a2a&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true&buying=false&liking=false&download=false&sharing=false&show_playcount=false"></iframe>
-            </div>
-            <div class="card-actions">
-              <a href="https://soundcloud.com/anubis_records/anubis-podcast-27-zvita?si=1ebccdc6d5214c43893561349f3b3f68&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing" target="_blank" class="card-link">
-                View on SoundCloud →
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Latest Release -->
-      <div class="content-section release-section">
-        <div class="section-header">
-          <h2 class="section-title">LATEST RELEASE</h2>
-          <div class="section-subtitle">Hot off the underground press</div>
-        </div>
-        
-        <div class="content-card">
-          <div class="card-header">
-            <div class="card-icon">💿</div>
-            <div class="card-info">
-              <h3 class="card-title">ANU003 - BALROG</h3>
-              <p class="card-subtitle">Cunning Maneuvers</p>
-            </div>
-          </div>
-          <div class="card-content">
-            <div class="audio-player">
-              <iframe width="100%" height="300" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/anubis_records/sets/anu003-balrog-cunning-maneuvers&color=%23ff2a2a&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true&buying=false&liking=false&download=false&sharing=false&show_playcount=false"></iframe>
-            </div>
-            <div class="card-actions">
-              <a href="https://soundcloud.com/anubis_records/sets/anu003-balrog-cunning-maneuvers" target="_blank" class="card-link">
-                Stream Full Release →
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="home-latest-podcast"></div>
+      <div id="home-latest-release"></div>
 
     </div>
 
@@ -339,6 +256,178 @@
     </div>
 
   </div>
+
+  <script>
+    function deriveHomeMediaTitle(sectionData) {
+      const explicitTitle = typeof sectionData?.title === 'string' ? sectionData.title.trim() : '';
+      if (explicitTitle) return explicitTitle;
+
+      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      if (!linkUrl) return '';
+
+      try {
+        const url = new URL(linkUrl);
+        const pathParts = url.pathname.split('/').filter(Boolean);
+        const slug = pathParts[pathParts.length - 1] || '';
+        const decodedSlug = decodeURIComponent(slug).replace(/[._-]+/g, ' ').trim();
+        return decodedSlug.replace(/\b\w/g, (char) => char.toUpperCase());
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function deriveHomeMediaSubtitle(sectionData) {
+      const explicitSubtitle = typeof sectionData?.subtitle === 'string' ? sectionData.subtitle.trim() : '';
+      if (explicitSubtitle) return explicitSubtitle;
+
+      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      if (!linkUrl) return '';
+
+      try {
+        const url = new URL(linkUrl);
+        const pathParts = url.pathname.split('/').filter(Boolean);
+        return pathParts
+          .map(part => decodeURIComponent(part).replace(/[._-]+/g, ' ').trim())
+          .map(part => part.replace(/\b\w/g, (char) => char.toUpperCase()))
+          .join(' ');
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function resolveHomeMediaEmbedUrl(sectionData) {
+      if (sectionData?.embedUrl) return sectionData.embedUrl;
+
+      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      if (!linkUrl || !linkUrl.includes('soundcloud.com/')) return '';
+
+      const encodedTrackUrl = encodeURIComponent(linkUrl);
+      return `https://w.soundcloud.com/player/?url=${encodedTrackUrl}&color=%23ff2a2a&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true&buying=false&liking=false&download=false&sharing=false&show_playcount=false`;
+    }
+
+    function buildHomeMediaSection(sectionClassName, sectionData) {
+      if (!sectionData) return '';
+
+      const embedUrl = resolveHomeMediaEmbedUrl(sectionData);
+      const title = deriveHomeMediaTitle(sectionData);
+
+      return `
+        <div class="content-section ${sectionClassName}">
+          <div class="section-header">
+            <h2 class="section-title">${sectionData.sectionTitle || ''}</h2>
+            <div class="section-subtitle">${sectionData.sectionSubtitle || ''}</div>
+          </div>
+
+          <div class="content-card">
+            <div class="card-header">
+              <div class="card-icon">${sectionData.icon || ''}</div>
+              <div class="card-info">
+                <h3 class="card-title">${title}</h3>
+                <p class="card-subtitle">${deriveHomeMediaSubtitle(sectionData)}</p>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="audio-player">
+                <iframe width="100%" height="300" scrolling="no" frameborder="no" src="${embedUrl}"></iframe>
+              </div>
+              <div class="card-actions">
+                <a href="${sectionData.linkUrl || '#'}" target="_blank" class="card-link">
+                  ${sectionData.linkText || 'Open'}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function renderHomeMedia() {
+      const podcastContainer = document.getElementById('home-latest-podcast');
+      const releaseContainer = document.getElementById('home-latest-release');
+      if (!podcastContainer || !releaseContainer) return;
+
+      try {
+        const response = await fetch('home.json');
+        if (!response.ok) throw new Error('Failed to load home.json');
+
+        const homeData = await response.json();
+        podcastContainer.innerHTML = buildHomeMediaSection('podcast-section', homeData.latestPodcast);
+        releaseContainer.innerHTML = buildHomeMediaSection('release-section', homeData.latestRelease);
+      } catch (error) {
+        console.error('Could not render home media sections', error);
+      }
+    }
+
+    async function renderHomeFeaturedEvent() {
+      const container = document.getElementById('home-featured-event');
+      if (!container) return;
+
+      try {
+        const response = await fetch('events.json');
+        if (!response.ok) throw new Error('Failed to load events.json');
+
+        const events = await response.json();
+        const currentEvents = Array.isArray(events)
+          ? events.filter((event) => event.status === 'current')
+          : [];
+
+        if (!currentEvents.length) {
+          container.innerHTML = '<p class="event-description" style="text-align:center;">Current event info will be announced soon.</p>';
+          return;
+        }
+
+        const badgeText = currentEvents.length > 1 ? 'CURRENT EVENT' : 'NEXT EVENT';
+
+        container.innerHTML = currentEvents.map((currentEvent) => {
+          const hasTicketLink = typeof currentEvent.ticketLink === 'string' && currentEvent.ticketLink.trim().length > 0;
+          const buttonText = typeof currentEvent.buttonText === 'string' && currentEvent.buttonText.trim().length > 0
+            ? currentEvent.buttonText.trim()
+            : (hasTicketLink ? 'GET TICKETS' : 'INFO SOON');
+          const imageSrc = Array.isArray(currentEvent.images) && currentEvent.images.length
+            ? currentEvent.images[0]
+            : '';
+          const imageStyle = typeof currentEvent.imageStyle === 'string' ? currentEvent.imageStyle : '';
+
+          return `
+            <div class="event-card">
+              <div class="event-image">
+                <img src="${imageSrc}" alt="${currentEvent.title}"${imageStyle ? ` style="${imageStyle}"` : ''}>
+                <div class="event-overlay">
+                  <div class="event-badge">${badgeText}</div>
+                </div>
+              </div>
+              <div class="event-details">
+                <h3 class="event-name">${currentEvent.title}</h3>
+                <p class="event-description">${currentEvent.subtitle || ''}</p>
+                <div class="event-meta">
+                  <div class="event-date">
+                    <span class="meta-label">DATE</span>
+                    <span class="meta-value">${currentEvent.date || 'TBA'}</span>
+                  </div>
+                  <div class="event-location">
+                    <span class="meta-label">LOCATION</span>
+                    <span class="meta-value">${currentEvent.location || 'TBA'}</span>
+                  </div>
+                </div>
+                <a href="${hasTicketLink ? currentEvent.ticketLink : '#'}" class="event-ticket-btn"${hasTicketLink ? ' target="_blank" rel="noopener noreferrer"' : ' aria-disabled="true" onclick="return false;"'}>
+                  <span>${buttonText}</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Could not render featured home event', error);
+        container.innerHTML = '<p class="event-description" style="text-align:center;">Current event info will be announced soon.</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderHomeMedia);
+    document.addEventListener('DOMContentLoaded', renderHomeFeaturedEvent);
+  </script>
 
 
   

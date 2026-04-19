@@ -92,154 +92,37 @@
     <div id="overlay" class="overlay" aria-hidden="true"></div>
   </div>
 
-  <script>if (!window.__ANUBIS_NAV_SCRIPT_LOADED__) {
-    const toggle = document.getElementById('menu-toggle');
-    const menu = document.getElementById('menu');
-    const overlay = document.getElementById('overlay');
 
-    function openMenu() {
-      menu.classList.add('active');
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden', 'false');
-      toggle.textContent = '✕';
-    }
-    function closeMenu() {
-      menu.classList.remove('active');
-      overlay.classList.remove('active');
-      overlay.setAttribute('aria-hidden', 'true');
-      toggle.textContent = '☰';
-      collapseAllSubmenus(); // collapse any open mobile dropdowns
-    }
-
-    toggle.addEventListener('click', () => {
-      if (menu.classList.contains('active')) closeMenu();
-      else openMenu();
-    });
-
-    overlay.addEventListener('click', closeMenu);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && menu.classList.contains('active')) closeMenu();
-    });
-
-    // Close menu when tapping/clicking outside it (mobile)
-    function outsideMenuHandler(e) {
-      if (!isMobileMenu()) return;
-      if (!menu.classList.contains('active')) return;
-      const clickedOutside = !menu.contains(e.target) && !toggle.contains(e.target);
-      if (clickedOutside) closeMenu();
-    }
-    document.addEventListener('click', outsideMenuHandler);
-    document.addEventListener('touchstart', outsideMenuHandler, { passive: true });
-
-    // Mobile dropdown toggle (accordion with slide animation)
-    const isMobileMenu = () =>
-      window.matchMedia('(max-width: 700px), (max-height: 500px) and (max-width: 1000px)').matches;
-
-    function collapseAllSubmenus() {
-      document.querySelectorAll('.menu .dropdown').forEach(dd => {
-        dd.classList.remove('open');
-        const panel = dd.querySelector('.dropdown-content');
-        const btn = dd.querySelector('.dropbtn');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-        if (panel) {
-          panel.style.maxHeight = '0px';
-          panel.style.opacity = '0';
-        }
-      });
-    }
-
-    // prepare dropdowns
-    document.querySelectorAll('.dropdown .dropbtn').forEach(btn => {
-      const dd = btn.closest('.dropdown');
-      const panel = dd.querySelector('.dropdown-content');
-      btn.setAttribute('aria-expanded', 'false');
-
-      btn.addEventListener('click', (e) => {
-        if (!isMobileMenu()) return; // desktop uses hover
-        e.preventDefault();
-        e.stopPropagation();
-
-        const willOpen = !dd.classList.contains('open');
-        dd.classList.toggle('open', willOpen);
-        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-
-        if (panel) {
-          if (willOpen) {
-            // set height to content height for smooth open
-            panel.style.maxHeight = panel.scrollHeight + 'px';
-            panel.style.opacity = '1';
-          } else {
-            // collapse
-            panel.style.maxHeight = '0px';
-            panel.style.opacity = '0';
-          }
-        }
-      });
-    });
-
-    // When switching to desktop, clear inline heights so hover works normally
-    function syncDropdownMode() {
-      if (!isMobileMenu()) {
-        document.querySelectorAll('.menu .dropdown-content').forEach(panel => {
-          panel.style.maxHeight = '';
-          panel.style.opacity = '';
-        });
-        document.querySelectorAll('.menu .dropdown').forEach(dd => dd.classList.remove('open'));
-        document.querySelectorAll('.dropdown .dropbtn').forEach(b => b.setAttribute('aria-expanded','false'));
-      }
-    }
-    window.addEventListener('resize', syncDropdownMode);
-    syncDropdownMode();
-  }
-  </script>
-  
-  
-
-
-<div class="product">
-  <img src="Media\Merch\tshirt.png" alt="T-Shirt" style="max-width: 300px; width: 100%; height: auto;">
-  <h3>Cool T-Shirt</h3>
-  <p>$25</p>
-
-  <!-- Size selector (circles) -->
-  <div class="size-group" role="radiogroup" aria-label="Size">
-    <input class="size-option" type="radio" name="size-tshirt" id="size-s" value="S">
-    <label class="size-pill" for="size-s">S</label>
-
-    <input class="size-option" type="radio" name="size-tshirt" id="size-m" value="M" checked>
-    <label class="size-pill" for="size-m">M</label>
-
-    <input class="size-option" type="radio" name="size-tshirt" id="size-l" value="L">
-    <label class="size-pill" for="size-l">L</label>
-  </div>
-
-  <!-- Quantity selector -->
-  <div style="margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 15px;">
-    <button type="button" class="quantity-btn" onclick="changeQuantity('quantity-tshirt', -1)">-</button>
-    <span id="quantity-tshirt" style="color: #fff; font-size: 20px; font-weight: 700; min-width: 30px; text-align: center;">1</span>
-    <button type="button" class="quantity-btn" onclick="changeQuantity('quantity-tshirt', 1)">+</button>
-  </div>
-
-  <button id="add-cart-btn" onclick="addToCart('Cool T-Shirt', 25, (document.querySelector('input[name=&quot;size-tshirt&quot;]:checked')||{}).value || 'M', parseInt(document.getElementById('quantity-tshirt').textContent) || 1)" style="padding: 12px 30px; background-color: #ff2a2a; color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 16px; font-weight: 600; transition: all 0.3s ease;">Add to Cart</button>
-</div>
+  <main>
+    <div id="merch-products"></div>
+  </main>
 
 
 <script>
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-function changeQuantity(id, delta) {
+function slugify(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function changeQuantity(id, delta, maxQuantity = 3) {
   const quantityElement = document.getElementById(id);
+  if (!quantityElement) return;
+
   let currentQuantity = parseInt(quantityElement.textContent) || 1;
   let newQuantity = currentQuantity + delta;
   
-  // Keep quantity between 1 and 3
+  // Keep quantity in allowed range for each product.
   if (newQuantity < 1) newQuantity = 1;
-  if (newQuantity > 3) newQuantity = 3;
+  if (newQuantity > maxQuantity) newQuantity = maxQuantity;
   
   quantityElement.textContent = newQuantity;
 }
 
-function addToCart(name, price, size, quantity) {
+function addToCart(name, price, size, quantity, buttonElement, defaultButtonText = 'Add to Cart') {
   // Add items based on quantity
   for (let i = 0; i < quantity; i++) {
     cart.push({ name, price, size });
@@ -247,17 +130,153 @@ function addToCart(name, price, size, quantity) {
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
   
+  if (!buttonElement) return;
+
   // Button animation
-  const btn = document.getElementById('add-cart-btn');
-  btn.textContent = 'Added!';
-  btn.style.backgroundColor = '#00cc00';
-  btn.style.pointerEvents = 'none';
+  buttonElement.textContent = 'Added!';
+  buttonElement.style.backgroundColor = '#00cc00';
+  buttonElement.style.pointerEvents = 'none';
   
   setTimeout(() => {
-    btn.textContent = 'Add to Cart';
-    btn.style.backgroundColor = '#ff2a2a';
-    btn.style.pointerEvents = 'auto';
+    buttonElement.textContent = defaultButtonText;
+    buttonElement.style.backgroundColor = '#ff2a2a';
+    buttonElement.style.pointerEvents = 'auto';
   }, 1000);
+}
+
+function createProductCard(product) {
+  const safeIdBase = slugify(product.id || product.name || 'product');
+  const quantityId = `quantity-${safeIdBase}`;
+  const sizeGroupName = `size-${safeIdBase}`;
+  const sizes = Array.isArray(product.sizes) && product.sizes.length ? product.sizes : ['One Size'];
+  const defaultSize = sizes.includes(product.defaultSize) ? product.defaultSize : sizes[0];
+  const maxQuantity = Number(product.maxQuantity) > 0 ? Number(product.maxQuantity) : 3;
+  const buttonText = product.buttonText || 'Add to Cart';
+
+  const card = document.createElement('div');
+  card.className = 'product';
+
+  const img = document.createElement('img');
+  img.src = product.image;
+  img.alt = product.imageAlt || product.name;
+  img.style.maxWidth = '300px';
+  img.style.width = '100%';
+  img.style.height = 'auto';
+
+  const title = document.createElement('h3');
+  title.textContent = product.name;
+
+  const price = document.createElement('p');
+  price.textContent = `$${product.price}`;
+
+  const sizeGroup = document.createElement('div');
+  sizeGroup.className = 'size-group';
+  sizeGroup.setAttribute('role', 'radiogroup');
+  sizeGroup.setAttribute('aria-label', 'Size');
+
+  sizes.forEach((sizeValue) => {
+    const optionId = `size-${safeIdBase}-${slugify(sizeValue)}`;
+
+    const input = document.createElement('input');
+    input.className = 'size-option';
+    input.type = 'radio';
+    input.name = sizeGroupName;
+    input.id = optionId;
+    input.value = sizeValue;
+    input.checked = sizeValue === defaultSize;
+
+    const label = document.createElement('label');
+    label.className = 'size-pill';
+    label.setAttribute('for', optionId);
+    label.textContent = sizeValue;
+
+    sizeGroup.appendChild(input);
+    sizeGroup.appendChild(label);
+  });
+
+  const quantityWrap = document.createElement('div');
+  quantityWrap.style.margin = '15px 0';
+  quantityWrap.style.display = 'flex';
+  quantityWrap.style.alignItems = 'center';
+  quantityWrap.style.justifyContent = 'center';
+  quantityWrap.style.gap = '15px';
+
+  const minusBtn = document.createElement('button');
+  minusBtn.type = 'button';
+  minusBtn.className = 'quantity-btn';
+  minusBtn.textContent = '-';
+  minusBtn.addEventListener('click', () => changeQuantity(quantityId, -1, maxQuantity));
+
+  const quantityText = document.createElement('span');
+  quantityText.id = quantityId;
+  quantityText.style.color = '#fff';
+  quantityText.style.fontSize = '20px';
+  quantityText.style.fontWeight = '700';
+  quantityText.style.minWidth = '30px';
+  quantityText.style.textAlign = 'center';
+  quantityText.textContent = '1';
+
+  const plusBtn = document.createElement('button');
+  plusBtn.type = 'button';
+  plusBtn.className = 'quantity-btn';
+  plusBtn.textContent = '+';
+  plusBtn.addEventListener('click', () => changeQuantity(quantityId, 1, maxQuantity));
+
+  quantityWrap.appendChild(minusBtn);
+  quantityWrap.appendChild(quantityText);
+  quantityWrap.appendChild(plusBtn);
+
+  const addButton = document.createElement('button');
+  addButton.type = 'button';
+  addButton.textContent = buttonText;
+  addButton.style.padding = '12px 30px';
+  addButton.style.backgroundColor = '#ff2a2a';
+  addButton.style.color = 'white';
+  addButton.style.border = 'none';
+  addButton.style.cursor = 'pointer';
+  addButton.style.borderRadius = '5px';
+  addButton.style.fontSize = '16px';
+  addButton.style.fontWeight = '600';
+  addButton.style.transition = 'all 0.3s ease';
+
+  addButton.addEventListener('click', () => {
+    const selectedSize = (document.querySelector(`input[name="${sizeGroupName}"]:checked`) || {}).value || defaultSize;
+    const quantity = parseInt(document.getElementById(quantityId)?.textContent, 10) || 1;
+    addToCart(product.name, Number(product.price), selectedSize, quantity, addButton, buttonText);
+  });
+
+  card.appendChild(img);
+  card.appendChild(title);
+  card.appendChild(price);
+  card.appendChild(sizeGroup);
+  card.appendChild(quantityWrap);
+  card.appendChild(addButton);
+
+  return card;
+}
+
+async function renderMerchFromJson() {
+  const container = document.getElementById('merch-products');
+  if (!container) return;
+
+  try {
+    const response = await fetch('merch.json');
+    if (!response.ok) throw new Error('Failed to load merch.json');
+
+    const products = await response.json();
+    if (!Array.isArray(products) || products.length === 0) {
+      container.innerHTML = '<p style="color: white; text-align: center;">No products available right now.</p>';
+      return;
+    }
+
+    container.innerHTML = '';
+    products.forEach((product) => {
+      container.appendChild(createProductCard(product));
+    });
+  } catch (error) {
+    console.error('Could not load merch.json', error);
+    container.innerHTML = '<p style="color: white; text-align: center;">Could not load products. Please refresh the page.</p>';
+  }
 }
 
 function updateCartCount() {
@@ -268,8 +287,11 @@ function updateCartCount() {
   }
 }
 
-// Update cart count on page load
-updateCartCount();
+// Render products and update cart count on page load.
+document.addEventListener('DOMContentLoaded', () => {
+  updateCartCount();
+  renderMerchFromJson();
+});
 </script>
  
 

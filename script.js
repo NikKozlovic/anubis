@@ -1,6 +1,25 @@
 window.__ANUBIS_NAV_SCRIPT_LOADED__ = true;
 
 document.addEventListener('DOMContentLoaded', () => {
+  const footerParagraphs = document.querySelectorAll('.footer p');
+
+  if (footerParagraphs.length) {
+    fetch('footer.json')
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to load footer.json');
+        return response.json();
+      })
+      .then((footerData) => {
+        if (!footerData || typeof footerData.text !== 'string') return;
+        footerParagraphs.forEach((paragraph) => {
+          paragraph.textContent = footerData.text;
+        });
+      })
+      .catch((error) => {
+        console.error('Could not load shared footer text', error);
+      });
+  }
+
   const toggle = document.getElementById('menu-toggle');
   const menu = document.getElementById('menu');
   const overlay = document.getElementById('overlay');

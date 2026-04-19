@@ -66,7 +66,7 @@
       </a>
 
       <a href="gallery.html">GALLERY</a>
-      <a href="https://techno-cult.com/products/kosowsky-oversized-t-shirt" target="_blank" rel="noopener noreferrer">MERCH</a>
+      <a href="store.html">MERCH</a>
       
 
       <div class="dropdown">
@@ -221,107 +221,65 @@
         <p class="section-subtitle">Click on each rule to reveal the underground wisdom</p>
       </div>
     
-    <div class="rules-list">
-      <div class="rule-item">
-        <h2 class="rule-header">RESPECT THE SPACE</h2>
-        <div class="rule-description">
-          <p>This is a sanctuary for music and freedom. Treat the venue, the gear, and the people around you with care.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">NO JUDGMENT, NO EGO</h2>
-        <div class="rule-description">
-          <p>Leave your attitude at the door. We move as one — everyone is equal on the dancefloor.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">CONSENT IS KEY</h2>
-        <div class="rule-description">
-          <p>Always respect personal boundaries. No means no — in every form.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">RAVE SAFE</h2>
-        <div class="rule-description">
-          <p>Take care of yourself and others. If someone looks unwell, check in. We look out for each other here.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">NO PHONES ON THE DANCEFLOOR</h2>
-        <div class="rule-description">
-          <p>Be present. Feel the moment. The only light that belongs here is the strobe.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">RESPECT THE MUSIC</h2>
-        <div class="rule-description">
-          <p>Trust the DJs and the flow. Every track has a purpose — let the sound guide you.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">KEEP IT UNDERGROUND</h2>
-        <div class="rule-description">
-          <p>This is not about fame or followers. It's about raw sound, energy, and connection.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">NO HATE, NO DISCRIMINATION</h2>
-        <div class="rule-description">
-          <p>Zero tolerance for racism, sexism, homophobia, or any form of disrespect. This space is for everyone.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">LOSE YOURSELF, NOT YOUR MIND</h2>
-        <div class="rule-description">
-          <p>Dance hard, rave harder — but know your limits. Your safety and energy matter.</p>
-        </div>
-      </div>
-      
-      <div class="rule-item">
-        <h2 class="rule-header">LEAVE ONLY VIBES</h2>
-        <div class="rule-description">
-          <p>Take your memories, not your trash. Respect the space and the people who build it.</p>
-        </div>
-      </div>
-    </div>
+    <div class="rules-list" id="rules-list"></div>
   </main>
   
   <script>
-    // Rule expansion functionality
-    document.querySelectorAll('.rule-item').forEach(item => {
-      const header = item.querySelector('.rule-header');
-      const description = item.querySelector('.rule-description');
-      
-      header.style.cursor = 'pointer';
-      description.style.maxHeight = '0';
-      description.style.overflow = 'hidden';
-      description.style.transition = 'max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease';
-      description.style.opacity = '0';
-      
-      header.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        
-        if (isOpen) {
-          item.classList.remove('open');
-          description.style.maxHeight = '0';
-          description.style.opacity = '0';
-          description.style.marginTop = '0';
-        } else {
-          item.classList.add('open');
-          description.style.maxHeight = description.scrollHeight + 'px';
-          description.style.opacity = '1';
-          description.style.marginTop = '15px';
-        }
+    function setupAccordion(container) {
+      container.querySelectorAll('.rule-item').forEach(item => {
+        const header = item.querySelector('.rule-header');
+        const description = item.querySelector('.rule-description');
+
+        header.style.cursor = 'pointer';
+        description.style.maxHeight = '0';
+        description.style.overflow = 'hidden';
+        description.style.transition = 'max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease';
+        description.style.opacity = '0';
+
+        header.addEventListener('click', () => {
+          const isOpen = item.classList.contains('open');
+
+          if (isOpen) {
+            item.classList.remove('open');
+            description.style.maxHeight = '0';
+            description.style.opacity = '0';
+            description.style.marginTop = '0';
+          } else {
+            item.classList.add('open');
+            description.style.maxHeight = description.scrollHeight + 'px';
+            description.style.opacity = '1';
+            description.style.marginTop = '15px';
+          }
+        });
       });
-    });
+    }
+
+    async function renderRulesFromJson() {
+      const list = document.getElementById('rules-list');
+      if (!list) return;
+
+      try {
+        const response = await fetch('rules.json');
+        if (!response.ok) throw new Error('Failed to load rules.json');
+        const rules = await response.json();
+
+        list.innerHTML = rules.map(rule => `
+          <div class="rule-item">
+            <h2 class="rule-header">${rule.title}</h2>
+            <div class="rule-description">
+              <p>${rule.description}</p>
+            </div>
+          </div>
+        `).join('');
+
+        setupAccordion(list);
+      } catch (error) {
+        console.error('Could not load Rules data', error);
+        list.innerHTML = '<div class="rule-item"><h2 class="rule-header">Rules unavailable</h2><div class="rule-description" style="max-height:none;opacity:1;margin-top:15px;"><p>Please try refreshing the page.</p></div></div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderRulesFromJson);
   </script>
   
   <footer class="footer">

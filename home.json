@@ -1,0 +1,16 @@
+{
+  "latestPodcast": {
+    "sectionTitle": "LATEST PODCAST",
+    "sectionSubtitle": "Fresh underground sounds from our residents",
+    "icon": "🎧",
+    "linkUrl": "https://soundcloud.com/anubis_records/zmauc_029",
+    "linkText": "View on SoundCloud →"
+  },
+  "latestRelease": {
+    "sectionTitle": "LATEST RELEASE",
+    "sectionSubtitle": "Hot off the underground press",
+    "icon": "💿",
+    "linkUrl": "https://soundcloud.com/anubis_records/vanch_mothers_of_disgrace",
+    "linkText": "Stream Full Release →"
+  }
+}

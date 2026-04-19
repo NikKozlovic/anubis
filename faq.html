@@ -66,7 +66,7 @@
       </a>
 
       <a href="gallery.html">GALLERY</a>
-      <a href="https://techno-cult.com/products/kosowsky-oversized-t-shirt" target="_blank" rel="noopener noreferrer">MERCH</a>
+      <a href="store.html">MERCH</a>
       
 
       <div class="dropdown">
@@ -217,142 +217,68 @@
         <h2 class="section-title">FAQ</h2>
         <p class="section-subtitle">Click on each question to reveal the answers</p>
       </div>
-    <div class="rules-list">
-      <div class="rule-item">
-        <h2 class="rule-header">How can I stay updated on upcoming events?</h2>
-        <div class="rule-description">
-          <p>Follow us on Instagram for all event updates and announcements.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">How can I get tickets for your events?</h2>
-        <div class="rule-description">
-          <p>Tickets are available on our website under the Events section or through Anubis promoters.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Can I buy tickets at the door?</h2>
-        <div class="rule-description">
-          <p>Yes, if the event isn’t sold out.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Are your events 18+ only?</h2>
-        <div class="rule-description">
-          <p>Yes.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Do you allow re-entry once I leave the venue?</h2>
-        <div class="rule-description">
-          <p>Depends on the venue.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Are there cloakrooms or lockers available?</h2>
-        <div class="rule-description">
-          <p>Depends on the event.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Is there a dress code?</h2>
-        <div class="rule-description">
-          <p>No. Wear whatever makes you feel free.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">How do you handle discrimination or harassment at events?</h2>
-        <div class="rule-description">
-          <p>Anyone engaging in discrimination or harassment will be removed from the event without hesitation.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Can I take photos or videos during the event?</h2>
-        <div class="rule-description">
-          <p>Depends on the event. You’ll be notified in the event rules.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Do you collaborate with other collectives or artists?</h2>
-        <div class="rule-description">
-          <p>Yes. We often work with other crews and artists who share our vision.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">How can I submit my demo to Anubis Underground?</h2>
-        <div class="rule-description">
-          <p>Select Submissions under the Music category on our website.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">What genres do you accept for demo submissions?</h2>
-        <div class="rule-description">
-          <p>Hard Techno, Industrial, Schranz, Psytechno/Psy
-          <p>Hard Techno, Industrial, Schranz, Psytechno/Psytrance, Bochka, Hard Groove/Groove — mostly underground styles.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Where are your events usually held?</h2>
-        <div class="rule-description">
-          <p>Across Slovenia. Venues vary depending on the event.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">How can I contact you?</h2>
-        <div class="rule-description">
-          <p>Email us at <a href="mailto:anubis.underground1@gmail.com">anubis.underground1@gmail.com</a> or DM us on <a href="https://www.instagram.com/anubisunderground/" target="_blank" rel="noopener noreferrer">Instagram</a>.</p>
-        </div>
-      </div>
-
-      <div class="rule-item">
-        <h2 class="rule-header">Do you accept collaborations or sponsorships?</h2>
-        <div class="rule-description">
-          <p>Yes. We’re open to working with those who align with our vision.</p>
-        </div>
-      </div>
-    </div>
+    <div class="rules-list" id="faq-list"></div>
   </main>
 
   <script>
-    // FAQ expansion functionality
-    document.querySelectorAll('.rule-item').forEach(item => {
-      const header = item.querySelector('.rule-header');
-      const description = item.querySelector('.rule-description');
+    function setupAccordion(container) {
+      container.querySelectorAll('.rule-item').forEach(item => {
+        const header = item.querySelector('.rule-header');
+        const description = item.querySelector('.rule-description');
 
-      header.style.cursor = 'pointer';
-      description.style.maxHeight = '0';
-      description.style.overflow = 'hidden';
-      description.style.transition = 'max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease';
-      description.style.opacity = '0';
+        header.style.cursor = 'pointer';
+        description.style.maxHeight = '0';
+        description.style.overflow = 'hidden';
+        description.style.transition = 'max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease';
+        description.style.opacity = '0';
 
-      header.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        if (isOpen) {
-          item.classList.remove('open');
-          description.style.maxHeight = '0';
-          description.style.opacity = '0';
-          description.style.marginTop = '0';
-        } else {
-          item.classList.add('open');
-          description.style.maxHeight = description.scrollHeight + 'px';
-          description.style.opacity = '1';
-          description.style.marginTop = '15px';
-        }
+        header.addEventListener('click', () => {
+          const isOpen = item.classList.contains('open');
+
+          if (isOpen) {
+            item.classList.remove('open');
+            description.style.maxHeight = '0';
+            description.style.opacity = '0';
+            description.style.marginTop = '0';
+          } else {
+            item.classList.add('open');
+            description.style.maxHeight = description.scrollHeight + 'px';
+            description.style.opacity = '1';
+            description.style.marginTop = '15px';
+          }
+        });
       });
-    });
+    }
+
+    async function renderFaqFromJson() {
+      const list = document.getElementById('faq-list');
+      if (!list) return;
+
+      try {
+        const response = await fetch('faq.json');
+        if (!response.ok) throw new Error('Failed to load faq.json');
+        const faqItems = await response.json();
+
+        list.innerHTML = faqItems.map(item => {
+          const answerContent = item.answerHtml ? item.answerHtml : item.answer;
+          return `
+            <div class="rule-item">
+              <h2 class="rule-header">${item.question}</h2>
+              <div class="rule-description">
+                <p>${answerContent}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        setupAccordion(list);
+      } catch (error) {
+        console.error('Could not load FAQ data', error);
+        list.innerHTML = '<div class="rule-item"><h2 class="rule-header">FAQ unavailable</h2><div class="rule-description" style="max-height:none;opacity:1;margin-top:15px;"><p>Please try refreshing the page.</p></div></div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderFaqFromJson);
   </script>
 
   <footer class="footer">
