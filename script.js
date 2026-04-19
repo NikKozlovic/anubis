@@ -96,6 +96,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function shouldKeepImageEager(img) {
+    if (!img || !(img instanceof HTMLImageElement)) return true;
+
+    // Preserve eager loading for first-paint / hero / nav imagery.
+    if (
+      img.closest('.navbar, .menu, .logo, .logo-inline') ||
+      img.closest('.hero-section, .about-hero, .rules-hero, .faq-hero, .submission-hero') ||
+      img.classList.contains('hero-logo-img') ||
+      img.classList.contains('about-logo-img') ||
+      img.classList.contains('rules-logo-img') ||
+      img.classList.contains('faq-logo-img') ||
+      img.classList.contains('submission-logo-img') ||
+      img.classList.contains('hero-snake-top-left') ||
+      img.classList.contains('hero-snake-top-right')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function applyImageLoadingHints(root = document) {
+    const images = root.querySelectorAll ? root.querySelectorAll('img') : [];
+    images.forEach((img) => {
+      if (shouldKeepImageEager(img)) {
+        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'eager');
+        if (!img.hasAttribute('fetchpriority')) img.setAttribute('fetchpriority', 'high');
+      } else {
+        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+        if (!img.hasAttribute('fetchpriority')) img.setAttribute('fetchpriority', 'low');
+      }
+
+      if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+    });
+  }
+
   // Expose resolver for inline scripts used on specific pages (cart/checkout, etc.).
   window.__ANUBIS_RESOLVE_URL = normalizeNavHref;
 
@@ -154,6 +190,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ensureSharedFooter();
   normalizeDocumentLinks();
+  applyImageLoadingHints();
+
+  const imageHintObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (!(node instanceof Element)) return;
+
+        if (node.tagName === 'IMG') {
+          applyImageLoadingHints(node.parentElement || document);
+          return;
+        }
+
+        if (node.querySelector && node.querySelector('img')) {
+          applyImageLoadingHints(node);
+        }
+      });
+    });
+  });
+  imageHintObserver.observe(document.body, { childList: true, subtree: true });
 
   const footerParagraphs = document.querySelectorAll('.footer p');
 
@@ -238,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         navMenuEl.innerHTML = html;
         normalizeDocumentLinks(navMenuEl);
+        applyImageLoadingHints(navMenuEl);
 
         document.querySelectorAll('.dropdown .dropbtn').forEach((button) => {
           const dropdown = button.closest('.dropdown');
