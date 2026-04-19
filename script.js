@@ -85,6 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return getBasePath() + path.replace(/^\/+/, '') + suffix;
   }
 
+  function normalizeDocumentLinks(root = document) {
+    root.querySelectorAll('a[href]').forEach((anchor) => {
+      const rawHref = anchor.getAttribute('href');
+      if (!rawHref) return;
+      const nextHref = normalizeNavHref(rawHref);
+      if (nextHref && nextHref !== rawHref) {
+        anchor.setAttribute('href', nextHref);
+      }
+    });
+  }
+
+  // Expose resolver for inline scripts used on specific pages (cart/checkout, etc.).
+  window.__ANUBIS_RESOLVE_URL = normalizeNavHref;
+
   const homePath = normalizeNavHref('index.html');
 
   function ensureSharedNavbar() {
@@ -139,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   ensureSharedFooter();
+  normalizeDocumentLinks();
 
   const footerParagraphs = document.querySelectorAll('.footer p');
 
@@ -222,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         navMenuEl.innerHTML = html;
+        normalizeDocumentLinks(navMenuEl);
 
         document.querySelectorAll('.dropdown .dropbtn').forEach((button) => {
           const dropdown = button.closest('.dropdown');
