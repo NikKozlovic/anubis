@@ -1095,6 +1095,8 @@ body {
   font-size: 12px;
   color: #888;
   margin: 0;
+  position: relative;
+  z-index: 11;
 }
 
 .ticket-btn {
@@ -3271,15 +3273,6 @@ strong {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 40px;
-}
-
-@media (min-width: 1040px) {
-  .events-gallery > .gallery-event-card:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: 100%;
-    max-width: calc((100% - 40px) / 2);
-  }
 }
 
 .gallery-event-card {

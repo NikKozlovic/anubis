@@ -10,6 +10,59 @@ function getSocialIconSvg(iconName) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  function ensureSharedNavbar() {
+    const existingNavbar = document.querySelector('.navbar');
+    if (existingNavbar) return existingNavbar;
+
+    const navbarMarkup =
+      '<div class="navbar">' +
+      '<a class="logo" href="home.html">' +
+      '<img src="Media/Logo/logo.png" alt="Logo">' +
+      '</a>' +
+      '<div class="socials" aria-hidden="false"></div>' +
+      '<div class="menu-toggle" id="menu-toggle" aria-label="Open menu"></div>' +
+      '<div class="menu" id="menu"></div>' +
+      '<a class="logo-inline" href="home.html">' +
+      '<img class="logo-img default" src="Media/Logo/logo.png" alt="Logo">' +
+      '<img class="logo-img hover" src="Media/Logo/logored.png" alt="Logo (red)">' +
+      '</a>' +
+      '<div id="overlay" class="overlay" aria-hidden="true"></div>' +
+      '</div>';
+
+    const mountPoint = document.getElementById('shared-navbar-root');
+    if (mountPoint) {
+      mountPoint.outerHTML = navbarMarkup;
+    } else {
+      document.body.insertAdjacentHTML('afterbegin', navbarMarkup);
+    }
+
+    return document.querySelector('.navbar');
+  }
+
+  ensureSharedNavbar();
+
+  function ensureSharedFooter() {
+    const existingFooter = document.querySelector('footer.footer');
+    if (existingFooter) return existingFooter;
+
+    const footerMarkup =
+      '<footer class="footer">' +
+      '<img src="Media/Graphic/snake_bottom_right.webp" alt="" class="hero-snake-bottom-right">' +
+      '<p>Copyright 2026 © All rights Reserved. Design by Anubis Underground</p>' +
+      '</footer>';
+
+    const mountPoint = document.getElementById('shared-footer-root');
+    if (mountPoint) {
+      mountPoint.outerHTML = footerMarkup;
+    } else {
+      document.body.insertAdjacentHTML('beforeend', footerMarkup);
+    }
+
+    return document.querySelector('footer.footer');
+  }
+
+  ensureSharedFooter();
+
   const footerParagraphs = document.querySelectorAll('.footer p');
 
   if (footerParagraphs.length) {
