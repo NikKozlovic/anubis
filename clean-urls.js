@@ -50,6 +50,8 @@
     const homeAliases = new Set([
         baseNoSlash + '/home',
         baseNoSlash + '/home/',
+        baseNoSlash + '/index',
+        baseNoSlash + '/index/',
         baseNoSlash + '/home.html',
         baseNoSlash + '/home/home.html',
         baseNoSlash + '/index.html'

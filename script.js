@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     path = path.replace(/\/index\.html$/i, '/');
     path = path.replace(/\.html$/i, '');
 
-    if (path === '' || path === 'home' || path === 'home/') {
+    if (path === '' || path === 'home' || path === 'home/' || path === 'index' || path === 'index/') {
       return getBasePath() + suffix;
     }
 
