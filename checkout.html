@@ -108,6 +108,15 @@
   </main>
 
   <script>
+    function getHomePath() {
+      const hostname = window.location.hostname;
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      if (hostname.endsWith('github.io') && parts.length > 0) {
+        return '/' + parts[0] + '/';
+      }
+      return '/';
+    }
+
     function showNotification(message, type = 'error') {
       const notification = document.getElementById('notification');
       notification.textContent = message;
@@ -216,7 +225,7 @@
                 
                 // Redirect to thank you page after 3 seconds
                 setTimeout(() => {
-                  window.location.href = 'home.html';
+                  window.location.href = getHomePath();
                 }, 3000);
               } else {
                 showNotification('Payment was successful, but there was an issue saving your order. Please contact us with your transaction ID: ' + details.id, 'error');

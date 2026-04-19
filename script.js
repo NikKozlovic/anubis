@@ -10,19 +10,96 @@ function getSocialIconSvg(iconName) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  function shouldForceCleanUrls() {
+    try {
+      if (window.__ANUBIS_FORCE_CLEAN_URLS__ === true) return true;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('clean') === '1') {
+        window.localStorage.setItem('anubis_force_clean_urls', '1');
+        return true;
+      }
+      return window.localStorage.getItem('anubis_force_clean_urls') === '1';
+    } catch (_) {
+      return window.__ANUBIS_FORCE_CLEAN_URLS__ === true;
+    }
+  }
+
+  function getBasePath() {
+    const hostname = window.location.hostname;
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    if (hostname.endsWith('github.io') && parts.length > 0) {
+      return '/' + parts[0] + '/';
+    }
+    return '/';
+  }
+
+  function isLocalDev() {
+    if (shouldForceCleanUrls()) return false;
+    const hostname = window.location.hostname;
+    return (
+      window.location.protocol === 'file:' ||
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '::1'
+    );
+  }
+
+  function normalizeNavHref(rawHref) {
+    if (typeof rawHref !== 'string' || rawHref.trim() === '') return rawHref;
+
+    const href = rawHref.trim();
+    if (
+      href.startsWith('#') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      /^[a-z][a-z0-9+.-]*:/i.test(href) ||
+      href.startsWith('//')
+    ) {
+      return href;
+    }
+
+    const suffixMatch = href.match(/([?#].*)$/);
+    const suffix = suffixMatch ? suffixMatch[1] : '';
+    let path = suffix ? href.slice(0, -suffix.length) : href;
+
+    if (!path || path === '.') return getBasePath() + suffix;
+
+    // Keep explicit root-relative paths untouched.
+    if (path.startsWith('/')) return path + suffix;
+
+    if (isLocalDev()) {
+      if (!/\.[a-z0-9]+$/i.test(path) && !path.endsWith('/')) {
+        path += '.html';
+      }
+      return path + suffix;
+    }
+
+    path = path.replace(/^\.\//, '');
+    path = path.replace(/\/index\.html$/i, '/');
+    path = path.replace(/\.html$/i, '');
+
+    if (path === '' || path === 'home' || path === 'home/') {
+      return getBasePath() + suffix;
+    }
+
+    return getBasePath() + path.replace(/^\/+/, '') + suffix;
+  }
+
+  const homePath = normalizeNavHref('index.html');
+
   function ensureSharedNavbar() {
     const existingNavbar = document.querySelector('.navbar');
     if (existingNavbar) return existingNavbar;
 
     const navbarMarkup =
       '<div class="navbar">' +
-      '<a class="logo" href="home.html">' +
+      '<a class="logo" href="' + homePath + '">' +
       '<img src="Media/Logo/logo.png" alt="Logo">' +
       '</a>' +
       '<div class="socials" aria-hidden="false"></div>' +
       '<div class="menu-toggle" id="menu-toggle" aria-label="Open menu"></div>' +
       '<div class="menu" id="menu"></div>' +
-      '<a class="logo-inline" href="home.html">' +
+      '<a class="logo-inline" href="' + homePath + '">' +
       '<img class="logo-img default" src="Media/Logo/logo.png" alt="Logo">' +
       '<img class="logo-img hover" src="Media/Logo/logored.png" alt="Logo (red)">' +
       '</a>' +
@@ -128,19 +205,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         navData.menu.forEach((item, index) => {
           if (index === logoInsertIndex) {
-            html += '<a class="logo-inline" href="home.html"><img class="logo-img default" src="Media/Logo/logo.png" alt="Logo"><img class="logo-img hover" src="Media/Logo/logored.png" alt="Logo (red)"></a>';
+            html += '<a class="logo-inline" href="' + homePath + '"><img class="logo-img default" src="Media/Logo/logo.png" alt="Logo"><img class="logo-img hover" src="Media/Logo/logored.png" alt="Logo (red)"></a>';
           }
 
           if (item.type === 'dropdown') {
             html += '<div class="dropdown"><button class="dropbtn">' + item.label + ' ▾</button><div class="dropdown-content">';
             item.items.forEach((subitem) => {
               const target = subitem.target ? ` target="${subitem.target}" rel="noopener noreferrer"` : '';
-              html += `<a href="${subitem.href}"${target}>${subitem.label}</a>`;
+              html += `<a href="${normalizeNavHref(subitem.href)}"${target}>${subitem.label}</a>`;
             });
             html += '</div></div>';
           } else {
             const target = item.target ? ` target="${item.target}" rel="noopener noreferrer"` : '';
-            html += `<a href="${item.href}"${target}>${item.label}</a>`;
+            html += `<a href="${normalizeNavHref(item.href)}"${target}>${item.label}</a>`;
           }
         });
 
