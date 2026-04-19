@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap');
 
+:root {
+  --nav-offset: 56px;
+}
+
 /* Reset and base sizing */
 * {
   -webkit-text-size-adjust: 100%;
@@ -19,7 +23,7 @@ body {
   color: white;
   font-family: 'Cinzel', serif;
   margin: 0;
-  padding-top: 56px; /* reserve space for fixed navbar */
+  padding-top: var(--nav-offset); /* reserve space for fixed navbar */
   overflow-x: hidden; /* prevent horizontal scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -31,7 +35,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 0 10px;
+  box-sizing: border-box;
   position: fixed; /* keep navbar on top when scrolling */
   top: 0;
   left: 0;
@@ -42,6 +47,7 @@ body {
   /* animation */
   transition: padding 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
   transform: translateY(0);
+  isolation: isolate;
 }
 
 /* logo (left) */
@@ -55,6 +61,8 @@ body {
   z-index: 1002;
   -webkit-tap-highlight-color: transparent; /* remove blue highlight on mobile tap */
   user-select: none; /* prevent text selection */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .logo img {
@@ -200,6 +208,8 @@ body {
   align-items: center;
   z-index: 1003;
   max-width: calc(100vw - 80px); /* prevent overflow */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* each icon uses currentColor so color/hover applies */
@@ -213,6 +223,8 @@ body {
   border-radius: 4px;
   -webkit-tap-highlight-color: transparent; /* remove blue highlight on mobile tap */
   user-select: none; /* prevent text selection */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* hover turns red and slightly scales */
@@ -228,7 +240,7 @@ body {
   align-items: stretch;      /* allow full width instead of center */
   justify-content: flex-start;  /* keep content at top instead of centered vertically */
   text-align: center;       /* center text inside */
-  min-height: calc(100vh - 56px); /* fill viewport minus navbar height */
+  min-height: calc(100vh - var(--nav-offset)); /* fill viewport minus navbar height */
   padding: 0 0 16px;  /* remove top padding, keep bottom padding */
   box-sizing: border-box;
 }
@@ -4679,4 +4691,151 @@ strong {
         height: 100%;
       }
     }
+
+/* ===== Final Mobile Nav Override ===== */
+@media (max-width: 1024px), (max-height: 500px) and (max-width: 1200px) {
+  .socials {
+    right: 72px;
+    gap: 8px;
+    max-width: calc(100vw - 136px);
+  }
+
+  .menu-toggle {
+    right: 12px;
+  }
+
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0;
+    color: transparent;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 12px;
+    transition: border-color 220ms ease, background-color 220ms ease;
+    transform: translateY(-50%) translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .menu-toggle-line {
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: #fff;
+    transition: transform 260ms ease, opacity 220ms ease;
+    transform-origin: center;
+  }
+
+  .menu-toggle.is-open .menu-toggle-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .menu-toggle.is-open .menu-toggle-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle.is-open .menu-toggle-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* Keep overlay and drawer below the fixed 56px navbar */
+  .overlay {
+    top: calc(var(--nav-offset) - 1px);
+    background: rgba(0, 0, 0, 0.65);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 240ms ease;
+    z-index: 998;
+  }
+
+  .overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .menu {
+    position: fixed;
+    top: calc(var(--nav-offset) - 1px);
+    right: 0;
+    left: auto;
+    height: calc(100dvh - var(--nav-offset) + 1px);
+    width: 70vw;
+    max-width: 70vw;
+    padding: 10px 12px 22px;
+    gap: 6px;
+    flex-direction: column;
+    background: linear-gradient(170deg, rgba(0, 0, 0, 0.98), rgba(8, 8, 8, 0.98));
+    border-left: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: -16px 0 36px rgba(0, 0, 0, 0.62);
+    transform: translateX(105%);
+    opacity: 0;
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+    z-index: 999;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .menu > *:first-child {
+    margin-top: 0;
+  }
+
+  .menu.active {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .menu a,
+  .dropbtn {
+    text-align: left;
+    padding: 13px 14px;
+    display: block;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .menu .dropdown-content {
+    padding: 4px 0 0 10px;
+    margin: 2px 0 8px;
+  }
+
+  .menu .dropdown-content a {
+    margin: 6px 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .menu > a,
+  .menu > .dropdown {
+    opacity: 0;
+    transform: translateX(14px);
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
+  }
+
+  .menu.active > a,
+  .menu.active > .dropdown {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .menu.active > *:nth-child(1) { transition-delay: 35ms; }
+  .menu.active > *:nth-child(2) { transition-delay: 60ms; }
+  .menu.active > *:nth-child(3) { transition-delay: 85ms; }
+  .menu.active > *:nth-child(4) { transition-delay: 110ms; }
+  .menu.active > *:nth-child(5) { transition-delay: 135ms; }
+  .menu.active > *:nth-child(6) { transition-delay: 160ms; }
+  .menu.active > *:nth-child(7) { transition-delay: 185ms; }
+
+  body.mobile-menu-open {
+    overflow: hidden;
+    touch-action: none;
+  }
+}
     
