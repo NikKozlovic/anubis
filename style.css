@@ -2672,6 +2672,35 @@ strong {
       }
     }
 
+    /* Android/Samsung optimization: reduce expensive blend/filter effects on coarse-pointer mobiles. */
+    @media (hover: none) and (pointer: coarse) {
+      .hieroglyph-marquee::before {
+        mix-blend-mode: normal;
+        opacity: 0.1;
+        animation: none;
+      }
+
+      .hieroglyph-track {
+        animation: hieroglyphLeftToRight 45s linear infinite -22.5s;
+        will-change: auto;
+      }
+
+      .hieroglyph-text {
+        animation: none;
+        filter: none;
+        text-shadow: 0 0 8px rgba(255, 42, 42, 0.25);
+      }
+
+      .hero-logo-img,
+      .about-logo-img,
+      .rules-logo-img,
+      .faq-logo-img,
+      .submission-logo-img {
+        animation: none !important;
+        filter: none !important;
+      }
+    }
+
     /* Featured Event Section */
     .featured-section {
       padding: 80px 20px;
