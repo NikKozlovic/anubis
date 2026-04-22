@@ -1,0 +1,70 @@
+{
+  "title": "Privacy Policy",
+  "lastUpdated": "April 22, 2026",
+  "contactEmail": "anubis.underground1@gmail.com",
+  "lead": "This Privacy Policy explains how Anubis Underground (\"we\", \"our\", \"us\") collects, uses, and protects personal information when you visit our website or contact us through our online contact form.",
+  "sections": [
+    {
+      "heading": "1. Information We Collect",
+      "paragraphs": [
+        "We only collect personal information that you voluntarily provide through the contact form, including:",
+        "In addition, technical information such as your IP address may be processed automatically for security, anti-abuse, and server-log purposes."
+      ],
+      "bullets": [
+        "Name",
+        "Email address",
+        "Message content"
+      ]
+    },
+    {
+      "heading": "2. How We Use Your Information",
+      "paragraphs": [
+        "We use the information you provide only to:",
+        "We do not sell, rent, or disclose your personal data to third parties, except where required by applicable law."
+      ],
+      "bullets": [
+        "Respond to your inquiries",
+        "Communicate with you regarding your message",
+        "Maintain the security and proper functioning of our website"
+      ]
+    },
+    {
+      "heading": "3. Data Storage and Security",
+      "paragraphs": [
+        "We apply reasonable technical and organizational safeguards to protect data against unauthorized access, misuse, alteration, or loss. Messages submitted through our website may be stored in our email system or site backend for as long as reasonably necessary to process and resolve your inquiry."
+      ]
+    },
+    {
+      "heading": "4. Third-Party Services",
+      "paragraphs": [
+        "Our website may rely on external hosting and content-delivery services (such as CDN or image hosting). These providers may process technical data, including IP addresses, for security and performance.",
+        "We do not use analytics tools, advertising trackers, or marketing cookies."
+      ]
+    },
+    {
+      "heading": "5. Your Rights",
+      "paragraphs": [
+        "Depending on applicable law, you may have the right to:",
+        "To exercise any of these rights, contact us at {email}."
+      ],
+      "bullets": [
+        "Request access to your personal data",
+        "Request correction or deletion of your data",
+        "Restrict or object to certain processing",
+        "Request data portability"
+      ]
+    },
+    {
+      "heading": "6. Changes to This Policy",
+      "paragraphs": [
+        "We may update this Privacy Policy from time to time. The most recent version will always be published on this page."
+      ]
+    },
+    {
+      "heading": "7. Contact",
+      "paragraphs": [
+        "If you have any questions about this Privacy Policy, contact us at {email}."
+      ]
+    }
+  ]
+}

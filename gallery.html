@@ -35,8 +35,8 @@
         <img class="hero-logo-img" src="Media/Logo/logo.png" alt="Anubis Underground Logo">
       </div>
       <h1 class="hero-title">ANUBIS <span class="text-accent">Gallery</span></h1>
-      <p class="hero-subtitle">text</p>
-      <p class="hero-tagline">text</p>
+      <p class="hero-subtitle">Our memories from past events</p>
+      <p class="hero-tagline">Check out pictures from our events</p>
       <div class="hero-divider"></div>
     </div>
 
@@ -53,6 +53,16 @@
       <div id="gallery" class="gallery-grid" aria-live="polite"></div>
     </section>
   </main>
+
+  <div class="gallery-lightbox" id="gallery-lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Gallery image viewer">
+    <button class="gallery-lightbox-close" id="gallery-lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
+    <button class="gallery-lightbox-nav gallery-lightbox-prev" id="gallery-lightbox-prev" type="button" aria-label="Previous image">&#10094;</button>
+    <figure class="gallery-lightbox-figure" id="gallery-lightbox-figure">
+      <img id="gallery-lightbox-image" src="" alt="">
+      <figcaption id="gallery-lightbox-caption"></figcaption>
+    </figure>
+    <button class="gallery-lightbox-nav gallery-lightbox-next" id="gallery-lightbox-next" type="button" aria-label="Next image">&#10095;</button>
+  </div>
 
   <script>
     fetch("gallery.json")
@@ -82,6 +92,21 @@
         const INITIAL_RENDER_COUNT = 12;
         const LOAD_MORE_COUNT = 12;
 
+        const lightbox = document.getElementById("gallery-lightbox");
+        const lightboxImage = document.getElementById("gallery-lightbox-image");
+        const lightboxCaption = document.getElementById("gallery-lightbox-caption");
+        const lightboxFigure = document.getElementById("gallery-lightbox-figure");
+        const lightboxPrevBtn = document.getElementById("gallery-lightbox-prev");
+        const lightboxNextBtn = document.getElementById("gallery-lightbox-next");
+        const lightboxCloseBtn = document.getElementById("gallery-lightbox-close");
+
+        const lightboxState = {
+          albumName: "",
+          entries: [],
+          currentIndex: 0,
+          touchStartX: 0
+        };
+
         function resolveImageSrc(entry, eventName) {
           if (typeof entry === "string") {
             if (/^https?:\/\//i.test(entry) || entry.startsWith("//")) return entry;
@@ -104,12 +129,93 @@
           return src.replace("/upload/", "/upload/f_auto,q_auto,w_900/");
         }
 
+        function optimizeLightboxSrc(src) {
+          if (!src) return src;
+          if (!/^https?:\/\/res\.cloudinary\.com\//i.test(src)) return src;
+          if (!src.includes("/upload/")) return src;
+          return src.replace("/upload/", "/upload/f_auto,q_auto,w_1800/");
+        }
+
+        function updateLightboxImage() {
+          if (!lightboxState.entries.length) return;
+
+          const entry = lightboxState.entries[lightboxState.currentIndex];
+          const source = resolveImageSrc(entry, lightboxState.albumName);
+          const lightboxSrc = optimizeLightboxSrc(source);
+
+          lightboxImage.src = lightboxSrc;
+          lightboxImage.alt = `${lightboxState.albumName} photo ${lightboxState.currentIndex + 1}`;
+          lightboxCaption.textContent = `${lightboxState.albumName} - ${lightboxState.currentIndex + 1} / ${lightboxState.entries.length}`;
+        }
+
+        function showNextInLightbox() {
+          if (!lightboxState.entries.length) return;
+          lightboxState.currentIndex = (lightboxState.currentIndex + 1) % lightboxState.entries.length;
+          updateLightboxImage();
+        }
+
+        function showPrevInLightbox() {
+          if (!lightboxState.entries.length) return;
+          lightboxState.currentIndex = (lightboxState.currentIndex - 1 + lightboxState.entries.length) % lightboxState.entries.length;
+          updateLightboxImage();
+        }
+
+        function closeLightbox() {
+          lightbox.hidden = true;
+          lightbox.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("gallery-lightbox-open");
+          lightboxImage.src = "";
+        }
+
+        function openLightbox(albumName, entries, startIndex) {
+          lightboxState.albumName = albumName;
+          lightboxState.entries = entries;
+          lightboxState.currentIndex = startIndex;
+
+          updateLightboxImage();
+          lightbox.hidden = false;
+          lightbox.setAttribute("aria-hidden", "false");
+          document.body.classList.add("gallery-lightbox-open");
+        }
+
+        lightboxPrevBtn.addEventListener("click", showPrevInLightbox);
+        lightboxNextBtn.addEventListener("click", showNextInLightbox);
+        lightboxCloseBtn.addEventListener("click", closeLightbox);
+
+        lightbox.addEventListener("click", (event) => {
+          if (event.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (lightbox.hidden) return;
+          if (event.key === "Escape") closeLightbox();
+          if (event.key === "ArrowLeft") showPrevInLightbox();
+          if (event.key === "ArrowRight") showNextInLightbox();
+        });
+
+        lightboxFigure.addEventListener("touchstart", (event) => {
+          lightboxState.touchStartX = event.changedTouches[0].screenX;
+        }, { passive: true });
+
+        lightboxFigure.addEventListener("touchend", (event) => {
+          const touchEndX = event.changedTouches[0].screenX;
+          const deltaX = touchEndX - lightboxState.touchStartX;
+
+          if (Math.abs(deltaX) < 45) return;
+          if (deltaX < 0) {
+            showNextInLightbox();
+          } else {
+            showPrevInLightbox();
+          }
+        }, { passive: true });
+
         function renderChunk(fileEntries, eventName, grid, startIndex, chunkSize) {
           const fragment = document.createDocumentFragment();
           let cursor = startIndex;
           const end = Math.min(startIndex + chunkSize, fileEntries.length);
 
           for (; cursor < end; cursor += 1) {
+            const entryIndex = cursor;
             const entry = fileEntries[cursor];
             const resolvedSrc = resolveImageSrc(entry, eventName);
             if (!resolvedSrc) continue;
@@ -128,6 +234,10 @@
             } else {
               image.src = optimizedSrc;
             }
+
+            image.addEventListener("click", () => {
+              openLightbox(eventName, fileEntries, entryIndex);
+            });
 
             fragment.appendChild(image);
           }

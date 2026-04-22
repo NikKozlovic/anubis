@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Privacy Policy for Anubis Underground: how contact-form data is collected, used, and protected.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Privacy Policy | Anubis Underground">
+  <meta property="og:description" content="How Anubis Underground collects, uses, and protects personal information.">
+  <meta property="og:image" content="Media/Logo/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Privacy Policy | Anubis Underground">
+  <meta name="twitter:description" content="How Anubis Underground collects, uses, and protects personal information.">
+  <title>Privacy Policy | Anubis Underground</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="Media/Logo/logo.png">
+  <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+
+  <div id="shared-navbar-root"></div>
+
+  <main class="content" style="padding-top: 6rem;">
+    <section class="privacy-shell">
+      <article class="privacy-card">
+        <h1 class="privacy-title" id="privacy-title">Privacy Policy</h1>
+        <p class="privacy-updated" id="privacy-updated">Last updated: April 22, 2026</p>
+        <p class="privacy-lead" id="privacy-lead"></p>
+        <div id="privacy-sections"></div>
+      </article>
+    </section>
+  </main>
+
+  <div id="shared-footer-root"></div>
+
+  <script>
+    function appendParagraphWithEmail(parent, text, email) {
+      const paragraph = document.createElement('p');
+      if (typeof text !== 'string' || !text.includes('{email}') || !email) {
+        paragraph.textContent = text || '';
+        parent.appendChild(paragraph);
+        return;
+      }
+
+      const [before, after] = text.split('{email}');
+      paragraph.append(document.createTextNode(before || ''));
+
+      const emailLink = document.createElement('a');
+      emailLink.href = `mailto:${email}`;
+      emailLink.textContent = email;
+      paragraph.appendChild(emailLink);
+
+      paragraph.append(document.createTextNode(after || ''));
+      parent.appendChild(paragraph);
+    }
+
+    async function renderPrivacyPolicy() {
+      const titleEl = document.getElementById('privacy-title');
+      const updatedEl = document.getElementById('privacy-updated');
+      const leadEl = document.getElementById('privacy-lead');
+      const sectionsEl = document.getElementById('privacy-sections');
+
+      try {
+        const response = await fetch('privacy.json');
+        if (!response.ok) throw new Error('Failed to load privacy.json');
+        const policy = await response.json();
+
+        const email = typeof policy.contactEmail === 'string' ? policy.contactEmail.trim() : '';
+
+        if (typeof policy.title === 'string' && policy.title.trim()) {
+          titleEl.textContent = policy.title.trim();
+          document.title = `${policy.title.trim()} | Anubis Underground`;
+        }
+
+        if (typeof policy.lastUpdated === 'string' && policy.lastUpdated.trim()) {
+          updatedEl.textContent = `Last updated: ${policy.lastUpdated.trim()}`;
+        }
+
+        if (typeof policy.lead === 'string' && policy.lead.trim()) {
+          leadEl.textContent = policy.lead.trim();
+        }
+
+        sectionsEl.innerHTML = '';
+
+        if (!Array.isArray(policy.sections)) return;
+
+        policy.sections.forEach((section) => {
+          const block = document.createElement('section');
+
+          if (typeof section.heading === 'string' && section.heading.trim()) {
+            const heading = document.createElement('h2');
+            heading.textContent = section.heading.trim();
+            block.appendChild(heading);
+          }
+
+          if (Array.isArray(section.paragraphs)) {
+            section.paragraphs.forEach((paragraphText) => {
+              appendParagraphWithEmail(block, paragraphText, email);
+            });
+          }
+
+          if (Array.isArray(section.bullets) && section.bullets.length > 0) {
+            const list = document.createElement('ul');
+            section.bullets.forEach((bulletText) => {
+              const item = document.createElement('li');
+              item.textContent = bulletText;
+              list.appendChild(item);
+            });
+            block.appendChild(list);
+          }
+
+          sectionsEl.appendChild(block);
+        });
+      } catch (error) {
+        console.error('Could not render privacy policy', error);
+      }
+    }
+
+    renderPrivacyPolicy();
+  </script>
+</body>
+</html>

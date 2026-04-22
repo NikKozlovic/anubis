@@ -188,7 +188,36 @@ document.addEventListener('DOMContentLoaded', () => {
     return document.querySelector('footer.footer');
   }
 
+  function ensureFooterPrivacyLink() {
+    const footerEls = document.querySelectorAll('footer.footer');
+    footerEls.forEach((footer) => {
+      let legalLinks = footer.querySelector('.footer-legal-links');
+      const footerCopy = footer.querySelector('p');
+
+      if (!legalLinks) {
+        legalLinks = document.createElement('div');
+        legalLinks.className = 'footer-legal-links';
+      }
+
+      if (footerCopy) {
+        footer.insertBefore(legalLinks, footerCopy);
+      } else if (!legalLinks.parentElement) {
+        footer.appendChild(legalLinks);
+      }
+
+      const existingPrivacyLink = legalLinks.querySelector('a[data-legal-link="privacy"]');
+      if (existingPrivacyLink) return;
+
+      const privacyLink = document.createElement('a');
+      privacyLink.setAttribute('data-legal-link', 'privacy');
+      privacyLink.href = normalizeNavHref('privacy.html');
+      privacyLink.textContent = 'Privacy Policy';
+      legalLinks.appendChild(privacyLink);
+    });
+  }
+
   ensureSharedFooter();
+  ensureFooterPrivacyLink();
   normalizeDocumentLinks();
   applyImageLoadingHints();
 
