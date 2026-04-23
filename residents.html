@@ -617,8 +617,12 @@
 
       // Mobile tutorial overlay: darkens page and shows tap + swipe demo with close button.
       (function showSwipeTutorialModal() {
-        const touchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches || navigator.maxTouchPoints > 0;
-        if (!touchDevice) return;
+        const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+        const noHover = window.matchMedia('(hover: none)').matches;
+        const phoneViewport = window.matchMedia('(max-width: 900px)').matches;
+        const mobileUserAgent = /Android|iPhone|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
+        const phoneLikeDevice = (coarsePointer && noHover && phoneViewport) || (mobileUserAgent && phoneViewport);
+        if (!phoneLikeDevice) return;
 
         const firstCard = document.querySelector('.residents-grid .resident');
         if (!firstCard) return;

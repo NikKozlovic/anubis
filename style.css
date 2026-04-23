@@ -268,17 +268,24 @@ body {
   font-size: 16px;
 }
 
-/* Residents grid: 3 per row on desktop, responsive down to 2/1 */
+/* Residents grid: 3 per row on desktop, responsive down to 2/1.
+   Flex layout so partial last rows (1 or 2 cards) are centered. */
 .residents-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 18px;
-  row-gap: 80px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 80px 18px;
   width: 100%;
   max-width: 1000px;
-  margin: 0 auto 12px auto; /* Center the grid */
+  margin: 0 auto 12px auto;
   align-items: start;
-  justify-self: center; /* Center within the stretched container */
+  justify-self: center;
+}
+
+.residents-grid .resident {
+  flex: 0 0 calc(33.333% - 12px);
+  max-width: calc(33.333% - 12px);
+  box-sizing: border-box;
 }
 
 .resident {
@@ -832,9 +839,12 @@ body {
 
 @media (max-width: 900px) {
   .residents-grid {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 18px;
-    row-gap: 35px;
+    gap: 35px 18px;
+  }
+  .residents-grid .resident {
+    flex: 0 0 calc(50% - 9px);
+    max-width: calc(50% - 9px);
+    box-sizing: border-box;
   }
 }
 
@@ -844,23 +854,19 @@ body {
   }
   
   .residents-grid {
-    grid-template-columns: 1fr; /* Single column layout */
-    column-gap: 20px;
-    row-gap: 30px;
-    justify-items: center;
+    gap: 30px 0;
     max-width: 100%;
     margin: 0 auto;
     padding: 0; /* Remove any inherited padding */
+  }
+  .residents-grid .resident {
+    flex: 0 0 100%;
+    max-width: 320px;
   }
   
   .content > .residents-grid {
     padding: 0 20px; /* Equal padding for single column */
     box-sizing: border-box;
-  }
-  
-  .resident {
-    width: 100%; /* Full width within grid cell */
-    max-width: 320px; /* Wider max-width */
   }
   
   .resident-image-slider {

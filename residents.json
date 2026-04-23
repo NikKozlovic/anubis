@@ -91,5 +91,35 @@
     ],
     "instagram": "https://www.instagram.com/vanch.wav/",
     "soundcloud": "https://soundcloud.com/vanch999"
-  }
+  },
+  {
+    "name": "GSMN",
+    "images": [
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776889870/DSC07292_zxppmf.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776980726/DSC07500_ehsvfy.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776980719/DSC07199_kp56po.webp"
+    ],
+    "bio": [
+      "Guess My Name is a young DJ/producer pushing Hard Techno, Psytechno, Psytrance, and Schranz with a clear Acid‑driven signature.",
+      "His sets hit fast and raw tight mixes, heavy low‑end, and acid lines that keep the floor locked in.",
+      "Focused on harder, faster, acid‑leaning sound, he aims for direct impact and high‑intensity club energy."
+    ],
+    "instagram": "https://www.instagram.com/guessmynamegsmn/",
+    "soundcloud": "https://soundcloud.com/guess_my_name"
+  },  
+  {
+    "name": "Zmauc",
+    "images": [
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776979173/DSC07185_zzdzv7.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776979175/DSC07264_zuafqo.webp",
+      "https://res.cloudinary.com/ddsdep1oj/image/upload/v1776889863/DSC07270_qccpgf.webp"
+    ],
+    "bio": [
+      "Vanch is a DJ and producer from Borovnica, Slovenia, known for his dark and unrelenting fusion of bochka and pure industrial. His sets dive deep into the mechanical void, merging distortion and rhythm into a relentless force that consumes the dancefloor in raw intensity.",
+      "Vanch's sound design explores the boundaries between noise and rhythm, creating immersive sonic experiences.",
+      "His innovative approach to production has positioned him as one of the most exciting talents in the industrial techno scene."
+    ],
+    "instagram": "https://www.instagram.com/zmauc_/",
+    "soundcloud": "https://soundcloud.com/zmauc"
+  }  
 ]
