@@ -146,15 +146,15 @@
             <!-- populated from residents.json -->
           </div>
 
-          <details class="agency-picker">
-            <summary class="agency-picker-toggle">
+          <div class="agency-picker">
+            <button type="button" class="agency-picker-toggle" aria-expanded="false" aria-controls="agency-checkboxes">
               <span>Agency Artists <span class="required">*</span></span>
               <span class="agency-picker-arrow" aria-hidden="true">▼</span>
-            </summary>
+            </button>
             <div class="checkbox-group agency-checkbox-group" id="agency-checkboxes">
               <!-- populated from agency.json -->
             </div>
-          </details>
+          </div>
 
           <label>
             Additional message:
@@ -254,8 +254,6 @@
       const agencyPickerToggle = agencyPicker?.querySelector('.agency-picker-toggle');
       if (agencyPicker && agencyPickerToggle && agencyCheckboxGroup) {
         const setAgencyPickerOpen = (isOpen) => {
-          if (isOpen) agencyPicker.setAttribute('open', '');
-          else agencyPicker.removeAttribute('open');
           agencyPicker.classList.toggle('is-open', isOpen);
           agencyPickerToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
           agencyCheckboxGroup.style.maxHeight = isOpen ? agencyCheckboxGroup.scrollHeight + 'px' : '0px';

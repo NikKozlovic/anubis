@@ -1930,7 +1930,6 @@ strong {
   transition: transform 0.2s ease;
 }
 
-.contact-form-section .agency-picker[open] .agency-picker-arrow,
 .contact-form-section .agency-picker.is-open .agency-picker-arrow {
   transform: rotate(180deg);
 }
