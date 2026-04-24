@@ -146,15 +146,15 @@
             <!-- populated from residents.json -->
           </div>
 
-          <div class="agency-picker">
-            <button type="button" class="agency-picker-toggle" aria-expanded="false" aria-controls="agency-checkboxes">
+          <details class="agency-picker">
+            <summary class="agency-picker-toggle">
               <span>Agency Artists <span class="required">*</span></span>
               <span class="agency-picker-arrow" aria-hidden="true">▼</span>
-            </button>
+            </summary>
             <div class="checkbox-group agency-checkbox-group" id="agency-checkboxes">
               <!-- populated from agency.json -->
             </div>
-          </div>
+          </details>
 
           <label>
             Additional message:
@@ -247,36 +247,6 @@
             item.innerHTML = `<input type="checkbox" id="${safeId}" name="agency_dj" value="${trimmedName}"><label for="${safeId}">${trimmedName}</label>`;
             agencyCheckboxGroup.appendChild(item);
           });
-      }
-
-      // Stabilize agency picker rendering on mobile by using a controlled toggle.
-      const agencyPicker = document.querySelector('.agency-picker');
-      const agencyPickerToggle = agencyPicker?.querySelector('.agency-picker-toggle');
-      if (agencyPicker && agencyPickerToggle && agencyCheckboxGroup) {
-        const setAgencyPickerOpen = (isOpen) => {
-          agencyPicker.classList.toggle('is-open', isOpen);
-          agencyPickerToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-          agencyCheckboxGroup.style.maxHeight = isOpen ? agencyCheckboxGroup.scrollHeight + 'px' : '0px';
-        };
-
-        agencyPickerToggle.setAttribute('aria-expanded', 'false');
-        setAgencyPickerOpen(false);
-
-        agencyPickerToggle.addEventListener('click', (event) => {
-          event.preventDefault();
-          setAgencyPickerOpen(!agencyPicker.classList.contains('is-open'));
-        });
-
-        agencyPickerToggle.addEventListener('keydown', (event) => {
-          if (event.key !== 'Enter' && event.key !== ' ') return;
-          event.preventDefault();
-          setAgencyPickerOpen(!agencyPicker.classList.contains('is-open'));
-        });
-
-        window.addEventListener('resize', () => {
-          if (!agencyPicker.classList.contains('is-open')) return;
-          agencyCheckboxGroup.style.maxHeight = agencyCheckboxGroup.scrollHeight + 'px';
-        });
       }
 
       // Build lookup maps from JSON data (same variable names used by setup code below)

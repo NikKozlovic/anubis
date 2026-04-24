@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!toggle || !menu || !overlay) return;
 
   const isMobileMenu = () =>
-    window.matchMedia('(max-width: 1024px), (max-height: 500px) and (max-width: 1200px)').matches;
+    window.matchMedia('(max-width: 700px), (max-height: 500px) and (max-width: 1000px)').matches;
 
   function syncNavOffsetVar() {
     if (!navbar) return;

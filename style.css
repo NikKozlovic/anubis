@@ -139,7 +139,6 @@ body {
   cursor: pointer;
   font-size: 16px;
   font-family: 'Cinzel', serif;
-  -webkit-tap-highlight-color: transparent;
 }
 
 /* Hover effects */
@@ -1880,9 +1879,6 @@ strong {
   border-radius: 12px;
   background: rgba(255,255,255,0.02);
   overflow: hidden;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  contain: paint;
 }
 
 .contact-form-section .agency-picker-toggle {
@@ -1901,15 +1897,6 @@ strong {
   background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(15, 15, 15, 0.9));
   border-bottom: 1px solid rgba(255,255,255,0.08);
   -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  user-select: none;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-.contact-form-section .agency-picker-toggle:focus,
-.contact-form-section .agency-picker-toggle:focus-visible {
-  outline: none;
 }
 
 .contact-form-section .agency-picker-toggle:active {
@@ -1920,17 +1907,13 @@ strong {
   display: none;
 }
 
-.contact-form-section .agency-picker-toggle::marker {
-  content: '';
-}
-
 .contact-form-section .agency-picker-arrow {
   font-size: 13px;
   color: #ff4a4a;
   transition: transform 0.2s ease;
 }
 
-.contact-form-section .agency-picker.is-open .agency-picker-arrow {
+.contact-form-section .agency-picker[open] .agency-picker-arrow {
   transform: rotate(180deg);
 }
 
@@ -1938,20 +1921,7 @@ strong {
   margin-bottom: 0;
   border: 0;
   border-radius: 0;
-  background: linear-gradient(180deg, rgba(16, 16, 16, 0.95), rgba(10, 10, 10, 0.95));
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  padding-top: 0;
-  padding-bottom: 0;
-  transition: max-height 260ms ease, opacity 180ms ease, padding 220ms ease;
-  will-change: max-height, opacity;
-}
-
-.contact-form-section .agency-picker.is-open .agency-checkbox-group {
-  opacity: 1;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  background: transparent;
 }
 
 .contact-form-section .checkbox-item {
@@ -2200,6 +2170,39 @@ strong {
   .contact-form-section select,
   .contact-form-section textarea {
     width: 100%;
+  }
+}
+
+/* Mobile compositor hardening: avoid brief gray flashes while expanding details content. */
+@media (hover: none) and (pointer: coarse) {
+  .contact-form-section form,
+  .contact-form-section input[type="email"],
+  .contact-form-section input[type="text"],
+  .contact-form-section input[type="date"],
+  .contact-form-section select,
+  .contact-form-section textarea,
+  .contact-form-section .checkbox-group,
+  .contact-form-section .agency-picker {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .contact-form-section form::before {
+    animation: none;
+    opacity: 0.3;
+  }
+
+  .contact-form-section input[type="email"]:focus,
+  .contact-form-section input[type="text"]:focus,
+  .contact-form-section input[type="date"]:focus,
+  .contact-form-section select:focus,
+  .contact-form-section textarea:focus,
+  .contact-form-section .checkbox-item:hover {
+    transform: none;
+  }
+
+  .contact-form-section .checkbox-item::before {
+    display: none;
   }
 }
 
@@ -5426,7 +5429,6 @@ body.gallery-lightbox-open {
     opacity: 0;
     pointer-events: none;
     transition: opacity 240ms ease;
-    will-change: opacity;
     z-index: 998;
   }
 
@@ -5456,7 +5458,6 @@ body.gallery-lightbox-open {
     transform: translateX(105%);
     opacity: 0;
     transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease;
-    will-change: transform, opacity;
     z-index: 999;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
