@@ -106,6 +106,11 @@
           <textarea id="message" name="message" rows="6" placeholder="Include your private SoundCloud link, genre, social media links, and anything else we should know about your music..."></textarea>
           <div class="field-icon">💬</div>
         </div>
+
+        <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+          <label for="website-field">Leave this field empty</label>
+          <input id="website-field" type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
       </div>
 
       <div class="form-actions">
@@ -133,8 +138,30 @@
       const statusEl = document.getElementById('form-status');
       const submitBtn = form.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn ? submitBtn.textContent : '';
+      const antiSpam = {
+        cooldownKey: 'anubis-submission-cooldown-until',
+        cooldownMs: 2 * 60 * 1000,
+        minFillMs: 3500
+      };
+      const formOpenedAt = Date.now();
 
       const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1442644304945217656/sYHL5pOc1GRyeB_PTqTDDnp-CDasmnHkosWTBeYg9ZK-IoYvrtaZK0_tvqASIqe34j8u';
+
+      function getCooldownRemainingMs() {
+        try {
+          const until = Number(localStorage.getItem(antiSpam.cooldownKey) || 0);
+          return Math.max(0, until - Date.now());
+        } catch (err) {
+          return 0;
+        }
+      }
+
+      function formatWait(ms) {
+        const seconds = Math.ceil(ms / 1000);
+        if (seconds < 60) return `${seconds}s`;
+        const mins = Math.ceil(seconds / 60);
+        return `${mins}m`;
+      }
 
       async function sendDiscordNotification(formData) {
         try {
@@ -165,6 +192,33 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const trapValue = (form.querySelector('input[name="website"]')?.value || '').trim();
+        if (trapValue.length > 0) {
+          if (statusEl) {
+            statusEl.dataset.state = 'error';
+            statusEl.textContent = 'Request blocked.';
+          }
+          return;
+        }
+
+        const elapsed = Date.now() - formOpenedAt;
+        if (elapsed < antiSpam.minFillMs) {
+          if (statusEl) {
+            statusEl.dataset.state = 'error';
+            statusEl.textContent = `Please wait ${formatWait(antiSpam.minFillMs - elapsed)} before submitting.`;
+          }
+          return;
+        }
+
+        const cooldownRemaining = getCooldownRemainingMs();
+        if (cooldownRemaining > 0) {
+          if (statusEl) {
+            statusEl.dataset.state = 'error';
+            statusEl.textContent = `Please wait ${formatWait(cooldownRemaining)} before submitting again.`;
+          }
+          return;
+        }
+
         // collect data before any reset
         const data = new FormData(form);
 
@@ -183,6 +237,12 @@
           });
 
           if (resp.ok) {
+            try {
+              localStorage.setItem(antiSpam.cooldownKey, String(Date.now() + antiSpam.cooldownMs));
+            } catch (err) {
+              // Ignore storage issues.
+            }
+
             form.reset(); // clears all user-entered text/values
             if (statusEl) {
               statusEl.dataset.state = 'success';

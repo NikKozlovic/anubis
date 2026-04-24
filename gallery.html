@@ -103,8 +103,7 @@
         const lightboxState = {
           albumName: "",
           entries: [],
-          currentIndex: 0,
-          touchStartX: 0
+          currentIndex: 0
         };
 
         function resolveImageSrc(entry, eventName) {
@@ -192,22 +191,6 @@
           if (event.key === "ArrowLeft") showPrevInLightbox();
           if (event.key === "ArrowRight") showNextInLightbox();
         });
-
-        lightboxFigure.addEventListener("touchstart", (event) => {
-          lightboxState.touchStartX = event.changedTouches[0].screenX;
-        }, { passive: true });
-
-        lightboxFigure.addEventListener("touchend", (event) => {
-          const touchEndX = event.changedTouches[0].screenX;
-          const deltaX = touchEndX - lightboxState.touchStartX;
-
-          if (Math.abs(deltaX) < 45) return;
-          if (deltaX < 0) {
-            showNextInLightbox();
-          } else {
-            showPrevInLightbox();
-          }
-        }, { passive: true });
 
         function renderChunk(fileEntries, eventName, grid, startIndex, chunkSize) {
           const fragment = document.createDocumentFragment();

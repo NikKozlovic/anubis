@@ -147,9 +147,22 @@
           </div>
 
           <label>
+            Agency artists:
+          </label>
+          <div class="checkbox-group agency-checkbox-group" id="agency-checkboxes">
+            <!-- populated from agency.json -->
+          </div>
+
+          <label>
             Additional message:
             <textarea name="message" placeholder="Any additional details or requirements..."></textarea>
           </label>
+
+          <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+            <label for="website-field">Leave this field empty</label>
+            <input id="website-field" type="text" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
           <button type="submit" id="booking-submit">Send Booking Request</button>
         </form>
       </div>
@@ -162,6 +175,7 @@
      document.addEventListener('DOMContentLoaded', async () => {
       // Load resident data from residents.json
       let residents;
+      let agencyDjs = [];
       try {
         const resp = await fetch('residents.json');
         if (!resp.ok) throw new Error('Failed to load residents.json');
@@ -169,6 +183,21 @@
       } catch (e) {
         console.error('Could not load residents.json', e);
         return;
+      }
+
+      // Load agency artists from agency.json
+      try {
+        const agencyResp = await fetch('agency.json');
+        if (agencyResp.ok) {
+          const agencyData = await agencyResp.json();
+          if (Array.isArray(agencyData)) {
+            agencyDjs = agencyData;
+          } else if (agencyData && Array.isArray(agencyData.djs)) {
+            agencyDjs = agencyData.djs;
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load agency.json, continuing without agency artists.', e);
       }
 
       // Build resident cards in the grid
@@ -206,6 +235,29 @@
           item.innerHTML = `<input type="checkbox" id="${id}" name="artist" value="${res.name}"><label for="${id}">${res.name}</label>`;
           checkboxGroup.appendChild(item);
         });
+      }
+
+      // Build agency artist checkboxes with the same card design as residents
+      const agencyCheckboxGroup = document.getElementById('agency-checkboxes');
+      if (agencyCheckboxGroup) {
+        const validAgencyDjs = agencyDjs
+          .filter((name) => typeof name === 'string' && name.trim().length > 0);
+
+        if (validAgencyDjs.length === 0) {
+          const emptyState = document.createElement('div');
+          emptyState.className = 'checkbox-empty-state';
+          emptyState.textContent = 'Agency list is currently empty. Coming soon.';
+          agencyCheckboxGroup.appendChild(emptyState);
+        } else {
+          validAgencyDjs.forEach((name, index) => {
+            const trimmedName = name.trim();
+            const safeId = `agency-${trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${index}`;
+            const item = document.createElement('div');
+            item.className = 'checkbox-item';
+            item.innerHTML = `<input type="checkbox" id="${safeId}" name="agency_dj" value="${trimmedName}"><label for="${safeId}">${trimmedName}</label>`;
+            agencyCheckboxGroup.appendChild(item);
+          });
+        }
       }
 
 
@@ -928,11 +980,34 @@
       const submitBtn = document.getElementById('booking-submit');
       if (!form || !submitBtn) return;
 
+      const antiSpam = {
+        cooldownKey: 'anubis-booking-cooldown-until',
+        cooldownMs: 2 * 60 * 1000,
+        minFillMs: 3500
+      };
+      const formOpenedAt = Date.now();
+
       const originalText = submitBtn.textContent;
       const originalStyle = {
         background: submitBtn.style.backgroundColor || '',
         color: submitBtn.style.color || '',
       };
+
+      function getCooldownRemainingMs() {
+        try {
+          const until = Number(localStorage.getItem(antiSpam.cooldownKey) || 0);
+          return Math.max(0, until - Date.now());
+        } catch (err) {
+          return 0;
+        }
+      }
+
+      function formatWait(ms) {
+        const seconds = Math.ceil(ms / 1000);
+        if (seconds < 60) return `${seconds}s`;
+        const mins = Math.ceil(seconds / 60);
+        return `${mins}m`;
+      }
 
       function setButtonState(text, bg, color) {
         submitBtn.textContent = text;
@@ -943,8 +1018,38 @@
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const trapValue = (form.querySelector('input[name="website"]')?.value || '').trim();
+        if (trapValue.length > 0) {
+          // Silently reject probable bot submissions.
+          setButtonState('Request blocked', '#dc3545', '#fff');
+          setTimeout(() => {
+            setButtonState(originalText, originalStyle.background, originalStyle.color);
+          }, 1800);
+          return;
+        }
+
+        const elapsed = Date.now() - formOpenedAt;
+        if (elapsed < antiSpam.minFillMs) {
+          const waitLeft = antiSpam.minFillMs - elapsed;
+          setButtonState(`Please wait ${formatWait(waitLeft)}`, '#6c757d', '#fff');
+          setTimeout(() => {
+            setButtonState(originalText, originalStyle.background, originalStyle.color);
+          }, 1400);
+          return;
+        }
+
+        const cooldownRemaining = getCooldownRemainingMs();
+        if (cooldownRemaining > 0) {
+          setButtonState(`Please wait ${formatWait(cooldownRemaining)}`, '#6c757d', '#fff');
+          setTimeout(() => {
+            setButtonState(originalText, originalStyle.background, originalStyle.color);
+          }, 1800);
+          return;
+        }
+
         const selectedResidents = form.querySelectorAll('input[name="artist"]:checked').length;
-        if (selectedResidents < 1) {
+        const selectedAgencyDjs = form.querySelectorAll('input[name="agency_dj"]:checked').length;
+        if (selectedResidents + selectedAgencyDjs < 1) {
           setButtonState('Select at least 1 artist', '#dc3545', '#fff');
           setTimeout(() => {
             setButtonState(originalText, originalStyle.background, originalStyle.color);
@@ -972,6 +1077,12 @@
           });
 
           if (resp.ok) {
+            try {
+              localStorage.setItem(antiSpam.cooldownKey, String(Date.now() + antiSpam.cooldownMs));
+            } catch (err) {
+              // Ignore storage write issues.
+            }
+
             // success UI
             setButtonState('Booking submitted', '#28a745', '#fff');
             // send Discord webhook with booking details (do this after email was accepted by Formspree)
@@ -985,10 +1096,12 @@
                 country: fd.get('country') || '',
                 booking_date: fd.get('booking_date') || '',
                 artists: typeof fd.getAll === 'function' ? fd.getAll('artist') : (fd.get('artist') || ''),
+                agency_djs: typeof fd.getAll === 'function' ? fd.getAll('agency_dj') : (fd.get('agency_dj') || ''),
                 message: fd.get('message') || ''
               };
 
               const artistsText = Array.isArray(bookingData.artists) ? bookingData.artists.join(', ') : bookingData.artists;
+              const agencyDjsText = Array.isArray(bookingData.agency_djs) ? bookingData.agency_djs.join(', ') : bookingData.agency_djs;
               const content = `**New booking received:**\n` +
                 `**Name:** ${bookingData.name}\n` +
                 `**Email:** ${bookingData.email}\n` +
@@ -997,6 +1110,7 @@
                 `**Country:** ${bookingData.country}\n` +
                 `**Date:** ${bookingData.booking_date}\n` +
                 `**Artists:** ${artistsText}\n` +
+                `**Agency Artists:** ${agencyDjsText}\n` +
                 `**Message:** ${bookingData.message}`;
 
               // Fire-and-forget POST to Discord webhook. We don't block the UI on this.
