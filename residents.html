@@ -249,6 +249,38 @@
           });
       }
 
+      // Stabilize agency picker rendering on mobile by using a controlled toggle.
+      const agencyPicker = document.querySelector('.agency-picker');
+      const agencyPickerToggle = agencyPicker?.querySelector('.agency-picker-toggle');
+      if (agencyPicker && agencyPickerToggle && agencyCheckboxGroup) {
+        const setAgencyPickerOpen = (isOpen) => {
+          if (isOpen) agencyPicker.setAttribute('open', '');
+          else agencyPicker.removeAttribute('open');
+          agencyPicker.classList.toggle('is-open', isOpen);
+          agencyPickerToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          agencyCheckboxGroup.style.maxHeight = isOpen ? agencyCheckboxGroup.scrollHeight + 'px' : '0px';
+        };
+
+        agencyPickerToggle.setAttribute('aria-expanded', 'false');
+        setAgencyPickerOpen(false);
+
+        agencyPickerToggle.addEventListener('click', (event) => {
+          event.preventDefault();
+          setAgencyPickerOpen(!agencyPicker.classList.contains('is-open'));
+        });
+
+        agencyPickerToggle.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          setAgencyPickerOpen(!agencyPicker.classList.contains('is-open'));
+        });
+
+        window.addEventListener('resize', () => {
+          if (!agencyPicker.classList.contains('is-open')) return;
+          agencyCheckboxGroup.style.maxHeight = agencyCheckboxGroup.scrollHeight + 'px';
+        });
+      }
+
       // Build lookup maps from JSON data (same variable names used by setup code below)
       const bios = {};
       const instagram = {};

@@ -1880,6 +1880,9 @@ strong {
   border-radius: 12px;
   background: rgba(255,255,255,0.02);
   overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: paint;
 }
 
 .contact-form-section .agency-picker-toggle {
@@ -1917,13 +1920,18 @@ strong {
   display: none;
 }
 
+.contact-form-section .agency-picker-toggle::marker {
+  content: '';
+}
+
 .contact-form-section .agency-picker-arrow {
   font-size: 13px;
   color: #ff4a4a;
   transition: transform 0.2s ease;
 }
 
-.contact-form-section .agency-picker[open] .agency-picker-arrow {
+.contact-form-section .agency-picker[open] .agency-picker-arrow,
+.contact-form-section .agency-picker.is-open .agency-picker-arrow {
   transform: rotate(180deg);
 }
 
@@ -1931,7 +1939,20 @@ strong {
   margin-bottom: 0;
   border: 0;
   border-radius: 0;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(16, 16, 16, 0.95), rgba(10, 10, 10, 0.95));
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: max-height 260ms ease, opacity 180ms ease, padding 220ms ease;
+  will-change: max-height, opacity;
+}
+
+.contact-form-section .agency-picker.is-open .agency-checkbox-group {
+  opacity: 1;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .contact-form-section .checkbox-item {
