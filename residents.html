@@ -146,16 +146,6 @@
             <!-- populated from residents.json -->
           </div>
 
-          <details class="agency-picker">
-            <summary class="agency-picker-toggle">
-              <span>Agency Artists <span class="required">*</span></span>
-              <span class="agency-picker-arrow" aria-hidden="true">▼</span>
-            </summary>
-            <div class="checkbox-group agency-checkbox-group" id="agency-checkboxes">
-              <!-- populated from agency.json -->
-            </div>
-          </details>
-
           <label>
             Additional message:
             <textarea name="message" placeholder="Any additional details or requirements..."></textarea>
@@ -172,7 +162,6 @@
      document.addEventListener('DOMContentLoaded', async () => {
       // Load resident data from residents.json
       let residents;
-      let agencyDjs = ['DJ1', 'DJ2', 'DJ3', 'DJ4'];
       try {
         const resp = await fetch('residents.json');
         if (!resp.ok) throw new Error('Failed to load residents.json');
@@ -180,21 +169,6 @@
       } catch (e) {
         console.error('Could not load residents.json', e);
         return;
-      }
-
-      // Load agency DJs from agency.json (editable without touching HTML)
-      try {
-        const agencyResp = await fetch('agency.json');
-        if (agencyResp.ok) {
-          const agencyData = await agencyResp.json();
-          if (Array.isArray(agencyData)) {
-            agencyDjs = agencyData;
-          } else if (agencyData && Array.isArray(agencyData.djs)) {
-            agencyDjs = agencyData.djs;
-          }
-        }
-      } catch (e) {
-        console.warn('Could not load agency.json, using default agency artists.', e);
       }
 
       // Build resident cards in the grid
@@ -234,20 +208,6 @@
         });
       }
 
-      // Build agency DJ checkboxes (same UI style as residents)
-      const agencyCheckboxGroup = document.getElementById('agency-checkboxes');
-      if (agencyCheckboxGroup) {
-        agencyDjs
-          .filter((name) => typeof name === 'string' && name.trim().length > 0)
-          .forEach((name, index) => {
-            const trimmedName = name.trim();
-            const safeId = `agency-${trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${index}`;
-            const item = document.createElement('div');
-            item.className = 'checkbox-item';
-            item.innerHTML = `<input type="checkbox" id="${safeId}" name="agency_dj" value="${trimmedName}"><label for="${safeId}">${trimmedName}</label>`;
-            agencyCheckboxGroup.appendChild(item);
-          });
-      }
 
       // Build lookup maps from JSON data (same variable names used by setup code below)
       const bios = {};
@@ -984,8 +944,7 @@
         e.preventDefault();
 
         const selectedResidents = form.querySelectorAll('input[name="artist"]:checked').length;
-        const selectedAgencyDjs = form.querySelectorAll('input[name="agency_dj"]:checked').length;
-        if (selectedResidents + selectedAgencyDjs < 1) {
+        if (selectedResidents < 1) {
           setButtonState('Select at least 1 artist', '#dc3545', '#fff');
           setTimeout(() => {
             setButtonState(originalText, originalStyle.background, originalStyle.color);
@@ -1026,12 +985,10 @@
                 country: fd.get('country') || '',
                 booking_date: fd.get('booking_date') || '',
                 artists: typeof fd.getAll === 'function' ? fd.getAll('artist') : (fd.get('artist') || ''),
-                agency_djs: typeof fd.getAll === 'function' ? fd.getAll('agency_dj') : (fd.get('agency_dj') || ''),
                 message: fd.get('message') || ''
               };
 
               const artistsText = Array.isArray(bookingData.artists) ? bookingData.artists.join(', ') : bookingData.artists;
-              const agencyDjsText = Array.isArray(bookingData.agency_djs) ? bookingData.agency_djs.join(', ') : bookingData.agency_djs;
               const content = `**New booking received:**\n` +
                 `**Name:** ${bookingData.name}\n` +
                 `**Email:** ${bookingData.email}\n` +
@@ -1040,7 +997,6 @@
                 `**Country:** ${bookingData.country}\n` +
                 `**Date:** ${bookingData.booking_date}\n` +
                 `**Artists:** ${artistsText}\n` +
-                `**Agency Artists:** ${agencyDjsText}\n` +
                 `**Message:** ${bookingData.message}`;
 
               // Fire-and-forget POST to Discord webhook. We don't block the UI on this.
