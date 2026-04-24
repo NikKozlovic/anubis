@@ -1742,6 +1742,9 @@ strong {
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout paint;
 }
 
 /* Add animated background pattern */
@@ -1877,8 +1880,9 @@ strong {
   margin-bottom: 20px;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 12px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(18, 18, 18, 0.96);
   overflow: hidden;
+  contain: paint;
 }
 
 .contact-form-section .agency-picker-toggle {
@@ -1921,7 +1925,24 @@ strong {
   margin-bottom: 0;
   border: 0;
   border-radius: 0;
-  background: transparent;
+  background: rgba(14, 14, 14, 0.98);
+  display: block;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: max-height 260ms ease, opacity 180ms ease, padding 220ms ease;
+  will-change: max-height, opacity;
+}
+
+.contact-form-section .agency-picker[open] .agency-checkbox-group {
+  max-height: min(320px, 52vh);
+  opacity: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .contact-form-section .checkbox-item {
@@ -2141,6 +2162,8 @@ strong {
   
   .contact-form-section form {
     padding: 20px 16px; /* Reduce padding inside form */
+    background: #111;
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.55);
   }
   
   .contact-form-section .checkbox-group {
@@ -2188,8 +2211,15 @@ strong {
   }
 
   .contact-form-section form::before {
-    animation: none;
-    opacity: 0.3;
+    display: none;
+  }
+
+  .contact-form-section form,
+  .contact-form-section .checkbox-group,
+  .contact-form-section .agency-picker,
+  .contact-form-section .agency-picker .agency-checkbox-group,
+  .contact-form-section .checkbox-item {
+    background: #111;
   }
 
   .contact-form-section input[type="email"]:focus,
