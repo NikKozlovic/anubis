@@ -132,6 +132,116 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function detectVideoMimeType(sourceEl) {
+    if (!sourceEl) return '';
+    if (sourceEl.type) return sourceEl.type.trim().toLowerCase();
+
+    const sourceUrl = (sourceEl.getAttribute('src') || '').toLowerCase();
+    if (sourceUrl.endsWith('.webm')) return 'video/webm';
+    if (sourceUrl.endsWith('.mp4')) return 'video/mp4';
+    return '';
+  }
+
+  function isIosFamilyDevice() {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    return /iphone|ipad|ipod/i.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  function isSafariEngine() {
+    const ua = navigator.userAgent || '';
+    return (
+      /safari/i.test(ua) &&
+      !/chrome|crios|chromium|fxios|edgios|opios|samsungbrowser|ucbrowser/i.test(ua)
+    );
+  }
+
+  function getSafariMajorVersion() {
+    const versionMatch = (navigator.userAgent || '').match(/Version\/(\d+)(?:\.|\s|$)/i);
+    if (!versionMatch) return NaN;
+    return Number(versionMatch[1]);
+  }
+
+  function shouldUseMp4FirstForHeroVideo() {
+    if (!isIosFamilyDevice() || !isSafariEngine()) return false;
+    const safariMajorVersion = getSafariMajorVersion();
+    return Number.isFinite(safariMajorVersion) && safariMajorVersion > 0 && safariMajorVersion < 17;
+  }
+
+  function isSourcePlayable(videoEl, sourceEl) {
+    const mimeType = detectVideoMimeType(sourceEl);
+    if (!mimeType) return true;
+    const supportValue = videoEl.canPlayType(mimeType);
+    return supportValue === 'probably' || supportValue === 'maybe';
+  }
+
+  function hideHeroVideo(videoEl) {
+    const heroBg = videoEl.closest('.hero-bg');
+    if (heroBg) {
+      heroBg.style.display = 'none';
+    }
+  }
+
+  function configureHeroVideoPlayback() {
+    const videoEl = document.querySelector('.hero-video');
+    if (!videoEl) return;
+
+    const sourceEls = Array.from(videoEl.querySelectorAll('source'));
+    if (sourceEls.length === 0) {
+      hideHeroVideo(videoEl);
+      return;
+    }
+
+    const preferredOrder = shouldUseMp4FirstForHeroVideo()
+      ? ['video/mp4', 'video/webm']
+      : ['video/webm', 'video/mp4'];
+
+    const rankedSources = sourceEls.slice().sort((a, b) => {
+      const rankA = preferredOrder.indexOf(detectVideoMimeType(a));
+      const rankB = preferredOrder.indexOf(detectVideoMimeType(b));
+      return (rankA === -1 ? 99 : rankA) - (rankB === -1 ? 99 : rankB);
+    });
+
+    if (rankedSources.some((sourceEl, index) => sourceEl !== sourceEls[index])) {
+      rankedSources.forEach((sourceEl) => videoEl.appendChild(sourceEl));
+    }
+
+    videoEl.controls = false;
+    videoEl.removeAttribute('controls');
+    videoEl.autoplay = true;
+    videoEl.loop = true;
+    videoEl.muted = true;
+    videoEl.setAttribute('muted', '');
+    videoEl.setAttribute('playsinline', '');
+
+    if (!rankedSources.some((sourceEl) => isSourcePlayable(videoEl, sourceEl))) {
+      hideHeroVideo(videoEl);
+      return;
+    }
+
+    let sourceErrors = 0;
+    const totalSources = rankedSources.length;
+    rankedSources.forEach((sourceEl) => {
+      sourceEl.addEventListener('error', () => {
+        sourceErrors += 1;
+        if (sourceErrors >= totalSources) hideHeroVideo(videoEl);
+      });
+    });
+
+    videoEl.addEventListener('error', () => {
+      if (sourceErrors >= totalSources) hideHeroVideo(videoEl);
+    });
+
+    videoEl.load();
+    const playPromise = videoEl.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        videoEl.controls = false;
+        videoEl.removeAttribute('controls');
+      });
+    }
+  }
+
   // Expose resolver for inline scripts used on specific pages (cart/checkout, etc.).
   window.__ANUBIS_RESOLVE_URL = normalizeNavHref;
 
@@ -220,6 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ensureFooterPrivacyLink();
   normalizeDocumentLinks();
   applyImageLoadingHints();
+  configureHeroVideoPlayback();
 
   const imageHintObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
