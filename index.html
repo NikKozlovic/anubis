@@ -370,7 +370,11 @@
       const platform = navigator.platform || '';
       const hasTouchMac = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
       const isIOS = /iPad|iPhone|iPod/.test(ua) || hasTouchMac;
+      const isAndroid = /Android/i.test(ua);
       const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua);
+      const iosVersionMatch = ua.match(/OS (\d+)_/);
+      const iosMajorVersion = iosVersionMatch ? parseInt(iosVersionMatch[1], 10) : null;
+      const isOldIPhone = isIOS && isSafari && iosMajorVersion !== null && iosMajorVersion < 16;
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const saveData = navigator.connection && navigator.connection.saveData;
 
@@ -382,15 +386,7 @@
         heroBg.setAttribute('data-video-state', 'fallback');
       }
 
-      heroVideo.muted = true;
-      heroVideo.defaultMuted = true;
-      heroVideo.setAttribute('muted', '');
-      heroVideo.setAttribute('playsinline', '');
-      heroVideo.setAttribute('webkit-playsinline', '');
-
-      // iOS Safari is more likely to crash on large background videos, so use image/gradient fallback.
-      if ((isIOS && isSafari) || prefersReducedMotion || saveData) {
-        markVideoFallback();
+      function clearVideoSources() {
         try {
           heroVideo.pause();
           heroVideo.removeAttribute('src');
@@ -399,22 +395,166 @@
         } catch (error) {
           console.warn('Hero video fallback applied with cleanup warning:', error);
         }
+      }
+
+      heroVideo.muted = true;
+      heroVideo.defaultMuted = true;
+      heroVideo.setAttribute('muted', '');
+      heroVideo.setAttribute('playsinline', '');
+      heroVideo.setAttribute('webkit-playsinline', '');
+
+      // Respect explicit user/device constraints first.
+      if (prefersReducedMotion || saveData) {
+        markVideoFallback();
+        clearVideoSources();
         return;
+      }
+
+      function attemptSourcePlayback(src, timeoutMs) {
+        return new Promise((resolve, reject) => {
+          let settled = false;
+
+          const finalize = (ok, reason) => {
+            if (settled) return;
+            settled = true;
+            window.clearTimeout(timer);
+            heroVideo.removeEventListener('playing', onReady);
+            heroVideo.removeEventListener('loadeddata', onReady);
+            heroVideo.removeEventListener('error', onFail);
+            heroVideo.removeEventListener('stalled', onFail);
+            if (ok) resolve();
+            else reject(reason || new Error('Video playback failed'));
+          };
+
+          const onReady = () => finalize(true);
+          const onFail = () => finalize(false, new Error('Video source failed to play'));
+          const timer = window.setTimeout(() => finalize(false, new Error('Video source timeout')), timeoutMs);
+
+          heroVideo.addEventListener('playing', onReady);
+          heroVideo.addEventListener('loadeddata', onReady);
+          heroVideo.addEventListener('error', onFail);
+          heroVideo.addEventListener('stalled', onFail);
+
+          try {
+            heroVideo.pause();
+            heroVideo.src = src;
+            heroVideo.load();
+            const startPlay = heroVideo.play();
+            if (startPlay && typeof startPlay.then === 'function') {
+              startPlay.catch(() => finalize(false, new Error('Video play() rejected')));
+            }
+          } catch (error) {
+            finalize(false, error);
+          }
+        });
+      }
+
+      const sourceEls = Array.from(heroVideo.querySelectorAll('source'));
+      const webmSource = sourceEls.find((source) => (source.type || '').toLowerCase().includes('webm'));
+      const mp4Source = sourceEls.find((source) => (source.type || '').toLowerCase().includes('mp4'));
+      const webmUrl = webmSource ? webmSource.getAttribute('src') : '';
+      const mp4Url = mp4Source ? mp4Source.getAttribute('src') : '';
+
+      if (isOldIPhone) {
+        // Use a manual source chain for older iPhones: webm -> mp4 -> fallback.
+        sourceEls.forEach((source) => source.removeAttribute('src'));
+
+        (async () => {
+          if (webmUrl) {
+            try {
+              await attemptSourcePlayback(webmUrl, 3500);
+              markVideoReady();
+              return;
+            } catch (_) {
+              // Continue to mp4 fallback.
+            }
+          }
+
+          if (mp4Url) {
+            try {
+              await attemptSourcePlayback(mp4Url, 4500);
+              markVideoReady();
+              return;
+            } catch (_) {
+              // Final fallback below.
+            }
+          }
+
+          markVideoFallback();
+          clearVideoSources();
+        })();
+        return;
+      }
+
+      if (isAndroid) {
+        // Prefer webm on Android/Samsung for faster loading, then fallback to mp4.
+        sourceEls.forEach((source) => source.removeAttribute('src'));
+
+        (async () => {
+          if (webmUrl) {
+            try {
+              await attemptSourcePlayback(webmUrl, 3500);
+              markVideoReady();
+              return;
+            } catch (_) {
+              // Continue to mp4 fallback.
+            }
+          }
+
+          if (mp4Url) {
+            try {
+              await attemptSourcePlayback(mp4Url, 4500);
+              markVideoReady();
+              return;
+            } catch (_) {
+              // Final fallback below.
+            }
+          }
+
+          markVideoFallback();
+          clearVideoSources();
+        })();
+        return;
+      }
+
+      let hasRetried = false;
+
+      function retryOnceThenFallback() {
+        if (hasRetried) {
+          markVideoFallback();
+          clearVideoSources();
+          return;
+        }
+
+        hasRetried = true;
+        try {
+          heroVideo.load();
+          const retryPlay = heroVideo.play();
+          if (retryPlay && typeof retryPlay.then === 'function') {
+            retryPlay.then(markVideoReady).catch(markVideoFallback);
+          }
+        } catch (error) {
+          markVideoFallback();
+          clearVideoSources();
+        }
       }
 
       heroVideo.addEventListener('playing', markVideoReady, { once: true });
       heroVideo.addEventListener('loadeddata', markVideoReady, { once: true });
-      heroVideo.addEventListener('error', markVideoFallback, { once: true });
-      heroVideo.addEventListener('stalled', markVideoFallback, { once: true });
+      heroVideo.addEventListener('error', retryOnceThenFallback, { once: true });
+      heroVideo.addEventListener('stalled', retryOnceThenFallback, { once: true });
 
-      const fallbackTimer = window.setTimeout(markVideoFallback, 4000);
+      const fallbackTimer = window.setTimeout(retryOnceThenFallback, 5000);
       heroVideo.addEventListener('playing', () => window.clearTimeout(fallbackTimer), { once: true });
       heroVideo.addEventListener('loadeddata', () => window.clearTimeout(fallbackTimer), { once: true });
       heroVideo.addEventListener('error', () => window.clearTimeout(fallbackTimer), { once: true });
 
       const maybePlay = heroVideo.play();
       if (maybePlay && typeof maybePlay.then === 'function') {
-        maybePlay.then(markVideoReady).catch(markVideoFallback);
+        maybePlay.then(markVideoReady).catch(() => {
+          markVideoFallback();
+          clearVideoSources();
+        });
       }
     });
   </script>
