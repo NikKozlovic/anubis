@@ -63,11 +63,10 @@
           <a href="residents.html" class="hero-btn secondary">BOOK AN ARTIST</a>
         </div>
       </div>
-      <div class="hero-bg" data-video-state="loading">
-        <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="metadata" poster="Media/Logo/logoblack.png" aria-label="Background video">
-          <source src="https://res.cloudinary.com/daca3y1wg/video/upload/v1777059853/video_tmytps.mp4" type="video/mp4">
-          <source src="https://github.com/NikKozlovic/video/releases/download/1.0.0/video.mp4" type="video/mp4">
+      <div class="hero-bg">
+        <video class="hero-video" autoplay muted loop playsinline preload="auto">
           <source src="https://res.cloudinary.com/daca3y1wg/video/upload/v1777059853/video_tmytps.webm" type="video/webm">
+          <source src="https://github.com/NikKozlovic/video/releases/download/1.0.0/video.mp4" type="video/mp4">
         </video>
       </div>
     </div>
@@ -194,10 +193,10 @@
 
   <script>
     function deriveHomeMediaTitle(sectionData) {
-      const explicitTitle = sectionData && typeof sectionData.title === 'string' ? sectionData.title.trim() : '';
+      const explicitTitle = typeof sectionData?.title === 'string' ? sectionData.title.trim() : '';
       if (explicitTitle) return explicitTitle;
 
-      const linkUrl = sectionData && typeof sectionData.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
       if (!linkUrl) return '';
 
       try {
@@ -212,10 +211,10 @@
     }
 
     function deriveHomeMediaSubtitle(sectionData) {
-      const explicitSubtitle = sectionData && typeof sectionData.subtitle === 'string' ? sectionData.subtitle.trim() : '';
+      const explicitSubtitle = typeof sectionData?.subtitle === 'string' ? sectionData.subtitle.trim() : '';
       if (explicitSubtitle) return explicitSubtitle;
 
-      const linkUrl = sectionData && typeof sectionData.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
       if (!linkUrl) return '';
 
       try {
@@ -231,9 +230,9 @@
     }
 
     function resolveHomeMediaEmbedUrl(sectionData) {
-      if (sectionData && sectionData.embedUrl) return sectionData.embedUrl;
+      if (sectionData?.embedUrl) return sectionData.embedUrl;
 
-      const linkUrl = sectionData && typeof sectionData.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
       if (!linkUrl || !linkUrl.includes('soundcloud.com/')) return '';
 
       const encodedTrackUrl = encodeURIComponent(linkUrl);
@@ -362,225 +361,6 @@
 
     document.addEventListener('DOMContentLoaded', renderHomeMedia);
     document.addEventListener('DOMContentLoaded', renderHomeFeaturedEvent);
-    document.addEventListener('DOMContentLoaded', () => {
-      const heroBg = document.querySelector('.hero-bg');
-      const heroVideo = document.querySelector('.hero-video');
-      if (!heroBg || !heroVideo) return;
-
-      const ua = navigator.userAgent || '';
-      const platform = navigator.platform || '';
-      const hasTouchMac = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-      const isIOS = /iPad|iPhone|iPod/.test(ua) || hasTouchMac;
-      const isAndroid = /Android/i.test(ua);
-      const isDesktop = !isIOS && !isAndroid;
-      const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua);
-      const iosVersionMatch = ua.match(/OS (\d+)_/);
-      const iosMajorVersion = iosVersionMatch ? parseInt(iosVersionMatch[1], 10) : null;
-      const isOldIPhone = isIOS && isSafari && iosMajorVersion !== null && iosMajorVersion < 16;
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const saveData = navigator.connection && navigator.connection.saveData;
-      const posterUrl = heroVideo.getAttribute('poster') || '';
-
-      if (posterUrl) {
-        heroBg.style.backgroundImage = `url(${posterUrl})`;
-        heroBg.style.backgroundPosition = 'center';
-        heroBg.style.backgroundRepeat = 'no-repeat';
-        heroBg.style.backgroundSize = 'cover';
-      }
-
-      function markVideoReady() {
-        heroBg.setAttribute('data-video-state', 'ready');
-      }
-
-      function markVideoFallback() {
-        heroBg.setAttribute('data-video-state', 'fallback');
-      }
-
-      function clearVideoSources() {
-        try {
-          heroVideo.pause();
-          heroVideo.removeAttribute('src');
-          heroVideo.querySelectorAll('source').forEach((source) => source.removeAttribute('src'));
-          heroVideo.load();
-        } catch (error) {
-          console.warn('Hero video fallback applied with cleanup warning:', error);
-        }
-      }
-
-      heroVideo.muted = true;
-      heroVideo.defaultMuted = true;
-      heroVideo.setAttribute('muted', '');
-      heroVideo.setAttribute('playsinline', '');
-      heroVideo.setAttribute('webkit-playsinline', '');
-
-      // Respect explicit user/device constraints first.
-      if (prefersReducedMotion || saveData) {
-        markVideoFallback();
-        clearVideoSources();
-        return;
-      }
-
-      function attemptSourcePlayback(src, timeoutMs) {
-        return new Promise((resolve, reject) => {
-          let settled = false;
-
-          const finalize = (ok, reason) => {
-            if (settled) return;
-            settled = true;
-            window.clearTimeout(timer);
-            heroVideo.removeEventListener('playing', onReady);
-            heroVideo.removeEventListener('loadeddata', onReady);
-            heroVideo.removeEventListener('canplay', onReady);
-            heroVideo.removeEventListener('error', onFail);
-            heroVideo.removeEventListener('stalled', onFail);
-            if (ok) resolve();
-            else reject(reason || new Error('Video playback failed'));
-          };
-
-          const onReady = () => finalize(true);
-          const onFail = () => finalize(false, new Error('Video source failed to play'));
-          const timer = window.setTimeout(() => finalize(false, new Error('Video source timeout')), timeoutMs);
-
-          heroVideo.addEventListener('playing', onReady);
-          heroVideo.addEventListener('loadeddata', onReady);
-          heroVideo.addEventListener('canplay', onReady);
-          heroVideo.addEventListener('error', onFail);
-          heroVideo.addEventListener('stalled', onFail);
-
-          try {
-            heroVideo.pause();
-            heroVideo.src = src;
-            heroVideo.load();
-            const startPlay = heroVideo.play();
-            if (startPlay && typeof startPlay.then === 'function') {
-              startPlay.catch(() => finalize(false, new Error('Video play() rejected')));
-            }
-          } catch (error) {
-            finalize(false, error);
-          }
-        });
-      }
-
-      const sourceEls = Array.from(heroVideo.querySelectorAll('source'));
-      const webmUrls = sourceEls
-        .filter((source) => (source.type || '').toLowerCase().includes('webm'))
-        .map((source) => source.getAttribute('src'))
-        .filter(Boolean);
-      const mp4Urls = sourceEls
-        .filter((source) => (source.type || '').toLowerCase().includes('mp4'))
-        .map((source) => source.getAttribute('src'))
-        .filter(Boolean);
-
-      async function attemptPlaybackChain(urls, timeoutMs) {
-        for (const url of urls) {
-          try {
-            await attemptSourcePlayback(url, timeoutMs);
-            return true;
-          } catch (_) {
-            // Try next source URL.
-          }
-        }
-        return false;
-      }
-
-      if (isOldIPhone) {
-        // Older iOS Safari can need an explicit MP4-first source chain.
-        sourceEls.forEach((source) => source.removeAttribute('src'));
-
-        (async () => {
-          if (await attemptPlaybackChain(mp4Urls, 5000)) {
-            markVideoReady();
-            return;
-          }
-
-          if (await attemptPlaybackChain(webmUrls, 4000)) {
-            markVideoReady();
-            return;
-          }
-
-          markVideoFallback();
-        })();
-        return;
-      }
-
-      if (isAndroid) {
-        // Prefer webm on Android/Samsung for faster loading, then fallback to mp4.
-        sourceEls.forEach((source) => source.removeAttribute('src'));
-
-        (async () => {
-          if (await attemptPlaybackChain(webmUrls, 3500)) {
-            markVideoReady();
-            return;
-          }
-
-          if (await attemptPlaybackChain(mp4Urls, 4500)) {
-            markVideoReady();
-            return;
-          }
-
-          markVideoFallback();
-        })();
-        return;
-      }
-
-      if (isDesktop) {
-        // Prefer webm first on desktop/PC, then fallback to mp4.
-        sourceEls.forEach((source) => source.removeAttribute('src'));
-
-        (async () => {
-          if (await attemptPlaybackChain(webmUrls, 3500)) {
-            markVideoReady();
-            return;
-          }
-
-          if (await attemptPlaybackChain(mp4Urls, 4500)) {
-            markVideoReady();
-            return;
-          }
-
-          markVideoFallback();
-        })();
-        return;
-      }
-
-      let hasRetried = false;
-
-      function retryOnceThenFallback() {
-        if (hasRetried) {
-          markVideoFallback();
-          return;
-        }
-
-        hasRetried = true;
-        try {
-          heroVideo.load();
-          const retryPlay = heroVideo.play();
-          if (retryPlay && typeof retryPlay.then === 'function') {
-            retryPlay.then(markVideoReady).catch(markVideoFallback);
-          }
-        } catch (error) {
-          markVideoFallback();
-        }
-      }
-
-      heroVideo.addEventListener('playing', markVideoReady, { once: true });
-      heroVideo.addEventListener('loadeddata', markVideoReady, { once: true });
-      heroVideo.addEventListener('error', retryOnceThenFallback, { once: true });
-      heroVideo.addEventListener('stalled', retryOnceThenFallback, { once: true });
-
-      const fallbackTimer = window.setTimeout(retryOnceThenFallback, 12000);
-      heroVideo.addEventListener('playing', () => window.clearTimeout(fallbackTimer), { once: true });
-      heroVideo.addEventListener('loadeddata', () => window.clearTimeout(fallbackTimer), { once: true });
-      heroVideo.addEventListener('error', () => window.clearTimeout(fallbackTimer), { once: true });
-
-      const maybePlay = heroVideo.play();
-      if (maybePlay && typeof maybePlay.then === 'function') {
-        maybePlay.then(markVideoReady).catch(() => {
-          // On some Safari builds play() can reject early even if media becomes playable shortly after.
-          // Keep loading path active; retry/fallback is already handled by events + timer above.
-        });
-      }
-    });
   </script>
 
   <script>

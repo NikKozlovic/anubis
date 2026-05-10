@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.json();
       })
       .then((socialsData) => {
-        if (!socialsData || !Array.isArray(socialsData.socials) || socialsData.socials.length === 0) return;
+        if (!Array.isArray(socialsData?.socials) || socialsData.socials.length === 0) return;
         socialsContainer.innerHTML = '';
         socialsData.socials.forEach((social) => {
           const link = document.createElement('a');
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.json();
       })
       .then((navData) => {
-        if (!navData || !Array.isArray(navData.menu) || navData.menu.length === 0) return;
+        if (!Array.isArray(navData?.menu) || navData.menu.length === 0) return;
 
         let html = '';
         const logoInsertIndex = Math.ceil(navData.menu.length / 2);
@@ -494,6 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('resize', syncDropdownMode);
   window.addEventListener('orientationchange', syncNavOffsetVar);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncNavOffsetVar);
+    window.visualViewport.addEventListener('scroll', syncNavOffsetVar);
+  }
   if (navbar) {
     navbar.addEventListener('transitionend', syncNavOffsetVar);
   }
