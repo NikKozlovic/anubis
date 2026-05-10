@@ -63,10 +63,10 @@
           <a href="residents.html" class="hero-btn secondary">BOOK AN ARTIST</a>
         </div>
       </div>
-      <div class="hero-bg">
-        <video class="hero-video" autoplay muted loop playsinline preload="auto">
-          <source src="https://res.cloudinary.com/daca3y1wg/video/upload/v1777059853/video_tmytps.webm" type="video/webm">
+      <div class="hero-bg" data-video-state="loading">
+        <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="none" poster="Media/Logo/logoblack.png" aria-label="Background video">
           <source src="https://github.com/NikKozlovic/video/releases/download/1.0.0/video.mp4" type="video/mp4">
+          <source src="https://res.cloudinary.com/daca3y1wg/video/upload/v1777059853/video_tmytps.webm" type="video/webm">
         </video>
       </div>
     </div>
@@ -193,10 +193,10 @@
 
   <script>
     function deriveHomeMediaTitle(sectionData) {
-      const explicitTitle = typeof sectionData?.title === 'string' ? sectionData.title.trim() : '';
+      const explicitTitle = sectionData && typeof sectionData.title === 'string' ? sectionData.title.trim() : '';
       if (explicitTitle) return explicitTitle;
 
-      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      const linkUrl = sectionData && typeof sectionData.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
       if (!linkUrl) return '';
 
       try {
@@ -211,10 +211,10 @@
     }
 
     function deriveHomeMediaSubtitle(sectionData) {
-      const explicitSubtitle = typeof sectionData?.subtitle === 'string' ? sectionData.subtitle.trim() : '';
+      const explicitSubtitle = sectionData && typeof sectionData.subtitle === 'string' ? sectionData.subtitle.trim() : '';
       if (explicitSubtitle) return explicitSubtitle;
 
-      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      const linkUrl = sectionData && typeof sectionData.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
       if (!linkUrl) return '';
 
       try {
@@ -230,9 +230,9 @@
     }
 
     function resolveHomeMediaEmbedUrl(sectionData) {
-      if (sectionData?.embedUrl) return sectionData.embedUrl;
+      if (sectionData && sectionData.embedUrl) return sectionData.embedUrl;
 
-      const linkUrl = typeof sectionData?.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
+      const linkUrl = sectionData && typeof sectionData.linkUrl === 'string' ? sectionData.linkUrl.trim() : '';
       if (!linkUrl || !linkUrl.includes('soundcloud.com/')) return '';
 
       const encodedTrackUrl = encodeURIComponent(linkUrl);
@@ -361,6 +361,62 @@
 
     document.addEventListener('DOMContentLoaded', renderHomeMedia);
     document.addEventListener('DOMContentLoaded', renderHomeFeaturedEvent);
+    document.addEventListener('DOMContentLoaded', () => {
+      const heroBg = document.querySelector('.hero-bg');
+      const heroVideo = document.querySelector('.hero-video');
+      if (!heroBg || !heroVideo) return;
+
+      const ua = navigator.userAgent || '';
+      const platform = navigator.platform || '';
+      const hasTouchMac = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || hasTouchMac;
+      const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua);
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const saveData = navigator.connection && navigator.connection.saveData;
+
+      function markVideoReady() {
+        heroBg.setAttribute('data-video-state', 'ready');
+      }
+
+      function markVideoFallback() {
+        heroBg.setAttribute('data-video-state', 'fallback');
+      }
+
+      heroVideo.muted = true;
+      heroVideo.defaultMuted = true;
+      heroVideo.setAttribute('muted', '');
+      heroVideo.setAttribute('playsinline', '');
+      heroVideo.setAttribute('webkit-playsinline', '');
+
+      // iOS Safari is more likely to crash on large background videos, so use image/gradient fallback.
+      if ((isIOS && isSafari) || prefersReducedMotion || saveData) {
+        markVideoFallback();
+        try {
+          heroVideo.pause();
+          heroVideo.removeAttribute('src');
+          heroVideo.querySelectorAll('source').forEach((source) => source.removeAttribute('src'));
+          heroVideo.load();
+        } catch (error) {
+          console.warn('Hero video fallback applied with cleanup warning:', error);
+        }
+        return;
+      }
+
+      heroVideo.addEventListener('playing', markVideoReady, { once: true });
+      heroVideo.addEventListener('loadeddata', markVideoReady, { once: true });
+      heroVideo.addEventListener('error', markVideoFallback, { once: true });
+      heroVideo.addEventListener('stalled', markVideoFallback, { once: true });
+
+      const fallbackTimer = window.setTimeout(markVideoFallback, 4000);
+      heroVideo.addEventListener('playing', () => window.clearTimeout(fallbackTimer), { once: true });
+      heroVideo.addEventListener('loadeddata', () => window.clearTimeout(fallbackTimer), { once: true });
+      heroVideo.addEventListener('error', () => window.clearTimeout(fallbackTimer), { once: true });
+
+      const maybePlay = heroVideo.play();
+      if (maybePlay && typeof maybePlay.then === 'function') {
+        maybePlay.then(markVideoReady).catch(markVideoFallback);
+      }
+    });
   </script>
 
   <script>
