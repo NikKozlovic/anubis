@@ -483,8 +483,8 @@
         return false;
       }
 
-      if (isOldIPhone || isIOS) {
-        // iOS Safari is most reliable with MP4 first.
+      if (isOldIPhone) {
+        // Older iOS Safari can need an explicit MP4-first source chain.
         sourceEls.forEach((source) => source.removeAttribute('src'));
 
         (async () => {
@@ -568,7 +568,7 @@
       heroVideo.addEventListener('error', retryOnceThenFallback, { once: true });
       heroVideo.addEventListener('stalled', retryOnceThenFallback, { once: true });
 
-      const fallbackTimer = window.setTimeout(retryOnceThenFallback, 5000);
+      const fallbackTimer = window.setTimeout(retryOnceThenFallback, 12000);
       heroVideo.addEventListener('playing', () => window.clearTimeout(fallbackTimer), { once: true });
       heroVideo.addEventListener('loadeddata', () => window.clearTimeout(fallbackTimer), { once: true });
       heroVideo.addEventListener('error', () => window.clearTimeout(fallbackTimer), { once: true });
@@ -576,7 +576,8 @@
       const maybePlay = heroVideo.play();
       if (maybePlay && typeof maybePlay.then === 'function') {
         maybePlay.then(markVideoReady).catch(() => {
-          markVideoFallback();
+          // On some Safari builds play() can reject early even if media becomes playable shortly after.
+          // Keep loading path active; retry/fallback is already handled by events + timer above.
         });
       }
     });
