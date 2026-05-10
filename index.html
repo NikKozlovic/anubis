@@ -371,6 +371,7 @@
       const hasTouchMac = platform === 'MacIntel' && navigator.maxTouchPoints > 1;
       const isIOS = /iPad|iPhone|iPod/.test(ua) || hasTouchMac;
       const isAndroid = /Android/i.test(ua);
+      const isDesktop = !isIOS && !isAndroid;
       const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua);
       const iosVersionMatch = ua.match(/OS (\d+)_/);
       const iosMajorVersion = iosVersionMatch ? parseInt(iosVersionMatch[1], 10) : null;
@@ -488,6 +489,37 @@
 
       if (isAndroid) {
         // Prefer webm on Android/Samsung for faster loading, then fallback to mp4.
+        sourceEls.forEach((source) => source.removeAttribute('src'));
+
+        (async () => {
+          if (webmUrl) {
+            try {
+              await attemptSourcePlayback(webmUrl, 3500);
+              markVideoReady();
+              return;
+            } catch (_) {
+              // Continue to mp4 fallback.
+            }
+          }
+
+          if (mp4Url) {
+            try {
+              await attemptSourcePlayback(mp4Url, 4500);
+              markVideoReady();
+              return;
+            } catch (_) {
+              // Final fallback below.
+            }
+          }
+
+          markVideoFallback();
+          clearVideoSources();
+        })();
+        return;
+      }
+
+      if (isDesktop) {
+        // Prefer webm first on desktop/PC, then fallback to mp4.
         sourceEls.forEach((source) => source.removeAttribute('src'));
 
         (async () => {
