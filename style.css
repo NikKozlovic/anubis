@@ -2549,6 +2549,9 @@ strong {
       overflow: hidden;
       z-index: 1;
       background: #000;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
 
     .hero-video {
@@ -2573,7 +2576,7 @@ strong {
     }
 
     .hero-bg[data-video-state="fallback"] .hero-video {
-      display: none;
+      opacity: 1;
     }
 
     .hero-content {

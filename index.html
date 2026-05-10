@@ -64,7 +64,8 @@
         </div>
       </div>
       <div class="hero-bg" data-video-state="loading">
-        <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="none" poster="Media/Logo/logoblack.png" aria-label="Background video">
+        <video class="hero-video" autoplay muted loop playsinline webkit-playsinline preload="metadata" poster="Media/Logo/logoblack.png" aria-label="Background video">
+          <source src="https://res.cloudinary.com/daca3y1wg/video/upload/v1777059853/video_tmytps.mp4" type="video/mp4">
           <source src="https://github.com/NikKozlovic/video/releases/download/1.0.0/video.mp4" type="video/mp4">
           <source src="https://res.cloudinary.com/daca3y1wg/video/upload/v1777059853/video_tmytps.webm" type="video/webm">
         </video>
@@ -378,6 +379,14 @@
       const isOldIPhone = isIOS && isSafari && iosMajorVersion !== null && iosMajorVersion < 16;
       const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const saveData = navigator.connection && navigator.connection.saveData;
+      const posterUrl = heroVideo.getAttribute('poster') || '';
+
+      if (posterUrl) {
+        heroBg.style.backgroundImage = `url(${posterUrl})`;
+        heroBg.style.backgroundPosition = 'center';
+        heroBg.style.backgroundRepeat = 'no-repeat';
+        heroBg.style.backgroundSize = 'cover';
+      }
 
       function markVideoReady() {
         heroBg.setAttribute('data-video-state', 'ready');
@@ -421,6 +430,7 @@
             window.clearTimeout(timer);
             heroVideo.removeEventListener('playing', onReady);
             heroVideo.removeEventListener('loadeddata', onReady);
+            heroVideo.removeEventListener('canplay', onReady);
             heroVideo.removeEventListener('error', onFail);
             heroVideo.removeEventListener('stalled', onFail);
             if (ok) resolve();
@@ -433,6 +443,7 @@
 
           heroVideo.addEventListener('playing', onReady);
           heroVideo.addEventListener('loadeddata', onReady);
+          heroVideo.addEventListener('canplay', onReady);
           heroVideo.addEventListener('error', onFail);
           heroVideo.addEventListener('stalled', onFail);
 
@@ -451,38 +462,43 @@
       }
 
       const sourceEls = Array.from(heroVideo.querySelectorAll('source'));
-      const webmSource = sourceEls.find((source) => (source.type || '').toLowerCase().includes('webm'));
-      const mp4Source = sourceEls.find((source) => (source.type || '').toLowerCase().includes('mp4'));
-      const webmUrl = webmSource ? webmSource.getAttribute('src') : '';
-      const mp4Url = mp4Source ? mp4Source.getAttribute('src') : '';
+      const webmUrls = sourceEls
+        .filter((source) => (source.type || '').toLowerCase().includes('webm'))
+        .map((source) => source.getAttribute('src'))
+        .filter(Boolean);
+      const mp4Urls = sourceEls
+        .filter((source) => (source.type || '').toLowerCase().includes('mp4'))
+        .map((source) => source.getAttribute('src'))
+        .filter(Boolean);
 
-      if (isOldIPhone) {
-        // Use a manual source chain for older iPhones: webm -> mp4 -> fallback.
+      async function attemptPlaybackChain(urls, timeoutMs) {
+        for (const url of urls) {
+          try {
+            await attemptSourcePlayback(url, timeoutMs);
+            return true;
+          } catch (_) {
+            // Try next source URL.
+          }
+        }
+        return false;
+      }
+
+      if (isOldIPhone || isIOS) {
+        // iOS Safari is most reliable with MP4 first.
         sourceEls.forEach((source) => source.removeAttribute('src'));
 
         (async () => {
-          if (webmUrl) {
-            try {
-              await attemptSourcePlayback(webmUrl, 3500);
-              markVideoReady();
-              return;
-            } catch (_) {
-              // Continue to mp4 fallback.
-            }
+          if (await attemptPlaybackChain(mp4Urls, 5000)) {
+            markVideoReady();
+            return;
           }
 
-          if (mp4Url) {
-            try {
-              await attemptSourcePlayback(mp4Url, 4500);
-              markVideoReady();
-              return;
-            } catch (_) {
-              // Final fallback below.
-            }
+          if (await attemptPlaybackChain(webmUrls, 4000)) {
+            markVideoReady();
+            return;
           }
 
           markVideoFallback();
-          clearVideoSources();
         })();
         return;
       }
@@ -492,28 +508,17 @@
         sourceEls.forEach((source) => source.removeAttribute('src'));
 
         (async () => {
-          if (webmUrl) {
-            try {
-              await attemptSourcePlayback(webmUrl, 3500);
-              markVideoReady();
-              return;
-            } catch (_) {
-              // Continue to mp4 fallback.
-            }
+          if (await attemptPlaybackChain(webmUrls, 3500)) {
+            markVideoReady();
+            return;
           }
 
-          if (mp4Url) {
-            try {
-              await attemptSourcePlayback(mp4Url, 4500);
-              markVideoReady();
-              return;
-            } catch (_) {
-              // Final fallback below.
-            }
+          if (await attemptPlaybackChain(mp4Urls, 4500)) {
+            markVideoReady();
+            return;
           }
 
           markVideoFallback();
-          clearVideoSources();
         })();
         return;
       }
@@ -523,28 +528,17 @@
         sourceEls.forEach((source) => source.removeAttribute('src'));
 
         (async () => {
-          if (webmUrl) {
-            try {
-              await attemptSourcePlayback(webmUrl, 3500);
-              markVideoReady();
-              return;
-            } catch (_) {
-              // Continue to mp4 fallback.
-            }
+          if (await attemptPlaybackChain(webmUrls, 3500)) {
+            markVideoReady();
+            return;
           }
 
-          if (mp4Url) {
-            try {
-              await attemptSourcePlayback(mp4Url, 4500);
-              markVideoReady();
-              return;
-            } catch (_) {
-              // Final fallback below.
-            }
+          if (await attemptPlaybackChain(mp4Urls, 4500)) {
+            markVideoReady();
+            return;
           }
 
           markVideoFallback();
-          clearVideoSources();
         })();
         return;
       }
@@ -554,7 +548,6 @@
       function retryOnceThenFallback() {
         if (hasRetried) {
           markVideoFallback();
-          clearVideoSources();
           return;
         }
 
@@ -567,7 +560,6 @@
           }
         } catch (error) {
           markVideoFallback();
-          clearVideoSources();
         }
       }
 
@@ -585,7 +577,6 @@
       if (maybePlay && typeof maybePlay.then === 'function') {
         maybePlay.then(markVideoReady).catch(() => {
           markVideoFallback();
-          clearVideoSources();
         });
       }
     });
