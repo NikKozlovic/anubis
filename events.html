@@ -152,13 +152,19 @@
 
       const imgContainer = document.createElement('div');
       imgContainer.className = 'event-image';
-      const img = document.createElement('img');
-      img.src = ev.images[0];
-      img.alt = ev.title;
+      // If there are multiple images, use the gallery slider (with nav arrows and dots).
+      if (Array.isArray(ev.images) && ev.images.length > 1) {
+        const slider = makeSlider(ev.images, ev.title, ev.imageStyle || '');
+        imgContainer.appendChild(slider);
+      } else {
+        const img = document.createElement('img');
+        img.src = Array.isArray(ev.images) && ev.images[0] ? ev.images[0] : (ev.image || '');
+        img.alt = ev.title;
+        imgContainer.appendChild(img);
+      }
       const overlay = document.createElement('div');
       overlay.className = 'event-overlay';
       overlay.innerHTML = '<div class="event-badge">NEXT EVENT</div>';
-      imgContainer.appendChild(img);
       imgContainer.appendChild(overlay);
 
       const details = document.createElement('div');

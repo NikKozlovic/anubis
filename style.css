@@ -2884,6 +2884,45 @@ strong {
       overflow: hidden;
     }
 
+    /* Allow homepage featured event to show nav/dots outside the image area */
+    #home-featured-event .event-card,
+    #home-featured-event .event-card .event-image {
+      overflow: visible;
+    }
+
+    #home-featured-event .event-image {
+      height: auto; /* let the slider dictate the height */
+    }
+
+    /* ── Homepage slider sizing & dot alignment ── */
+    #home-featured-event .gallery-slider {
+      padding: 0;                  /* remove the 30px default padding */
+    }
+
+    #home-featured-event .gallery-slider .slider-container {
+      border-radius: 0;            /* card already has rounded corners */
+      margin-bottom: 0;
+    }
+
+    #home-featured-event .gallery-slider .slider-container img {
+      height: 280px;               /* phone default */
+      border-radius: 0;
+    }
+
+    @media (min-width: 768px) {
+      #home-featured-event .gallery-slider .slider-container img {
+        height: 620px;             /* bigger on desktop */
+      }
+    }
+
+    #home-featured-event .gallery-slider .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 0 10px;
+      background: transparent;
+    }
+
     .event-image img {
       width: 100%;
       height: 100%;
@@ -3418,6 +3457,427 @@ strong {
 }
 
 /* ===== Events Page Styling ===== */
+.giveaway-date {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+.giveaway-date strong {
+  color: #ff4444;
+}
+
+.giveaway-section {
+  padding: 80px 20px 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.giveaway-prizes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  max-width: 760px;
+  margin: 0 auto 0;
+  border: 1px solid #333;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  transition: border-color 0.3s ease;
+}
+
+
+
+.giveaway-prize {
+  position: relative;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.giveaway-prize + .giveaway-prize {
+  border-left: 1px solid #2a2a2a;
+}
+
+.giveaway-prize:hover {
+  background: rgba(255, 42, 42, 0.03);
+}
+
+.giveaway-prize-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: linear-gradient(45deg, #ff2a2a, #ff4444);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(255, 42, 42, 0.35);
+  z-index: 1;
+}
+
+.giveaway-prize-badge--second {
+  background: linear-gradient(45deg, #8b6914, #c9941a);
+  box-shadow: 0 4px 12px rgba(201, 148, 26, 0.35);
+}
+
+/* ── Third prize ── */
+.giveaway-prize-badge--third {
+  background: linear-gradient(45deg, #2a6b4a, #3a9e6e);
+  box-shadow: 0 4px 12px rgba(58, 158, 110, 0.35);
+}
+
+/* Full-width third row */
+.giveaway-prize--third {
+  grid-column: 1 / -1;
+  border-left: none;
+  border-top: 1px solid #2a2a2a;
+  flex-direction: row;         /* items side-by-side inside the card */
+  align-items: center;
+  text-align: left;
+  gap: 0;
+}
+
+.giveaway-prize--third .giveaway-prize-img--bundle {
+  flex-shrink: 0;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  color: #3a9e6e;
+  background: #0d0d0d;
+  border-right: 1px solid #2a2a2a;
+}
+
+.giveaway-prize--third .giveaway-prize-info {
+  border-top: none;
+  padding: 20px 24px;
+}
+
+.giveaway-prize-label--third {
+  color: #3a9e6e;
+}
+
+@media (max-width: 540px) {
+  .giveaway-prize--third {
+    flex-direction: column;
+    text-align: center;
+  }
+  .giveaway-prize--third .giveaway-prize-img--bundle {
+    width: 100%;
+    height: 100px;
+    border-right: none;
+    border-bottom: 1px solid #2a2a2a;
+  }
+}
+
+.giveaway-prize-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.giveaway-prize-img--placeholder {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  color: #333;
+  background: #0d0d0d;
+}
+
+.giveaway-prize-info {
+  padding: 18px 16px 22px;
+  border-top: 1px solid #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.giveaway-prize-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #ff2a2a;
+  margin-bottom: 6px;
+}
+
+.giveaway-prize:nth-child(2) .giveaway-prize-label {
+  color: #c9941a;
+}
+
+.giveaway-prize-desc {
+  margin: 0;
+  font-size: 1rem;
+  color: #e0e0e0;
+  line-height: 1.5;
+}
+
+.giveaway-prize-desc strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.giveaway-ticket-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: linear-gradient(45deg, #ff2a2a, #ff4444);
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.giveaway-ticket-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(255, 42, 42, 0.4);
+}
+
+.giveaway-ticket-btn--second {
+  background: linear-gradient(45deg, #8b6914, #c9941a);
+}
+
+.giveaway-ticket-btn--second:hover {
+  box-shadow: 0 10px 24px rgba(201, 148, 26, 0.4);
+}
+
+.giveaway-form {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 0 0 20px 20px;
+  border: 1px solid #333;
+  border-top: 1px solid #2a2a2a;
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+  display: grid;
+  gap: 12px;
+  text-align: left;
+}
+
+.giveaway-ticket-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(255, 42, 42, 0.07);
+  border: 1px solid rgba(255, 42, 42, 0.2);
+  color: #ffaaaa;
+  font-size: 0.88rem;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+}
+
+.giveaway-ticket-notice svg {
+  flex-shrink: 0;
+  color: #ff4444;
+}
+
+.giveaway-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.giveaway-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.giveaway-field {
+  display: grid;
+  gap: 8px;
+}
+
+.giveaway-form label {
+  color: #ff2a2a;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.giveaway-form input,
+.giveaway-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #353535;
+  border-radius: 12px;
+  background: #0b0b0b;
+  color: #fff;
+  padding: 13px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+}
+
+.giveaway-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.giveaway-form input:focus,
+.giveaway-form textarea:focus {
+  outline: none;
+  border-color: #ff2a2a;
+  box-shadow: 0 0 0 3px rgba(255, 42, 42, 0.2);
+}
+
+/* ── Rules checkbox ── */
+.giveaway-rules-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 18px auto 4px;
+  max-width: 520px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.giveaway-rules-check input[type="checkbox"] {
+  flex-shrink: 0;
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: #ff2a2a;
+  cursor: pointer;
+}
+
+.giveaway-rules-text {
+  font-size: 0.82rem;
+  color: #aaa;
+  line-height: 1.5;
+  font-family: 'Cinzel', serif;
+}
+
+.giveaway-rules-text strong {
+  color: #e0e0e0;
+  display: block;
+  margin-top: 3px;
+}
+
+.giveaway-submit-btn {
+  justify-self: center;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, #ff2a2a, #ff4444);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 30px;
+  min-width: 180px;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.giveaway-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(255, 42, 42, 0.35);
+}
+
+.giveaway-submit-btn.is-loading {
+  cursor: wait;
+  opacity: 0.95;
+}
+
+.giveaway-submit-btn.is-loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: giveaway-spin 0.7s linear infinite;
+}
+
+.giveaway-submit-btn.is-success {
+  background: linear-gradient(45deg, #0c8f3f, #24be63);
+  box-shadow: 0 14px 30px rgba(36, 190, 99, 0.35);
+  animation: giveaway-pop 0.4s ease;
+}
+
+.giveaway-status {
+  margin: 4px 0 0;
+  min-height: 1.3em;
+  text-align: center;
+  font-size: 0.92rem;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.giveaway-status.is-success,
+.giveaway-status.is-error {
+  animation: giveaway-fade-up 0.35s ease forwards;
+}
+
+.giveaway-status.is-success {
+  color: #58d98d;
+}
+
+.giveaway-status.is-error {
+  color: #ff8c8c;
+}
+
+@keyframes giveaway-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes giveaway-pop {
+  0% {
+    transform: scale(0.98);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes giveaway-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .featured-event-section {
   padding: 80px 20px;
   max-width: 1200px;
@@ -3434,7 +3894,36 @@ strong {
 }
 
 #currentEventContainer .event-image {
-  height: 600px;
+  height: auto;
+  overflow: visible; /* allow slider dots to be visible outside the image area */
+}
+
+/* Responsive image height for current event slider on events.html */
+#currentEventContainer .gallery-slider {
+  padding: 0;
+}
+
+#currentEventContainer .gallery-slider .slider-container {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+#currentEventContainer .gallery-slider .slider-container img {
+  height: 280px; /* phone default */
+  border-radius: 0;
+}
+
+@media (min-width: 768px) {
+  #currentEventContainer .gallery-slider .slider-container img {
+    height: 620px; /* bigger on desktop */
+  }
+}
+
+#currentEventContainer .gallery-slider .slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 0 10px;
 }
 
 #currentEventContainer .event-details {
@@ -3872,6 +4361,7 @@ strong {
 
 .gallery-slider {
   padding: 30px;
+  position: relative; /* anchor absolutely-positioned dots */
 }
 
 .slider-container {
@@ -3969,6 +4459,45 @@ strong {
 .slider-dot.active {
   background: #ff2a2a;
   transform: scale(1.3);
+}
+
+/* Make dots more visible and touch-friendly on small screens */
+@media (max-width: 640px) {
+  .slider-dots {
+    gap: 12px;
+    padding: 6px 0 12px;
+    position: relative; /* keep them in flow when not absolutely positioned */
+    z-index: 20; /* ensure they sit above images */
+  }
+
+  .slider-dot {
+    width: 16px;
+    height: 16px;
+    background: rgba(255,255,255,0.45);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  }
+
+  .slider-dot.active {
+    background: #ff2a2a;
+    transform: scale(1.4);
+    box-shadow: 0 4px 10px rgba(255, 42, 42, 0.25);
+  }
+
+  /* Ensure dots are centered and visible above the image area without being clipped */
+  /* Place dots below the slider on small screens to avoid clipping by overflow:hidden */
+  .gallery-slider {
+    padding-bottom: 0; /* no extra overlap required when dots are below */
+    margin-bottom: 22px; /* ensure space for dots so they don't overlay following text */
+  }
+
+  .gallery-slider > .slider-dots {
+    position: static;
+    margin-top: 10px;
+    bottom: auto;
+    justify-content: center;
+    pointer-events: auto;
+    z-index: 30;
+  }
 }
 
 .single-event-image {
@@ -4241,9 +4770,37 @@ body.gallery-lightbox-open {
 
 /* Mobile responsive for events */
 @media (max-width: 768px) {
+  .giveaway-section,
   .featured-event-section,
   .past-events-section {
     padding: 60px 15px;
+  }
+
+  .giveaway-section {
+    padding-bottom: 10px;
+  }
+
+  .giveaway-form {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .giveaway-prizes {
+    grid-template-columns: 1fr;
+  }
+
+  .giveaway-prize + .giveaway-prize {
+    border-left: none;
+    border-top: 1px solid #2a2a2a;
+  }
+
+  .giveaway-form {
+    border-radius: 0 0 16px 16px;
+    padding: 20px 16px;
+  }
+
+  .giveaway-grid-two {
+    grid-template-columns: 1fr;
   }
 
   .event-image-container {
