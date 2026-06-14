@@ -116,7 +116,7 @@
           <div class="giveaway-prize-info">
             <span class="giveaway-prize-label giveaway-prize-label--third">Third Prize</span>
             <p class="giveaway-prize-desc">
-              1× Anubis Flag &nbsp;·&nbsp; 1× Anubis T‑shirt &nbsp;·&nbsp; 1× Rolling Pappers
+              1× Anubis Flag &nbsp;·&nbsp; 1× Anubis T‑shirt &nbsp;·&nbsp; 1× Anubis Rolling Pappers
             </p>
           </div>
         </div>
@@ -185,7 +185,7 @@
           <input type="checkbox" name="rules_accepted" required>
           <span class="giveaway-rules-text">
             I have read and accept the rules.
-            <strong>If selected as a winner, I agree to present a valid ticket purchase receipt.</strong>
+            <strong>To be eligible you must purchase a ticket to the current Anubis Underground event — <em>Anubis Represents: Sokar's Dungeon</em>. If selected as a winner, proof of that ticket purchase must be presented.</strong>
           </span>
         </label>
 
@@ -660,6 +660,29 @@
           });
 
           if (!response.ok) throw new Error('Formspree submission failed');
+
+          // ── Discord webhook notification (fire-and-forget) ──────────────
+          try {
+            const fd = new FormData(form);
+            fetch('https://discordapp.com/api/webhooks/1515505655769727097/MFZPIp14-h-FW2N4qC0WAhTurV3J_BQuG-YpQJ0jvvAK7b7Uv486HehQ6pf0LX503mef', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                embeds: [{
+                  title: '🎉 New Giveaway Entry',
+                  color: 0xff2a2a,
+                  fields: [
+                    { name: 'Name', value: (fd.get('first_name') || '—') + ' ' + (fd.get('last_name') || '—'), inline: true },
+                    { name: 'Instagram', value: fd.get('instagram') || '—', inline: true },
+                    { name: 'Email', value: fd.get('email') || '—', inline: false },
+                    { name: 'Rules accepted', value: fd.get('rules_accepted') ? '✅ Yes' : '❌ No', inline: true }
+                  ],
+                  footer: { text: 'Anubis Underground Giveaway' },
+                  timestamp: new Date().toISOString()
+                }]
+              })
+            }).catch(() => {}); // silently ignore Discord errors
+          } catch (_) {}
 
           try { window.localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch (_) {}
 
