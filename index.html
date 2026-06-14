@@ -122,7 +122,7 @@
         </div>
       </div>
 
-      <form class="giveaway-form" action="https://formspree.io/f/maqzpnjk" method="POST">
+      <form class="giveaway-form" method="POST">
         <p class="giveaway-ticket-notice">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           A valid ticket purchase is required to be eligible for the giveaway.
@@ -644,7 +644,6 @@
         }
 
         const actionUrl = form.getAttribute('action');
-        if (!actionUrl) return;
 
         submitBtn.disabled = true;
         submitBtn.classList.remove('is-success');
@@ -653,36 +652,28 @@
         statusEl.textContent = '';
 
         try {
-          const response = await fetch(actionUrl, {
+          // ── Discord webhook (primary submission — no Formspree) ──────────
+          const fd = new FormData(form);
+          const discordRes = await fetch('https://discordapp.com/api/webhooks/1515505655769727097/MFZPIp14-h-FW2N4qC0WAhTurV3J_BQuG-YpQJ0jvvAK7b7Uv486HehQ6pf0LX503mef', {
             method: 'POST',
-            body: new FormData(form),
-            headers: { Accept: 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              embeds: [{
+                title: '🎉 New Giveaway Entry',
+                color: 0xff2a2a,
+                fields: [
+                  { name: 'Name', value: (fd.get('first_name') || '—') + ' ' + (fd.get('last_name') || '—'), inline: true },
+                  { name: 'Instagram', value: fd.get('instagram') || '—', inline: true },
+                  { name: 'Email', value: fd.get('email') || '—', inline: false },
+                  { name: 'Rules accepted', value: fd.get('rules_accepted') ? '✅ Yes' : '❌ No', inline: true }
+                ],
+                footer: { text: 'Anubis Underground Giveaway' },
+                timestamp: new Date().toISOString()
+              }]
+            })
           });
 
-          if (!response.ok) throw new Error('Formspree submission failed');
-
-          // ── Discord webhook notification (fire-and-forget) ──────────────
-          try {
-            const fd = new FormData(form);
-            fetch('https://discordapp.com/api/webhooks/1515505655769727097/MFZPIp14-h-FW2N4qC0WAhTurV3J_BQuG-YpQJ0jvvAK7b7Uv486HehQ6pf0LX503mef', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                embeds: [{
-                  title: '🎉 New Giveaway Entry',
-                  color: 0xff2a2a,
-                  fields: [
-                    { name: 'Name', value: (fd.get('first_name') || '—') + ' ' + (fd.get('last_name') || '—'), inline: true },
-                    { name: 'Instagram', value: fd.get('instagram') || '—', inline: true },
-                    { name: 'Email', value: fd.get('email') || '—', inline: false },
-                    { name: 'Rules accepted', value: fd.get('rules_accepted') ? '✅ Yes' : '❌ No', inline: true }
-                  ],
-                  footer: { text: 'Anubis Underground Giveaway' },
-                  timestamp: new Date().toISOString()
-                }]
-              })
-            }).catch(() => {}); // silently ignore Discord errors
-          } catch (_) {}
+          if (!discordRes.ok) throw new Error('Discord submission failed');
 
           try { window.localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch (_) {}
 
