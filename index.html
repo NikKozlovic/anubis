@@ -683,14 +683,16 @@
           form.reset();
           submitBtn.classList.remove('is-loading');
           submitBtn.classList.add('is-success');
+          const btnTextEl = submitBtn.querySelector('.btn-text');
+          if (btnTextEl) btnTextEl.textContent = 'Submitted!';
           statusEl.classList.add('is-success');
           statusEl.textContent = 'Submitted. Your giveaway entry was received.';
 
           window.setTimeout(() => {
             submitBtn.classList.remove('is-success');
-          }, 1800);
-
-          startCooldownUI(COOLDOWN_MS);
+            if (btnTextEl) btnTextEl.textContent = 'Submit';
+            startCooldownUI(COOLDOWN_MS);
+          }, 5000);
         } catch (error) {
           console.error('Giveaway form submit failed:', error);
           submitBtn.classList.remove('is-loading');
