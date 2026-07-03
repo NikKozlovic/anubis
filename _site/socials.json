@@ -1,0 +1,20 @@
+{
+  "socials": [
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/anubisunderground/",
+      "icon": "instagram"
+    },
+    {
+      "name": "Facebook",
+      "url": "https://www.facebook.com/AnubisUnderground/",
+      "icon": "facebook"
+      
+    },
+    {
+      "name": "TikTok",
+      "url": "https://www.tiktok.com/@anubisunderground",
+      "icon": "tiktok"
+    }
+  ]
+}

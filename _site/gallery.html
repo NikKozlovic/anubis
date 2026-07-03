@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery | Anubis Underground</title>
+  <meta name="description" content="Explore visuals from Anubis Underground events. Relive the atmosphere of Slovenian underground techno nights through curated galleries.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Gallery | Anubis Underground">
+  <meta property="og:description" content="Visual archive of Anubis Underground events and underground atmosphere.">
+  <meta property="og:image" content="https://anubisunderground.com/Media/Logo/logoblack.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gallery | Anubis Underground">
+  <meta name="twitter:description" content="Visual archive of Anubis Underground events and underground atmosphere.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="Media/Logo/logo.png">
+  <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+
+    <div id="shared-navbar-root"></div>
+<!-- Hero Section -->
+  <section class="hero-section">
+    <!-- Decorative snake image - top left -->
+    <img src="Media/Graphic/snake_top_left.webp" alt="" class="hero-snake-top-left">
+    <!-- Decorative snake image - top right -->
+    <img src="Media/Graphic/snake_top_right.webp" alt="" class="hero-snake-top-right">
+    
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-logo">
+        <img class="hero-logo-img" src="Media/Logo/logo.png" alt="Anubis Underground Logo">
+      </div>
+      <h1 class="hero-title">ANUBIS <span class="text-accent">Gallery</span></h1>
+      <p class="hero-subtitle">Our memories from past events</p>
+      <p class="hero-tagline">Check out pictures from our events</p>
+      <div class="hero-divider"></div>
+    </div>
+
+    <div class="hieroglyph-marquee" aria-label="Animated hieroglyph line">
+      <div class="hieroglyph-track">
+        <span class="hieroglyph-text">𓂧𓌅 𓉗𓇯 𓃾𓂝𓏴𓌅𓀠 𓀠𓃻𓏲𓏴𓃾 𓇯𓂋𓃾𓌓 𓂋𓏲𓁶𓁹𓂝𓃾 𓉐𓂝𓇯 𓉗𓇯 𓉐𓂝𓏴 𓇯𓂝𓆓𓃾 𓃻𓃾 𓁹𓉐𓇯𓏲𓂝𓏴𓃾 𓌅𓃾 𓃾𓆓𓌓𓂝𓃾  |  𓂧𓌅 𓉗𓇯 𓃾𓂝𓏴𓌅𓀠 𓀠𓃻𓏲𓏴𓃾 𓇯𓂋𓃾𓌓 𓂋𓏲𓁶𓁹𓂝𓃾 𓉐𓂝𓇯 𓉗𓇯 𓉐𓂝𓏴 𓇯𓂝𓆓𓃾 𓃻𓃾 𓁹𓉐𓇯𓏲𓂝𓏴𓃾 𓌅𓃾 𓃾𓆓𓌓𓂝𓃾</span>
+        <span class="hieroglyph-text" aria-hidden="true">𓂧𓌅 𓉗𓇯 𓃾𓂝𓏴𓌅𓀠 𓀠𓃻𓏲𓏴𓃾 𓇯𓂋𓃾𓌓 𓂋𓏲𓁶𓁹𓂝𓃾 𓉐𓂝𓇯 𓉗𓇯 𓉐𓂝𓏴 𓇯𓂝𓆓𓃾 𓃻𓃾 𓁹𓉐𓇯𓏲𓂝𓏴𓃾 𓌅𓃾 𓃾𓆓𓌓𓂝𓃾  |  𓂧𓌅 𓉗𓇯 𓃾𓂝𓏴𓌅𓀠 𓀠𓃻𓏲𓏴𓃾 𓇯𓂋𓃾𓌓 𓂋𓏲𓁶𓁹𓂝𓃾 𓉐𓂝𓇯 𓉗𓇯 𓉐𓂝𓏴 𓇯𓂝𓆓𓃾 𓃻𓃾 𓁹𓉐𓇯𓏲𓂝𓏴𓃾 𓌅𓃾 𓃾𓆓𓌓𓂝𓃾</span>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="gallery-page">
+      <div id="gallery" class="gallery-grid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <div class="gallery-lightbox" id="gallery-lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Gallery image viewer">
+    <button class="gallery-lightbox-close" id="gallery-lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
+    <button class="gallery-lightbox-nav gallery-lightbox-prev" id="gallery-lightbox-prev" type="button" aria-label="Previous image">&#10094;</button>
+    <figure class="gallery-lightbox-figure" id="gallery-lightbox-figure">
+      <img id="gallery-lightbox-image" src="" alt="">
+      <figcaption id="gallery-lightbox-caption"></figcaption>
+    </figure>
+    <button class="gallery-lightbox-nav gallery-lightbox-next" id="gallery-lightbox-next" type="button" aria-label="Next image">&#10095;</button>
+  </div>
+
+  <script>
+    fetch("gallery.json")
+      .then((response) => {
+        if (!response.ok) throw new Error(`Failed to load gallery.json (${response.status})`);
+        return response.json();
+      })
+      .then((data) => {
+        const container = document.getElementById("gallery");
+        if (!container) throw new Error("Missing #gallery container in gallery.html");
+
+        const imageObserver = "IntersectionObserver" in window
+          ? new IntersectionObserver((entries, observer) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const img = entry.target;
+                const src = img.dataset.src;
+                if (src) {
+                  img.src = src;
+                  img.removeAttribute("data-src");
+                }
+                observer.unobserve(img);
+              });
+            }, { rootMargin: "120px 0px" })
+          : null;
+
+        const INITIAL_RENDER_COUNT = 12;
+        const LOAD_MORE_COUNT = 12;
+
+        const lightbox = document.getElementById("gallery-lightbox");
+        const lightboxImage = document.getElementById("gallery-lightbox-image");
+        const lightboxCaption = document.getElementById("gallery-lightbox-caption");
+        const lightboxFigure = document.getElementById("gallery-lightbox-figure");
+        const lightboxPrevBtn = document.getElementById("gallery-lightbox-prev");
+        const lightboxNextBtn = document.getElementById("gallery-lightbox-next");
+        const lightboxCloseBtn = document.getElementById("gallery-lightbox-close");
+
+        const lightboxState = {
+          albumName: "",
+          entries: [],
+          currentIndex: 0
+        };
+
+        function resolveImageSrc(entry, eventName) {
+          if (typeof entry === "string") {
+            if (/^https?:\/\//i.test(entry) || entry.startsWith("//")) return entry;
+            if (entry.startsWith("Media/")) return entry;
+            return `Media/Gallery/${eventName}/${entry}`;
+          }
+
+          if (entry && typeof entry === "object") {
+            const src = entry.src || entry.url || entry.link;
+            if (typeof src === "string" && src.length > 0) return src;
+          }
+
+          return "";
+        }
+
+        function optimizeImageSrc(src) {
+          if (!src) return src;
+          if (!/^https?:\/\/res\.cloudinary\.com\//i.test(src)) return src;
+          if (!src.includes("/upload/")) return src;
+          return src.replace("/upload/", "/upload/f_auto,q_auto,w_900/");
+        }
+
+        function optimizeLightboxSrc(src) {
+          if (!src) return src;
+          if (!/^https?:\/\/res\.cloudinary\.com\//i.test(src)) return src;
+          if (!src.includes("/upload/")) return src;
+          return src.replace("/upload/", "/upload/f_auto,q_auto,w_1800/");
+        }
+
+        function updateLightboxImage() {
+          if (!lightboxState.entries.length) return;
+
+          const entry = lightboxState.entries[lightboxState.currentIndex];
+          const source = resolveImageSrc(entry, lightboxState.albumName);
+          const lightboxSrc = optimizeLightboxSrc(source);
+
+          lightboxImage.src = lightboxSrc;
+          lightboxImage.alt = `${lightboxState.albumName} photo ${lightboxState.currentIndex + 1}`;
+          lightboxCaption.textContent = `${lightboxState.albumName} - ${lightboxState.currentIndex + 1} / ${lightboxState.entries.length}`;
+        }
+
+        function showNextInLightbox() {
+          if (!lightboxState.entries.length) return;
+          lightboxState.currentIndex = (lightboxState.currentIndex + 1) % lightboxState.entries.length;
+          updateLightboxImage();
+        }
+
+        function showPrevInLightbox() {
+          if (!lightboxState.entries.length) return;
+          lightboxState.currentIndex = (lightboxState.currentIndex - 1 + lightboxState.entries.length) % lightboxState.entries.length;
+          updateLightboxImage();
+        }
+
+        function closeLightbox() {
+          lightbox.hidden = true;
+          lightbox.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("gallery-lightbox-open");
+          lightboxImage.src = "";
+        }
+
+        function openLightbox(albumName, entries, startIndex) {
+          lightboxState.albumName = albumName;
+          lightboxState.entries = entries;
+          lightboxState.currentIndex = startIndex;
+
+          updateLightboxImage();
+          lightbox.hidden = false;
+          lightbox.setAttribute("aria-hidden", "false");
+          document.body.classList.add("gallery-lightbox-open");
+        }
+
+        lightboxPrevBtn.addEventListener("click", showPrevInLightbox);
+        lightboxNextBtn.addEventListener("click", showNextInLightbox);
+        lightboxCloseBtn.addEventListener("click", closeLightbox);
+
+        lightbox.addEventListener("click", (event) => {
+          if (event.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (lightbox.hidden) return;
+          if (event.key === "Escape") closeLightbox();
+          if (event.key === "ArrowLeft") showPrevInLightbox();
+          if (event.key === "ArrowRight") showNextInLightbox();
+        });
+
+        function renderChunk(fileEntries, eventName, grid, startIndex, chunkSize) {
+          const fragment = document.createDocumentFragment();
+          let cursor = startIndex;
+          const end = Math.min(startIndex + chunkSize, fileEntries.length);
+
+          for (; cursor < end; cursor += 1) {
+            const entryIndex = cursor;
+            const entry = fileEntries[cursor];
+            const resolvedSrc = resolveImageSrc(entry, eventName);
+            if (!resolvedSrc) continue;
+
+            const image = document.createElement("img");
+            const optimizedSrc = optimizeImageSrc(resolvedSrc);
+
+            image.alt = `${eventName} photo`;
+            image.loading = "lazy";
+            image.decoding = "async";
+            image.fetchPriority = "low";
+
+            if (imageObserver) {
+              image.dataset.src = optimizedSrc;
+              imageObserver.observe(image);
+            } else {
+              image.src = optimizedSrc;
+            }
+
+            image.addEventListener("click", () => {
+              openLightbox(eventName, fileEntries, entryIndex);
+            });
+
+            fragment.appendChild(image);
+          }
+
+          grid.appendChild(fragment);
+          return cursor;
+        }
+
+        Object.keys(data).forEach((eventName, index) => {
+          const section = document.createElement("div");
+          section.className = "gallery-event-section";
+
+          // Clickable header
+          const header = document.createElement("button");
+          header.className = "gallery-event-toggle";
+          header.setAttribute("aria-expanded", "false");
+          header.innerHTML = `
+            <span class="gallery-event-toggle-name">${eventName}</span>
+            <span class="gallery-event-toggle-count">${data[eventName].length} photos</span>
+            <span class="gallery-event-toggle-arrow">▼</span>
+          `;
+
+          // Collapsible panel
+          const panel = document.createElement("div");
+          panel.className = "gallery-event-panel";
+          panel.hidden = true;
+
+          const grid = document.createElement("div");
+          grid.className = "photo-grid";
+          const loadMoreBtn = document.createElement("button");
+          loadMoreBtn.className = "gallery-load-more";
+          loadMoreBtn.type = "button";
+          loadMoreBtn.textContent = "Load more photos";
+
+          let loaded = false;
+          let cursor = 0;
+          const entries = Array.isArray(data[eventName]) ? data[eventName] : [];
+
+          // Load images only when first opened
+          function loadImages() {
+            if (loaded) return;
+            loaded = true;
+            cursor = renderChunk(entries, eventName, grid, 0, INITIAL_RENDER_COUNT);
+            if (cursor >= entries.length) {
+              loadMoreBtn.hidden = true;
+            }
+          }
+
+          loadMoreBtn.addEventListener("click", () => {
+            cursor = renderChunk(entries, eventName, grid, cursor, LOAD_MORE_COUNT);
+            if (cursor >= entries.length) {
+              loadMoreBtn.hidden = true;
+            }
+          });
+
+          header.addEventListener("click", () => {
+            const isOpen = header.getAttribute("aria-expanded") === "true";
+            if (!isOpen) {
+              loadImages();
+              panel.hidden = false;
+              // Allow hidden removal to take effect before animating
+              requestAnimationFrame(() => panel.classList.add("open"));
+              header.setAttribute("aria-expanded", "true");
+            } else {
+              panel.classList.remove("open");
+              panel.addEventListener("transitionend", () => { panel.hidden = true; }, { once: true });
+              header.setAttribute("aria-expanded", "false");
+            }
+          });
+
+          panel.appendChild(grid);
+          panel.appendChild(loadMoreBtn);
+          section.appendChild(header);
+          section.appendChild(panel);
+          container.appendChild(section);
+        });
+      })
+      .catch((error) => {
+        console.error("Gallery failed to render:", error);
+      });
+  </script>
+
+
+  <div id="shared-footer-root"></div>
+
+</body>
+</html>

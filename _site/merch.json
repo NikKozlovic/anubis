@@ -1,0 +1,14 @@
+[
+  {
+    "id": "cool-tshirt",
+    "name": "Cool T-Shirt",
+    "price": 25,
+    "stockTotal": 100,
+    "image": "Media/Merch/tshirt.png",
+    "imageAlt": "T-Shirt",
+    "sizes": ["S", "M", "L"],
+    "defaultSize": "M",
+    "maxQuantity": 3,
+    "buttonText": "Add to Cart"
+  }
+]

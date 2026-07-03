@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Anubis Underground</title>
+  <meta name="description" content="Complete your Anubis Underground order securely at checkout.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Checkout | Anubis Underground">
+  <meta property="og:description" content="Secure checkout for Anubis Underground orders.">
+  <meta property="og:image" content="https://anubisunderground.com/Media/Logo/logoblack.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Checkout | Anubis Underground">
+  <meta name="twitter:description" content="Secure checkout for Anubis Underground orders.">
+  <link rel="stylesheet" href="style2.css">
+  <link rel="icon" href="Media/Logo/logo.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="Media/Logo/logo.png">
+  <script src="clean-urls.js"></script>
+  <script src="script.js"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AdLNKkfZbxKJzCQqlbXvWVoNwZETuPutFAi5clmGdgGhhAOuyClxIpY4hrnjbYoZk2KmNMH08RCtpGWc&currency=EUR"></script>
+</head>
+<body>
+
+    <div id="shared-navbar-root"></div>
+
+
+  <main class="checkout-container" style="max-width: 800px; margin: 100px auto; padding: 20px;">
+    <h2 style="color: white; text-align: center; margin-bottom: 30px;">CHECKOUT</h2>
+    
+    <!-- Cart Summary -->
+    <div class="cart-summary" style="background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+      <h3 style="color: white; margin-bottom: 20px; border-bottom: 2px solid #ff2a2a; padding-bottom: 10px;">Order Summary</h3>
+      <div id="checkout-items"></div>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #333;">
+        <h3 id="checkout-total" style="color: white; text-align: right; font-size: 24px;"></h3>
+      </div>
+    </div>
+
+    <!-- Customer Information Form -->
+    <form id="checkout-form" action="https://formspree.io/f/meopoobw" method="POST" style="background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+      <h3 style="color: white; margin-bottom: 20px; border-bottom: 2px solid #ff2a2a; padding-bottom: 10px;">Customer Information</h3>
+      
+      <!-- Shipping Notice -->
+      <div style="background: #ff2a2a; color: white; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center;">
+        <strong>📦 Shipping Notice:</strong> We currently ship only within Slovenia. International shipping coming soon!
+      </div>
+      
+      <input type="hidden" name="order_details" id="order_details">
+      <input type="hidden" name="total_amount" id="total_amount">
+      <input type="hidden" name="_cc" id="customer_email_cc">
+      <input type="hidden" name="_subject" value="New order from Anubis Underground Store">
+      <input type="text" name="_gotcha" style="display:none">
+      
+      <!-- Customer Information Fields -->
+      <div style="margin-bottom: 20px;">
+        <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Full Name <span style="color: #ff2a2a;">*</span></label>
+        <input type="text" name="full_name" required style="width: 100%; box-sizing: border-box; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Email <span style="color: #ff2a2a;">*</span></label>
+        <input type="email" name="email" id="customer_email" required style="width: 100%; box-sizing: border-box; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Phone Number <span style="color: #ff2a2a;">*</span></label>
+        <input type="tel" name="phone" required style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Shipping Address <span style="color: #ff2a2a;">*</span></label>
+        <textarea name="address" required rows="3" style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">City <span style="color: #ff2a2a;">*</span></label>
+        <input type="text" name="city" required style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+        <div>
+          <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Postal Code <span style="color: #ff2a2a;">*</span></label>
+          <input type="text" name="postal_code" required style="width: 100%; box-sizing: border-box; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px;">
+        </div>
+        <div>
+          <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Country <span style="color: #ff2a2a;">*</span></label>
+          <input type="text" name="country" value="Slovenia" readonly required style="width: 100%; box-sizing: border-box; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: #999; font-size: 16px; cursor: not-allowed;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="color: white; display: block; margin-bottom: 8px; font-weight: 600;">Additional Notes (optional)</label>
+        <textarea name="notes" rows="3" placeholder="Any special instructions or comments..." style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0e0e0e; color: white; font-size: 16px; resize: vertical;"></textarea>
+      </div>
+    </form>
+
+    <!-- Notification message area -->
+    <div id="notification" style="display: none; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600;"></div>
+
+    <!-- Payment Options -->
+    <div class="payment-options" style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+      <h3 style="color: white; margin-bottom: 10px;">Select Payment Method</h3>
+      
+      <!-- Dynamic PayPal Button Container -->
+      <div id="paypal-button-container" style="width: 100%; max-width: 400px; margin: 0 auto;"></div>
+
+      <button onclick="proceedWithRevolut()" style="width: 100%; max-width: 400px; padding: 15px 30px; background-color: #000000; color: white; border: 2px solid #ff2a2a; cursor: pointer; border-radius: 8px; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 15.317c-.238.296-.535.534-.891.713-.357.178-.762.267-1.215.267h-3.576l1.782-4.445h1.794c.356 0 .653-.089.891-.267.238-.179.416-.416.535-.713.119-.297.178-.624.178-.98 0-.356-.059-.683-.178-.98-.119-.297-.297-.534-.535-.713-.238-.178-.535-.267-.891-.267H11.21L8.894 15.317H6.322L9.937 5.633h5.85c.772 0 1.424.148 1.956.445.533.297.94.683 1.224 1.158.283.475.425 1.01.425 1.604 0 .772-.178 1.485-.534 2.138-.356.654-.861 1.188-1.515 1.604.653.237 1.158.594 1.514 1.069.357.475.535 1.04.535 1.693 0 .594-.119 1.128-.356 1.604-.238.475-.565.861-.951 1.158z"/>
+        </svg>
+        Pay with Revolut
+      </button>
+
+      <a href="cart.html" style="margin-top: 20px; color: #ff2a2a; text-decoration: none; font-weight: 600;">← Back to Cart</a>
+    </div>
+  </main>
+
+  <script>
+    function getHomePath() {
+      const hostname = window.location.hostname;
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      if (hostname.endsWith('github.io') && parts.length > 0) {
+        return '/' + parts[0] + '/';
+      }
+      return '/';
+    }
+
+    function showNotification(message, type = 'error') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      
+      if (type === 'error') {
+        notification.style.background = '#ff2a2a';
+        notification.style.color = 'white';
+      } else if (type === 'success') {
+        notification.style.background = '#00cc00';
+        notification.style.color = 'white';
+      } else if (type === 'info') {
+        notification.style.background = '#ffa500';
+        notification.style.color = 'white';
+      }
+      
+      // Scroll to notification
+      notification.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      
+      // Auto hide after 5 seconds
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 5000);
+    }
+
+    function initializePayPal() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      
+      if (cart.length === 0) {
+        document.getElementById('paypal-button-container').innerHTML = 
+          '<p style="color: #999; text-align: center;">Add items to cart to enable PayPal checkout</p>';
+        return;
+      }
+
+      // Clear any existing PayPal buttons
+      document.getElementById('paypal-button-container').innerHTML = '';
+
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          // Validate form before creating PayPal order
+          if (!validateForm()) {
+            return Promise.reject(new Error('Form validation failed'));
+          }
+
+          let cart = JSON.parse(localStorage.getItem('cart')) || [];
+          let total = cart.reduce((sum, item) => sum + item.price, 0);
+          
+          // Create line items for PayPal
+          let items = cart.map(item => ({
+            name: item.name,
+            unit_amount: {
+              currency_code: 'EUR',
+              value: item.price.toFixed(2)
+            },
+            quantity: '1',
+            description: `Size: ${item.size || 'N/A'}`
+          }));
+
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                currency_code: 'EUR',
+                value: total.toFixed(2),
+                breakdown: {
+                  item_total: {
+                    currency_code: 'EUR',
+                    value: total.toFixed(2)
+                  }
+                }
+              },
+              items: items,
+              description: 'Anubis Underground Merchandise Order'
+            }]
+          });
+        },
+        
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            // Submit customer information to Formspree
+            const form = document.getElementById('checkout-form');
+            const formData = new FormData(form);
+            
+            // Add PayPal transaction details
+            formData.append('paypal_transaction_id', details.id);
+            formData.append('paypal_payer_email', details.payer.email_address);
+            formData.append('payment_status', 'COMPLETED');
+            
+            // Set customer email for CC
+            const customerEmail = document.getElementById('customer_email').value;
+            document.getElementById('customer_email_cc').value = customerEmail;
+            
+            showNotification('Payment successful! Processing your order...', 'success');
+            
+            // Submit order details to Formspree
+            fetch(form.action, {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'Accept': 'application/json'
+              }
+            }).then(response => {
+              if (response.ok) {
+                // Clear cart after successful payment and submission
+                localStorage.removeItem('cart');
+                showNotification(`Thank you for your purchase! Your transaction ID is: ${details.id}. Check your email for order confirmation.`, 'success');
+                
+                // Redirect to thank you page after 3 seconds
+                setTimeout(() => {
+                  window.location.href = getHomePath();
+                }, 3000);
+              } else {
+                showNotification('Payment was successful, but there was an issue saving your order. Please contact us with your transaction ID: ' + details.id, 'error');
+              }
+            }).catch(error => {
+              showNotification('Payment was successful, but there was an issue saving your order. Please contact us with your transaction ID: ' + details.id, 'error');
+            });
+          });
+        },
+        
+        onError: function(err) {
+          console.error('PayPal error:', err);
+          showNotification('There was an error processing your payment. Please try again.', 'error');
+        },
+        
+        style: {
+          color: 'blue',
+          shape: 'rect',
+          label: 'paypal',
+          layout: 'vertical'
+        }
+      }).render('#paypal-button-container');
+    }
+
+    function displayCheckout() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let checkoutItemsDiv = document.getElementById('checkout-items');
+      let checkoutTotalDiv = document.getElementById('checkout-total');
+      
+      if (cart.length === 0) {
+        checkoutItemsDiv.innerHTML = '<p style="color: white; text-align: center;">Your cart is empty.</p>';
+        checkoutTotalDiv.innerHTML = '';
+        initializePayPal(); // Initialize PayPal even with empty cart
+        return;
+      }
+      
+      let html = '';
+      let total = 0;
+      let orderDetails = '';
+      
+      cart.forEach((item, index) => {
+        total += item.price;
+        orderDetails += `${item.name} - Size: ${item.size} - $${item.price}\n`;
+        html += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #333;">
+            <div style="color: white;">
+              <span style="font-weight: 600;">${item.name}</span>
+              <span style="color: #999; margin-left: 10px;">Size: ${item.size || 'N/A'}</span>
+            </div>
+            <span style="color: white; font-weight: 600;">$${item.price}</span>
+          </div>
+        `;
+      });
+      
+      checkoutItemsDiv.innerHTML = html;
+      checkoutTotalDiv.innerHTML = `Total: $${total}`;
+      
+      // Set hidden form fields
+      document.getElementById('order_details').value = orderDetails;
+      document.getElementById('total_amount').value = `$${total}`;
+      
+      // Initialize PayPal after displaying checkout
+      initializePayPal();
+    }
+
+    function validateForm() {
+      const form = document.getElementById('checkout-form');
+      if (!form.checkValidity()) {
+        // Find first invalid field
+        const invalidField = form.querySelector(':invalid');
+        if (invalidField) {
+          invalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          invalidField.focus();
+        }
+        showNotification('Please fill in all required fields before proceeding with payment.', 'error');
+        return false;
+      }
+      return true;
+    }
+
+    function proceedWithRevolut() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (cart.length === 0) {
+        showNotification('Your cart is empty!', 'error');
+        return;
+      }
+      
+      if (!validateForm()) {
+        return;
+      }
+      
+      // Set customer email for CC
+      const customerEmail = document.getElementById('customer_email').value;
+      document.getElementById('customer_email_cc').value = customerEmail;
+      
+      // Submit form via AJAX and then redirect to Revolut
+      const form = document.getElementById('checkout-form');
+      const formData = new FormData(form);
+      
+      showNotification('Processing your order...', 'info');
+      
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          // Clear cart after successful submission
+          localStorage.removeItem('cart');
+          showNotification('Order submitted successfully! Check your email for confirmation. Redirecting to Revolut...', 'success');
+          // Here you would integrate with Revolut API
+          // setTimeout(() => {
+          //   window.location.href = 'your-revolut-checkout-url';
+          // }, 2000);
+        } else {
+          showNotification('There was a problem submitting your order. Please try again.', 'error');
+        }
+      }).catch(error => {
+        showNotification('There was a problem submitting your order. Please try again.', 'error');
+      });
+    }
+
+    displayCheckout();
+  </script>
+
+  <div id="shared-footer-root"></div>
+  
+</body>
+</html>
