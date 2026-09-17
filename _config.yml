@@ -1,4 +1,6 @@
 permalink: pretty
+include:
+  - CNAME
 plugins:
   - jekyll-redirect-from
 
