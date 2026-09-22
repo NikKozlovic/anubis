@@ -146,7 +146,8 @@
       };
       const formOpenedAt = Date.now();
 
-      const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1551685755082903623/nQBMlTOD9QzRtzjRRtNx28eI7oFhLUbmicXsrcKsDkhGynVc13sCOqbJ1ONG-neqHZTW';
+      // Discord webhook URL is kept server-side; this only calls our proxy.
+      const PROXY_URL = 'https://anubis-discord-proxy.anubis-underground1.workers.dev';
 
       function getCooldownRemainingMs() {
         try {
@@ -179,10 +180,10 @@
             `**Message:** ${message}`
           ].join('\n');
 
-          await fetch(DISCORD_WEBHOOK, {
+          await fetch(PROXY_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content })
+            body: JSON.stringify({ type: 'submission', payload: { content } })
           });
         } catch (err) {
           // ignore Discord errors (CORS or network); they shouldn't block user flow
