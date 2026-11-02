@@ -2884,13 +2884,9 @@ strong {
       overflow: hidden;
     }
 
-    /* Allow homepage featured event to show nav/dots outside the image area */
-    #home-featured-event .event-card,
-    #home-featured-event .event-card .event-image {
-      overflow: visible;
-    }
-
+    /* Allow homepage featured event slider dots to lay out without being clipped */
     #home-featured-event .event-image {
+      overflow: visible;
       height: auto; /* let the slider dictate the height */
     }
 
@@ -2912,6 +2908,19 @@ strong {
     @media (min-width: 768px) {
       #home-featured-event .gallery-slider .slider-container img {
         height: 620px;             /* bigger on desktop */
+      }
+    }
+
+    /* PC mode: slightly smaller featured event card to match events page */
+    @media (min-width: 1024px) {
+      #home-featured-event .event-card {
+        max-width: 640px;
+      }
+
+      #home-featured-event .gallery-slider .slider-container img,
+      #home-featured-event .single-event-image img {
+        height: 460px;
+        max-height: 460px;
       }
     }
 
@@ -3916,6 +3925,19 @@ strong {
 @media (min-width: 768px) {
   #currentEventContainer .gallery-slider .slider-container img {
     height: 620px; /* bigger on desktop */
+  }
+}
+
+/* PC mode: slightly smaller current event card to match home page */
+@media (min-width: 1024px) {
+  #currentEventContainer .event-card {
+    max-width: 640px;
+  }
+
+  #currentEventContainer .gallery-slider .slider-container img,
+  #currentEventContainer .single-event-image img {
+    height: 460px;
+    max-height: 460px;
   }
 }
 
